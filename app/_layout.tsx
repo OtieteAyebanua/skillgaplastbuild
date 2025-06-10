@@ -10,6 +10,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native";
 import SplashScreen from "./(tabs)/splashScreen";
 
 export default function RootLayout() {
@@ -28,19 +29,18 @@ export default function RootLayout() {
   }, []);
 
   if (one != 0) {
-    // Async font loading only occurs in development.
     return <SplashScreen />;
   }
 
   return (
-   
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{headerShown: false}} >
+        <SafeAreaView>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-
+        </SafeAreaView>
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }
