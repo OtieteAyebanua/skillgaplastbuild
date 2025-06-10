@@ -1,5 +1,5 @@
+import { Router } from "@/services/router";
 import { getFirstTimeInstallationDetail, getTokenFromStorage, setFirstTimeInstallation } from "@/services/storageHelpers";
-import { router } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ArrowLeftIcon, ArrowRightIcon } from "react-native-heroicons/outline";
@@ -60,21 +60,23 @@ const Onboarding = ({ children }: IOnBoarding) => {
 
   setIsLoading(false);
 };
+
 const checkApproval = () => {
   if (isOnBoarded) {
-    router.push('/(tabs)/explore');
+    Router.push('/(tabs)/explore');
   } else if (!isFirstTime) {
-    router.push('/(tabs)/auth/login');
+    Router.push('/(tabs)/auth/auth-home');
   } else {  
     setIsApprove(false);
   }
 };
+
   const nextStep = () => {
     console.log(step);
     if (step < 3) {
       setStep(step + 1);
     } else {
-      router.push("/auth/auth-home");
+      Router.push("/auth/auth-home");
     }
   };
 

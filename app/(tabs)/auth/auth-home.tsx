@@ -1,5 +1,6 @@
+import { Router } from "@/services/router";
 import { useFonts } from "expo-font";
-import { router } from "expo-router";
+import { useEffect } from "react";
 import {
   Image,
   ImageBackground,
@@ -18,9 +19,10 @@ const AuthHome = () => {
     SpaceGrotesk: require("../../../assets/fonts/SpaceGrotesk-SemiBold.ttf"),
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  useEffect(() => {
+    // reset routing history, this is a base-page
+    Router.clearHistory();
+  }, []);
 
   return (
     <ScrollView>
@@ -48,10 +50,10 @@ const AuthHome = () => {
         </View>
         <View
           style={{
-            backgroundColor: "#FFFFFF", 
-            borderTopLeftRadius: 24, 
+            backgroundColor: "#FFFFFF",
+            borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
-            padding: 24, 
+            padding: 24,
             height: "100%",
           }}
         >
@@ -60,8 +62,8 @@ const AuthHome = () => {
               style={{
                 fontSize: 24,
                 fontWeight: "bold",
-                color: "#141414", 
-                marginBottom: 8, 
+                color: "#141414",
+                marginBottom: 8,
                 fontFamily: "SpaceGrotesk",
               }}
             >
@@ -81,7 +83,9 @@ const AuthHome = () => {
             </Text>
 
             <TouchableOpacity
-              onPress={() => {router.push('/(tabs)/auth/sign-up')}}
+              onPress={() => {
+                Router.push("/(tabs)/auth/sign-up");
+              }}
               style={{
                 width: wp("90%"),
                 height: 56,
@@ -100,7 +104,9 @@ const AuthHome = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {router.push('/(tabs)/auth/login')}}
+              onPress={() => {
+                Router.push("/(tabs)/auth/login");
+              }}
               style={{
                 width: wp("90%"),
                 height: 56,

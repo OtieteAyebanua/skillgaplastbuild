@@ -6,6 +6,7 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Router } from "@/services/router";
 import { BackHandler } from "react-native";
 
 export default function TabLayout() {
@@ -13,8 +14,10 @@ export default function TabLayout() {
 
 useEffect(() => {
     const onBackPress = () => {
+      Router.back();
       return true;
     };
+    
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       onBackPress,

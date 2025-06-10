@@ -1,4 +1,7 @@
+import { emailValidation } from "@/services/formValidation";
+import { Router } from "@/services/router";
 import { useFonts } from "expo-font";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -8,27 +11,18 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Input, { PasswordTextBox } from "../../../components/ui/Input";
-import Label from "../../../components/ui/Label";
-// import { login } from "@/services/api/userApi";
-// import useToast from "@/components/toast";
-// import useApi from "@/hooks/useApi";
-// import { emailValidation } from "@/services/helpers/formValidation";
-// import { setTokenToStorage } from "@/services/helpers/tokenStorage";
-import { emailValidation } from "@/services/formValidation";
-import { Link, router } from "expo-router";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Input, { PasswordTextBox } from "../../../components/ui/Input";
+import Label from "../../../components/ui/Label";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useColorScheme();
-  // const api = useApi(true);
-  // const notify = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -37,35 +31,9 @@ const Login = () => {
     "GeneralSans-Variable": require("../../../assets/fonts/GeneralSans-Medium.ttf"),
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  // const onLogin = async () => {
-  //   if (!api || isLoading) return;
-
-  //   setIsLoading(true);
-  //   setError(false);
-
-  //   try {
-  //     const res = await login(api, email, password);
-
-  //     if (res) {
-  //       await setTokenToStorage(res);
-  //       refreshUserData?.();
-  //       router.push("/");
-  //     } else {
-  //       setError(true);
-  //       notify("Login failed, please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //     setError(true);
-  //     notify("Something went wrong, please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const routeTo = (url: any) => {
+    Router.push(url);
+  };
 
   return (
     <SafeAreaView
@@ -155,18 +123,17 @@ const Login = () => {
             )}
           </TouchableOpacity>
 
-          <Link
-            href="/(tabs)/auth/recoverAccount"
-            style={{
-              textAlign: "center",
-              color: "#1D9BF0",
-              fontWeight: "600", // font-semibold
-              fontSize: 14, // text-sm ≈ 14px
-              marginBottom: 8, // mb-2 → 2 * 4px
-            }}
-          >
-            Recover Password
-          </Link>
+           <TouchableOpacity onPress={() => routeTo("/(tabs)/auth/recoverAccount")}>
+                <Text
+                  style={{
+                    alignItems: "center",
+                    color: "#1D9BF0",
+                    fontWeight: "600",
+                  }}
+                >
+                  Recover Password
+                </Text>
+              </TouchableOpacity>
           <View style={{ alignItems: "center" }}>
             <Text
               style={{
@@ -175,15 +142,17 @@ const Login = () => {
               }}
             >
               Don’t have an account?
-              <Link
-                href="/(tabs)/auth/sign-up"
-                style={{
-                  color: "#1D9BF0",
-                  fontWeight: "600",
-                }}
-              >
-                Create Account
-              </Link>
+              <TouchableOpacity onPress={() => routeTo("/(tabs)/auth/sign-up")}>
+                <Text
+                  style={{
+                    alignItems: "center",
+                    color: "#1D9BF0",
+                    fontWeight: "600",
+                  }}
+                >
+                  Create Account
+                </Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </View>

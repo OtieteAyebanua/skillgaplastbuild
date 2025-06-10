@@ -24,13 +24,9 @@ import {
   passwordValidation,
 } from "@/services/formValidation";
 import type { Country } from "react-native-country-picker-modal";
-// import useApi from "@/hooks/useApi";
-// import { login, signup } from "@/services/api/userApi";
-// import { IUserDetail } from "@/types/auth";
-// import useToast from "@/components/toast";
 
+import { Router } from "@/services/router";
 import { IUserDetail } from "@/types/auth";
-import { router } from "expo-router";
 import CountryPicker from "react-native-country-picker-modal";
 import {
   ChevronDownIcon,
@@ -49,7 +45,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [allValid, setAllValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState<String[] | number>(234);
+  const [countryCode, setCountryCode] = useState<string[] | number>(234);
   const [inValidEmailText, setShowInValidEmailText] = useState(false);
   const [signupPayload, setSignupPayload] = useState<IUserDetail>({
     firstName: "",
@@ -59,8 +55,6 @@ const SignUp = () => {
     password: "",
     darkMode: true,
   });
-  // const api = useApi(true);
-  // const notify = useToast();
 
   const darkMode = theme === "dark" ? true : false;
 
@@ -98,41 +92,6 @@ const SignUp = () => {
     countryCode,
   ]);
 
-  // const onSignup = () => {
-  //   if (!isLoading && allValid) {
-  //     setIsLoading(true);
-  //     api &&
-  //       signup(api, signupPayload)
-  //         .then((res) => {
-  //           if (res) {
-  //             login(api, email, password)
-  //               .then((res) => {
-  //                 if (res) {
-  //                   setTokenToStorage(res);
-  //                   setIsLoading(false);
-  //                   router.push("/");
-  //                 } else {
-  //                   router.push("/login");
-  //                 }
-  //               })
-  //               .catch(() => {
-  //                 router.push("/login");
-  //               });
-  //           } else {
-  //             console.log(res);
-  //             notify("Try again");
-  //             setShowInValidEmailText(true);
-  //             setIsLoading(false);
-  //           }
-  //         })
-  //         .catch((err) => {
-  //           notify("Something went wrong");
-  //           setShowInValidEmailText(true);
-  //           setIsLoading(false);
-  //         });
-  //   }
-  // };
-
   return (
     <View
       style={{
@@ -145,7 +104,7 @@ const SignUp = () => {
     >
       <TouchableOpacity
         onPress={() => {
-          router.push("/(tabs)/auth/auth-home");
+          Router.back();
         }}
         style={{
           paddingLeft: 3,
@@ -174,7 +133,7 @@ const SignUp = () => {
         style={{ height: hp("80%"), width: wp("100%"), flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView style={{padding:4}}>
+        <ScrollView style={{ padding: 4 }}>
           <View style={{ width: wp("93%"), margin: "auto" }}>
             <Label>First Name</Label>
             <Input
