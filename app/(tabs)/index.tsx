@@ -1,4 +1,4 @@
-import { getTokenFromStorage } from "@/services/storageHelpers";
+import { getFirstTimeInstallationDetail, getTokenFromStorage, setFirstTimeInstallation } from "@/services/storageHelpers";
 import { router } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -21,11 +21,18 @@ const Onboarding = ({ children }: IOnBoarding) => {
   const step3Img = require("../../assets/images/onboarding-step3.png");
   const [step, setStep] = useState(1);
   const [isOnBoarded, setIsOnBoarded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFirstTime,setIsFirstTime] = useState(true);
+  const [approve,setIsApprove] = useState(true);
 
   useEffect(() => {
+    checkForFirstTimeInstallation();
     CheckOnBoardingStatus();
   }, []);
+
+  useEffect(()=>{
+     checkApproval();
+  },[isFirstTime])
 
   const CheckOnBoardingStatus = async () => {
     const userData = await getTokenFromStorage();
@@ -37,6 +44,31 @@ const Onboarding = ({ children }: IOnBoarding) => {
       setIsLoading(false);
     }
   };
+
+ const checkForFirstTimeInstallation = async () => {
+  setIsLoading(true);
+
+  const hasInstalledBefore = await getFirstTimeInstallationDetail();
+  console.log('First‐time flag from storage:', hasInstalledBefore);
+
+  if (hasInstalledBefore != null) {
+    setIsFirstTime(false);
+  } else {
+    setIsFirstTime(true);
+    await setFirstTimeInstallation();
+  }
+
+  setIsLoading(false);
+};
+const checkApproval = () => {
+  if (isOnBoarded) {
+    router.push('/(tabs)/explore');
+  } else if (!isFirstTime) {
+    router.push('/(tabs)/auth/login');
+  } else {  
+    setIsApprove(false);
+  }
+};
   const nextStep = () => {
     console.log(step);
     if (step < 3) {
@@ -54,7 +86,7 @@ const Onboarding = ({ children }: IOnBoarding) => {
 
   return isLoading ? (
     <SplashScreen />
-  ) : (
+  ) :  approve ? <SplashScreen/> : (
     <>
       (
       <View
