@@ -7,18 +7,17 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import texts from "../../constants/text";
-import StepIndicator from "./auth/StepIndicator";
-import SplashScreen from "./splashScreen";
-
+import texts from "../../../constants/text";
+import SplashScreen from "../splashScreen";
+import StepIndicator from "./StepIndicator";
 
 interface IOnBoarding {
   children: ReactNode;
 }
 const Onboarding = ({ children }: IOnBoarding) => {
-  const step1Img = require("../../assets/images/onboarding-step1.png");
-  const step2Img = require("../../assets/images/onboarding-step2.png");
-  const step3Img = require("../../assets/images/onboarding-step3.png");
+  const step1Img = require("../../../assets/images/onboarding-step1.png");
+  const step2Img = require("../../../assets/images/onboarding-step2.png");
+  const step3Img = require("../../../assets/images/onboarding-step3.png");
   const [step, setStep] = useState(1);
   const [isOnBoarded, setIsOnBoarded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
