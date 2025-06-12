@@ -1,17 +1,16 @@
 import React, { ReactNode } from "react";
-import { Text, useColorScheme } from "react-native";
+import { Text } from "react-native";
 
 
 interface ILabel {
   children: ReactNode;
 }
 const Label = ({ children }: ILabel) => {
-  const  theme  = useColorScheme();
 
   return (
    <Text
   style={{
-    color: theme === 'light' ? '#000000' : '#ffffff',
+    color: '#000000',
     fontWeight: '500', 
   }}
 >

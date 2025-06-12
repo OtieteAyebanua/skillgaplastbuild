@@ -9,8 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 
 import {
@@ -23,29 +22,22 @@ import {
   passwordExactness,
   passwordValidation,
 } from "@/services/formValidation";
-import type { Country } from "react-native-country-picker-modal";
 
 import { Router } from "@/services/router";
 import { IUserDetail } from "@/types/auth";
-import CountryPicker from "react-native-country-picker-modal";
 import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
+  ChevronLeftIcon
 } from "react-native-heroicons/outline";
 
 const SignUp = () => {
-  const theme = useColorScheme();
   const [country, setCountry] = useState<any>("NG");
-  const [countryDetail, setCountryDetail] = useState<Country | null>(null);
-  const [visible, setVisible] = useState<boolean>(false);
-  const [firstName, setFirstName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [allValid, setAllValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState<string[] | number>(234);
   const [inValidEmailText, setShowInValidEmailText] = useState(false);
   const [signupPayload, setSignupPayload] = useState<IUserDetail>({
     firstName: "",
@@ -56,46 +48,43 @@ const SignUp = () => {
     darkMode: true,
   });
 
-  const darkMode = theme === "dark" ? true : false;
-
   useEffect(() => {
     setSignupPayload((prev: any) => ({
       ...prev,
-      firstName,
+      fullName,
       lastName,
       email,
       country,
       password,
-      darkMode,
     }));
 
     if (
       emailValidation(email) &&
       passwordValidation(password) &&
-      firstName != "" &&
-      lastName != "" &&
+      fullName != "" &&
       passwordExactness(password, confirmPassword)
     ) {
-      setAllValid(true);
+      setAllValid(true);  
     } else {
       setAllValid(false);
     }
-
-    console.log(country);
   }, [
     password,
     email,
-    firstName,
-    lastName,
+    fullName,
     confirmPassword,
-    countryDetail,
-    countryCode,
   ]);
+
+  const simulateApiReq = ()=>{
+    setIsLoading(true);
+    setTimeout(()=>{setIsLoading(false);Router.push('/(tabs)/auth/accountVerification')},1000)
+    return false;
+  }
 
   return (
     <View
       style={{
-        backgroundColor: theme === "light" ? "#fff" : "#000",
+        backgroundColor: "#fff",
         flex: 1,
         height: hp("100%"),
         width: wp("100%"),
@@ -115,7 +104,7 @@ const SignUp = () => {
       >
         <ChevronLeftIcon
           size={25}
-          color={theme === "light" ? "#292D32" : "#ffffff"}
+          color={"#292D32"}
         />
       </TouchableOpacity>
       <Text
@@ -124,7 +113,7 @@ const SignUp = () => {
           paddingLeft: 12,
           fontSize: 24,
           fontWeight: "600",
-          color: theme === "light" ? "#000" : "#fff",
+          color: "#000",
         }}
       >
         Create Account
@@ -135,20 +124,11 @@ const SignUp = () => {
       >
         <ScrollView style={{ padding: 4 }}>
           <View style={{ width: wp("93%"), margin: "auto" }}>
-            <Label>First Name</Label>
+            <Label>Full name</Label>
             <Input
               type="text"
-              placeholder="Enter first name"
-              value={(e) => setFirstName(e)}
-            />
-          </View>
-
-          <View style={{ width: wp("93%"), margin: "auto" }}>
-            <Label>Last Name</Label>
-            <Input
-              type="text"
-              placeholder="Enter last name"
-              value={(e) => setLastName(e)}
+              placeholder="Enter full name"
+              value={(e) => setFullName(e)}
             />
           </View>
 
@@ -164,50 +144,6 @@ const SignUp = () => {
                 ? null
                 : "Incorrect email or already been used"}
             </Text>
-          </View>
-
-          <View style={{ width: wp("93%"), margin: "auto" }}>
-            <Label>Region(Country)</Label>
-          </View>
-          <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.dropdown}
-              onPress={() => setVisible(true)}
-            >
-              <ChevronDownIcon size={17} color={"#000000"} />
-            </TouchableOpacity>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                height: hp("4.8%"),
-              }}
-            >
-              <CountryPicker
-                visible={visible}
-                withFilter
-                withFlag
-                withAlphaFilter
-                withCallingCode
-                onSelect={(country) => {
-                  setCountryDetail(country);
-                  setCountry(country.cca2);
-                  setVisible(false);
-                  setCountryCode(countryDetail?.callingCode ?? 234);
-                }}
-                onClose={() => setVisible(false)}
-                countryCode={country}
-              />
-              <Text
-                style={{
-                  color: "#8F8F8F",
-                  fontSize: 14,
-                }}
-              >
-                {countryDetail?.name ?? "Nigeria"}
-              </Text>
-            </View>
           </View>
           <View style={{ width: wp("93%"), margin: "auto" }}>
             <Label>Password</Label>
@@ -248,7 +184,7 @@ const SignUp = () => {
         className={`bg-white`}
       >
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => {simulateApiReq()}}
           disabled={allValid ? false : true}
           style={{
             width: wp("90%"),

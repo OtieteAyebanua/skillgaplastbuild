@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import {
   ExclamationCircleIcon,
   EyeIcon,
@@ -21,7 +21,6 @@ interface IInput {
 }
 
 const Input = ({ type, value, isError, icon, placeholder }: IInput) => {
-  const theme  = useColorScheme();
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -64,10 +63,10 @@ const Input = ({ type, value, isError, icon, placeholder }: IInput) => {
     onFocus={handleFocus}
     onBlur={handleBlur}
     placeholder={placeholder}
-    placeholderTextColor={theme ? '#8F8F8F' : '#ffffff'}
+    placeholderTextColor={'#8F8F8F'}
     onChangeText={value}
     style={{
-      color: theme === 'light' ? '#000000' : '#ffffff',
+      color:'#000000',
       width: wp('90%'),
       height: hp('5.5%'),
     
@@ -125,7 +124,6 @@ interface IPassWordTextBox {
 export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const  theme  = useColorScheme();
   const handleFocus = () => {
     setIsFocused(true);
   };
@@ -153,9 +151,9 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder="Enter password"
-        placeholderTextColor={theme ? '#8F8F8F' : '#ffffff'}
+        placeholderTextColor={'#8F8F8F'}
         style={{
-          color: theme === 'light' ? '#000000' : '#ffffff',
+          color:  '#000000',
           width: wp('90%'),
           height: hp('5.5%'),
         }}

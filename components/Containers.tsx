@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

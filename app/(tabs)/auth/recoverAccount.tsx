@@ -33,6 +33,7 @@ import {
 import Label from "@/components/ui/Label";
 
 import PageContainer from "@/components/Containers";
+import { Router } from "@/services/router";
 import { router } from "expo-router";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 
@@ -198,21 +199,21 @@ const RecoverAccount = () => {
           }}
         >
           <TouchableOpacity
-        onPress={() => {
-          router.push("/(tabs)/auth/auth-home");
-        }}
-        style={{
-          paddingLeft: 3,
-          marginBottom: 24, // mb-6 → 6 × 4
-          width: 30, // w-[30px]
-          borderRadius: 9999,
-        }}
-      >
-        <ChevronLeftIcon
-          size={25}
-          color={theme === "light" ? "#292D32" : "#ffffff"}
-        />
-      </TouchableOpacity>
+            onPress={() => {
+              Router.back();
+            }}
+            style={{
+              paddingLeft: 3,
+              marginBottom: 24, // mb-6 → 6 × 4
+              width: 30, // w-[30px]
+              borderRadius: 9999,
+            }}
+          >
+            <ChevronLeftIcon
+              size={25}
+              color={theme === "light" ? "#292D32" : "#ffffff"}
+            />
+          </TouchableOpacity>
 
           <Text
             style={{
@@ -287,7 +288,7 @@ const RecoverAccount = () => {
           </View>
 
           <TouchableOpacity
-           // onPress={sendOtp}
+            // onPress={sendOtp}
             style={{
               width: "99%",
               height: 56,
@@ -332,22 +333,22 @@ const RecoverAccount = () => {
               paddingHorizontal: 16, // px-4
             }}
           >
-           <TouchableOpacity
-        onPress={() => {
-          router.push("/(tabs)/auth/auth-home");
-        }}
-        style={{
-          paddingLeft: 3,
-          marginBottom: 24, // mb-6 → 6 × 4
-          width: 30, // w-[30px]
-          borderRadius: 9999,
-        }}
-      >
-        <ChevronLeftIcon
-          size={25}
-          color={theme === "light" ? "#292D32" : "#ffffff"}
-        />
-      </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/(tabs)/auth/auth-home");
+              }}
+              style={{
+                paddingLeft: 3,
+                marginBottom: 24, // mb-6 → 6 × 4
+                width: 30, // w-[30px]
+                borderRadius: 9999,
+              }}
+            >
+              <ChevronLeftIcon
+                size={25}
+                color={theme === "light" ? "#292D32" : "#ffffff"}
+              />
+            </TouchableOpacity>
 
             <View>
               <Text
@@ -378,7 +379,7 @@ const RecoverAccount = () => {
               />
 
               <TouchableOpacity
-                onPress={()=>{}}
+                onPress={() => {}}
                 disabled={!emailValidation(email)}
                 style={{
                   width: "99%",

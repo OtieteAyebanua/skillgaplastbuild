@@ -8,7 +8,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
@@ -22,7 +21,6 @@ import Label from "../../../components/ui/Label";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const theme = useColorScheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -35,12 +33,20 @@ const Login = () => {
     Router.push(url);
   };
 
+  const simulateApiReq = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      Router.push('/(tabs)/auth/transactionPin')
+    }, 2000);
+  };
+
   return (
     <SafeAreaView
       style={{
         paddingTop: 40,
         height: "100%",
-        backgroundColor: theme === "light" ? "#fff" : "#000", // bg-[#fff]
+        backgroundColor: "#fff",
       }}
     >
       <ScrollView>
@@ -62,10 +68,7 @@ const Login = () => {
               borderRadius: 9999,
             }}
           >
-            <ChevronLeftIcon
-              size={25}
-              color={theme === "light" ? "#292D32" : "#ffffff"}
-            />
+            <ChevronLeftIcon size={25} color={"#292D32"} />
           </TouchableOpacity>
 
           <Text
@@ -95,7 +98,9 @@ const Login = () => {
           </View>
 
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {
+              simulateApiReq();
+            }}
             disabled={!emailValidation(email)}
             style={{
               width: wp("90%"),
@@ -123,22 +128,25 @@ const Login = () => {
             )}
           </TouchableOpacity>
 
-           <TouchableOpacity onPress={() => routeTo("/(tabs)/auth/recoverAccount")}>
-                <Text
-                  style={{
-                    alignItems: "center",
-                    color: "#1D9BF0",
-                    fontWeight: "600",
-                  }}
-                >
-                  Recover Password
-                </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={{ alignItems: "center", paddingTop: 5 }}
+            onPress={() => Router.push('/auth/recoverPassword')}
+          >
+            <Text
+              style={{
+                alignItems: "center",
+                color: "#1D9BF0",
+                fontWeight: "600",
+              }}
+            >
+              Recover Password
+            </Text>
+          </TouchableOpacity>
           <View style={{ alignItems: "center" }}>
             <Text
               style={{
                 alignItems: "center",
-                color: theme === "light" ? "#000" : "#fff",
+                color: "#000",
               }}
             >
               Don’t have an account?

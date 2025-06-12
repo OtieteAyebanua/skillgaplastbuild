@@ -15,8 +15,6 @@ export class Router {
 
     // navigate app to url
     router.push(activeRoute);
-
-    console.log("push:", routesHistory, activeRoute);
   };
 
   static back = () => {
