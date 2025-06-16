@@ -15,12 +15,9 @@ import {
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface IRecoverAccountPhase3{
-  onBack:()=> void;
-  onFinish:()=>void;
-}
 
-const RecoverAccountPhase3 = ({onBack,onFinish}:IRecoverAccountPhase3) => {
+
+const RecoverAccountPhase3 = () => {
   const [passwordLoader, setPasswordLoader] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,7 +26,6 @@ const RecoverAccountPhase3 = ({onBack,onFinish}:IRecoverAccountPhase3) => {
     setPasswordLoader(true);
     setTimeout(() => {
       setPasswordLoader(false);
-      onFinish()
       Router.push('/(tabs)/auth/recoverPassword/recoverAccountPhase4')
     }, 1000);
   };
@@ -50,7 +46,7 @@ const RecoverAccountPhase3 = ({onBack,onFinish}:IRecoverAccountPhase3) => {
       >
         <TouchableOpacity
           onPress={() => {
-            onBack()
+            Router.back()
           }}
           style={{
             paddingLeft: 3,
@@ -81,25 +77,27 @@ const RecoverAccountPhase3 = ({onBack,onFinish}:IRecoverAccountPhase3) => {
             placeholder="Enter new password"
             value={(e) => setPassword(e)}
           />
-          {!passwordValidation(password) && password !== "" && (
+           <View style={{display: !passwordValidation(password) && password !== "" ? "flex" :"none" }}>
+          {!passwordValidation(password) && password !== "" ? (
             <Text style={{ color: "#F04438" }}>
               Password must be 8–12 characters long and include at least one
               uppercase letter, one lowercase letter, and one number
             </Text>
-          )}
+          ):null}</View>
         </View>
 
         {/* Confirm Password Field */}
-        <View style={{ width: "100%", marginBottom: 80 }}>
+        <View style={{ width: "100%", marginBottom: 20 }}>
         <Text style={{color:"#344054"}}>Confirm Password</Text>
           <Input
             type="password"
             placeholder="Confirm password"
             value={(e) => setConfirmPassword(e)}
           />
-          {!passwordExactness(password, confirmPassword) && (
+          <View style={{display: !passwordExactness(password, confirmPassword) ? "flex" :"none" }}>
+          {!passwordExactness(password, confirmPassword)?(
             <Text style={{ color: "#F04438" }}>Password does not match</Text>
-          )}
+          ):null}</View>
         </View>
 
         {/* Save Button */}
@@ -124,7 +122,7 @@ const RecoverAccountPhase3 = ({onBack,onFinish}:IRecoverAccountPhase3) => {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: -20,
+            marginTop: 0,
             alignSelf: "center",
           }}
         >

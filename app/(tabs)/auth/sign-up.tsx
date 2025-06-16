@@ -88,7 +88,7 @@ const SignUp = () => {
         flex: 1,
         height: hp("100%"),
         width: wp("100%"),
-        paddingTop: 40,
+        paddingTop: 80,
       }}
     >
       <TouchableOpacity
@@ -123,7 +123,7 @@ const SignUp = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView style={{ padding: 4 }}>
-          <View style={{ width: wp("93%"), margin: "auto" }}>
+          <View style={{ width: wp("93%"), margin: "auto",marginBottom:10 }}>
             <Label>Full name</Label>
             <Input
               type="text"
@@ -132,58 +132,52 @@ const SignUp = () => {
             />
           </View>
 
-          <View style={{ width: wp("93%"), margin: "auto" }}>
+          <View style={{ width: wp("93%"), margin: "auto",marginBottom:10  }}>
             <Label>Email</Label>
             <Input
               type="email"
               placeholder="Enter email address"
               value={(e) => setEmail(e)}
             />
-            <Text style={{ color: "#F04438", paddingLeft: 10 }}>
+            <View style={{display: !inValidEmailText ? "none":"flex"}}>
+            <Text style={{ color: "#F04438", paddingLeft: 10, }}>
               {!inValidEmailText
                 ? null
                 : "Incorrect email or already been used"}
-            </Text>
+            </Text></View>
           </View>
-          <View style={{ width: wp("93%"), margin: "auto" }}>
+          <View style={{ width: wp("93%"), margin: "auto",marginBottom:10  }}>
             <Label>Password</Label>
             <Input
               type="password"
               placeholder="Enter password"
               value={(e) => setPassword(e)}
             />
+            <View style={{display: !passwordValidation(password) && password != "" ? "flex":"none"}}>
             <Text style={{ color: "#F04438" }}>
               {!passwordValidation(password) && password != ""
                 ? "Password must be 8-12 characters long and include at least one uppercase letter, one lowercase letter, and one number"
                 : null}
-            </Text>
+            </Text></View>
           </View>
 
-          <View style={{ width: wp("93%"), margin: "auto" }}>
+          <View style={{ width: wp("93%"), margin: "auto",marginBottom:10  }}>
             <Label>Confirm Password</Label>
             <Input
               type="password"
               placeholder="Confirm password"
               value={(e) => setConfirmPassword(e)}
             />
+             <View style={{display: !passwordExactness(password, confirmPassword) ? "flex":"none"}}>
             <Text>
               {!passwordExactness(password, confirmPassword) ? (
                 <Text style={{ color: "#F04438" }}>
                   "Password does not match"
                 </Text>
               ) : null}
-            </Text>
+            </Text></View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <View
-        style={{
-          width: wp("100%"),
-          marginBottom: 20,
-        }}
-        className={`bg-white`}
-      >
-        <TouchableOpacity
+            <TouchableOpacity
           onPress={() => {simulateApiReq()}}
           disabled={allValid ? false : true}
           style={{
@@ -197,6 +191,7 @@ const SignUp = () => {
             justifyContent: "center",
             alignItems: "center",
             marginHorizontal: "auto",
+            marginTop:20
           }}
         >
           <Text
@@ -209,6 +204,16 @@ const SignUp = () => {
             )}
           </Text>
         </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <View
+        style={{
+          width: wp("100%"),
+          marginBottom: 20,
+        }}
+        className={`bg-white`}
+      >
+      
       </View>
     </View>
   );

@@ -130,7 +130,7 @@ const Login = () => {
 
           <TouchableOpacity
             style={{ alignItems: "center", paddingTop: 5 }}
-            onPress={() => Router.push('/auth/recoverPassword')}
+            onPress={() => Router.push('/auth/recoverPassword/recoverAccountPhase1')}
           >
             <Text
               style={{
@@ -142,7 +142,7 @@ const Login = () => {
               Recover Password
             </Text>
           </TouchableOpacity>
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: "center",paddingTop:1 }}>
             <Text
               style={{
                 alignItems: "center",
@@ -156,6 +156,8 @@ const Login = () => {
                     alignItems: "center",
                     color: "#1D9BF0",
                     fontWeight: "600",
+                    paddingTop:15,
+                    paddingLeft:3
                   }}
                 >
                   Create Account

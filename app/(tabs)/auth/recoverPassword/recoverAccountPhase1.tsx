@@ -5,20 +5,16 @@ import { useState } from "react";
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 
-interface IRecoverAccountPhase1 {
-  getEmail:(email:string)=>void;
-  onNext:()=> void;
-}
-const RecoverAccountPhase1 = ({ getEmail,onNext}: IRecoverAccountPhase1) => {
-  const [email,setEmail] = useState("");
+
+const RecoverAccountPhase1 = () => {
+  const [email,setEmail] = useState("placeholder@gmail.com");
   const [proceedLoader,setProceedLoader] = useState(false);
 
     const simulateApiReq = () => {
     setProceedLoader(true);
     setTimeout(() => {
       setProceedLoader(false);
-      getEmail(email);
-      onNext()
+      Router.push('/(tabs)/auth/recoverPassword/recoverAccountPhase2')
     }, 2000);
   };
 
@@ -27,12 +23,14 @@ const RecoverAccountPhase1 = ({ getEmail,onNext}: IRecoverAccountPhase1) => {
             paddingTop: 40,
             flex: 1,
             backgroundColor: "#fff",
+            
           }}
         >
           <ScrollView
             style={{
               flex: 1,
-              paddingHorizontal: 16, // px-4
+              paddingHorizontal: 16,
+              paddingTop:40
             }}
           >
             <TouchableOpacity
@@ -59,15 +57,14 @@ const RecoverAccountPhase1 = ({ getEmail,onNext}: IRecoverAccountPhase1) => {
                   fontWeight: "600", // font-semibold
                   color: "#020B12",
                 }}
-              >
-                Recover Account
+              >Account Verification
               </Text>
 
               <Text
                 style={{
                   color: "#000000" ,
                   marginTop: 30,
-                  marginBottom: 50,
+                  marginBottom: 10,
                 }}
               >
                 Enter email address associated with your existing account to
@@ -94,7 +91,7 @@ const RecoverAccountPhase1 = ({ getEmail,onNext}: IRecoverAccountPhase1) => {
                   flexDirection: "row",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginTop: 40,
+                  marginTop: 20,
                   alignSelf: "center", // replaces margin: "auto"
                 }}
               >

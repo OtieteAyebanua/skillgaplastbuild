@@ -1,3 +1,4 @@
+import { Router } from "@/services/router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,19 +16,15 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-interface IRecoverAccountPhase2 {
-  email: string;
-  onNext: () => void;
-  onBack: () => void;
-}
 
-const INITIAL_TIME = 90;
-const RecoverAccountPhase2 = ({email,onBack,onNext }: IRecoverAccountPhase2) => {
+const INITIAL_TIME = 60;
+const RecoverAccountPhase2 = () => {
   const [otp, setOtp] = useState("");
   const [secondsRemaining, setSecondsRemaining] = useState(INITIAL_TIME);
   const [showResend, setShowResend] = useState(false);
   const [otpLoader, setOtpLoader] = useState(false);
   const [startTimer, setStartTimer] = useState(true);
+  const [email,setEmail] = useState("placeholder@gmail.com")
  
 
   const formatTime = (time: number) => {
@@ -58,9 +55,15 @@ const RecoverAccountPhase2 = ({email,onBack,onNext }: IRecoverAccountPhase2) => 
     setOtpLoader(true);
     setTimeout(() => {
       setOtpLoader(false);
-        onNext()
+      Router.push('/(tabs)/auth/recoverPassword/recoverAccountPhase3')
+        
     }, 1000);
   };
+
+  const handleResend=()=>{
+    setSecondsRemaining(60)
+    setShowResend(false);
+  }
 
   const resendStyles = StyleSheet.create({
     container: {
@@ -106,12 +109,13 @@ const RecoverAccountPhase2 = ({email,onBack,onNext }: IRecoverAccountPhase2) => 
       <ScrollView
         style={{
           flex: 1,
-          paddingHorizontal: 16, // px-4
+          paddingHorizontal: 16, 
+          paddingTop:40
         }}
       >
         <TouchableOpacity
           onPress={() => {
-            onBack()
+            Router.back()
           }}
           style={{
             paddingLeft: 3,
@@ -133,14 +137,18 @@ const RecoverAccountPhase2 = ({email,onBack,onNext }: IRecoverAccountPhase2) => 
         >
           Recover Account
         </Text>
-
+          <Text style={{
+            color: "#000000",
+            fontSize: 14, // text-sm
+          }}>Input OTP that was sent to </Text>
         <Text
           style={{
             color: "#000000",
-            fontSize: 14, // text-sm
+            fontSize: 14,
+            width:wp("60%")
           }}
         >
-          Enter OTP sent to your Email {email.toLowerCase()}
+          {email.toLowerCase()} check your email account
         </Text>
         <View
           style={{
@@ -184,7 +192,7 @@ const RecoverAccountPhase2 = ({email,onBack,onNext }: IRecoverAccountPhase2) => 
             <View style={resendStyles.resendContainer}>
               <Text style={resendStyles.errorText}>Didn't get the email?</Text>
               <TouchableOpacity
-              // onPress={handleResend}
+              onPress={handleResend}
               >
                 <Text style={resendStyles.resendText}>Resend</Text>
               </TouchableOpacity>
