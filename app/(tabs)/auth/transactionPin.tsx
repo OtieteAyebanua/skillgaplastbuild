@@ -4,6 +4,7 @@ import React, { ReactNode, useState } from "react";
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import SplashScreen from "../splashScreen";
+import { router } from "expo-router";
 
 interface ITransactionPin {
   children: ReactNode;
@@ -38,7 +39,7 @@ const TransactionPin = ({ children }: ITransactionPin) => {
       setTimeout(() => {
         setIsVisible(false);
         
-        Router.push("/(tabs)/home");
+        Router.push("/(tabs)/mainApp");
       }, 1000);
       return false;
     };

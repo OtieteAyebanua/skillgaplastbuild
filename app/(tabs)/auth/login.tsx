@@ -24,7 +24,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-
+router.push('/(tabs)/mainApp')
   const [fontsLoaded] = useFonts({
     "GeneralSans-Variable": require("../../../assets/fonts/GeneralSans-Medium.ttf"),
   });

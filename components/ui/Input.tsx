@@ -66,7 +66,7 @@ const Input = ({ type, value, isError, icon, placeholder }: IInput) => {
     placeholderTextColor={'#8F8F8F'}
     onChangeText={value}
     style={{
-      color:'#000000',
+      color:'#8F8F8F',
       width: wp('90%'),
       height: hp('5.5%'),
     
@@ -153,7 +153,7 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
         placeholder="Enter password"
         placeholderTextColor={'#8F8F8F'}
         style={{
-          color:  '#000000',
+          color:  '#8F8F8F',
           width: wp('90%'),
           height: hp('5.5%'),
         }}
@@ -176,3 +176,5 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
     </View>
   );
 };
+
+
