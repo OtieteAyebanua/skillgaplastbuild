@@ -1,3 +1,5 @@
+import { AuthSession, recovery } from "@/services/authSession";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,7 +18,6 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-
 const INITIAL_TIME = 60;
 const RecoverAccountPhase2 = () => {
   const [otp, setOtp] = useState("");
@@ -24,8 +25,7 @@ const RecoverAccountPhase2 = () => {
   const [showResend, setShowResend] = useState(false);
   const [otpLoader, setOtpLoader] = useState(false);
   const [startTimer, setStartTimer] = useState(true);
-  const [email,setEmail] = useState("placeholder@gmail.com")
- 
+  const [email, setEmail] = useState(recovery.email ?? "");
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -51,19 +51,25 @@ const RecoverAccountPhase2 = () => {
     return () => clearInterval(interval);
   }, [secondsRemaining, startTimer]);
 
-  const simulateApiReq = () => {
+  const handleVerifyOtp = async () => {
     setOtpLoader(true);
-    setTimeout(() => {
-      setOtpLoader(false);
-      Router.push('/(tabs)/auth/recoverPassword/recoverAccountPhase3')
-        
-    }, 1000);
+    const success = await AuthSession.validatePasswordResetCode(otp);
+    if (success) {
+      Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase3");
+    } else {
+      // TODO :: replace it with toast message to user
+      Logger.error("OTP verification failed");
+    }
+
+    setOtpLoader(false);
   };
 
-  const handleResend=()=>{
-    setSecondsRemaining(60)
+  const handleResend = async () => {
+    setSecondsRemaining(60);
     setShowResend(false);
-  }
+
+    await AuthSession.sendPasswordResetCode(email);
+  };
 
   const resendStyles = StyleSheet.create({
     container: {
@@ -98,7 +104,7 @@ const RecoverAccountPhase2 = () => {
     },
   });
 
-  return(
+  return (
     <SafeAreaView
       style={{
         paddingTop: 40,
@@ -109,13 +115,13 @@ const RecoverAccountPhase2 = () => {
       <ScrollView
         style={{
           flex: 1,
-          paddingHorizontal: 16, 
-          paddingTop:40
+          paddingHorizontal: 16,
+          paddingTop: 40,
         }}
       >
         <TouchableOpacity
           onPress={() => {
-            Router.back()
+            Router.back();
           }}
           style={{
             paddingLeft: 3,
@@ -137,15 +143,19 @@ const RecoverAccountPhase2 = () => {
         >
           Recover Account
         </Text>
-          <Text style={{
+        <Text
+          style={{
             color: "#000000",
             fontSize: 14, // text-sm
-          }}>Input OTP that was sent to </Text>
+          }}
+        >
+          Input OTP that was sent to{" "}
+        </Text>
         <Text
           style={{
             color: "#000000",
             fontSize: 14,
-            width:wp("60%")
+            width: wp("60%"),
           }}
         >
           {email.toLowerCase()} check your email account
@@ -191,9 +201,7 @@ const RecoverAccountPhase2 = () => {
           ) : (
             <View style={resendStyles.resendContainer}>
               <Text style={resendStyles.errorText}>Didn't get the email?</Text>
-              <TouchableOpacity
-              onPress={handleResend}
-              >
+              <TouchableOpacity onPress={handleResend}>
                 <Text style={resendStyles.resendText}>Resend</Text>
               </TouchableOpacity>
             </View>
@@ -201,13 +209,14 @@ const RecoverAccountPhase2 = () => {
         </View>
 
         <TouchableOpacity
-          onPress={() => simulateApiReq()}
+          onPress={handleVerifyOtp}
+          disabled={otp.length < 6}
           style={{
             width: "99%",
             height: 56,
             borderRadius: 100,
             padding: 10,
-            backgroundColor: "#1D9BF0",
+            backgroundColor: !(otp.length < 6) ? "#1D9BF0" : "#8F8F8F",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",

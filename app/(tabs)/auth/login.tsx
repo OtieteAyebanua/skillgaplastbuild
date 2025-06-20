@@ -1,7 +1,8 @@
+import { AuthSession } from "@/services/authSession";
 import { emailValidation } from "@/services/formValidation";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { useFonts } from "expo-font";
-import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -24,7 +25,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-router.push('/(tabs)/mainApp')
+
   const [fontsLoaded] = useFonts({
     "GeneralSans-Variable": require("../../../assets/fonts/GeneralSans-Medium.ttf"),
   });
@@ -33,12 +34,16 @@ router.push('/(tabs)/mainApp')
     Router.push(url);
   };
 
-  const simulateApiReq = () => {
+  const handleLogin = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      Router.push('/(tabs)/auth/transactionPin')
-    }, 2000);
+    const success = await AuthSession.login(email, password);
+    if (success) {
+      Router.push("/(tabs)/mainApp");
+    } else {
+      // TODO:: REPLACE IT Toast Message to User
+      Logger.error("Login failed invalid email or password");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -59,7 +64,7 @@ router.push('/(tabs)/mainApp')
         >
           <TouchableOpacity
             onPress={() => {
-              router.push("/(tabs)/auth/auth-home");
+              Router.back();
             }}
             style={{
               paddingLeft: 3,
@@ -98,9 +103,7 @@ router.push('/(tabs)/mainApp')
           </View>
 
           <TouchableOpacity
-            onPress={() => {
-              simulateApiReq();
-            }}
+            onPress={handleLogin}
             disabled={!emailValidation(email)}
             style={{
               width: wp("90%"),
@@ -130,7 +133,9 @@ router.push('/(tabs)/mainApp')
 
           <TouchableOpacity
             style={{ alignItems: "center", paddingTop: 5 }}
-            onPress={() => Router.push('/auth/recoverPassword/recoverAccountPhase1')}
+            onPress={() =>
+              Router.push("/auth/recoverPassword/recoverAccountPhase1")
+            }
           >
             <Text
               style={{
@@ -142,7 +147,7 @@ router.push('/(tabs)/mainApp')
               Recover Password
             </Text>
           </TouchableOpacity>
-          <View style={{ alignItems: "center",paddingTop:1 }}>
+          <View style={{ alignItems: "center", paddingTop: 1 }}>
             <Text
               style={{
                 alignItems: "center",
@@ -156,8 +161,8 @@ router.push('/(tabs)/mainApp')
                     alignItems: "center",
                     color: "#1D9BF0",
                     fontWeight: "600",
-                    paddingTop:15,
-                    paddingLeft:3
+                    paddingTop: 15,
+                    paddingLeft: 3,
                   }}
                 >
                   Create Account

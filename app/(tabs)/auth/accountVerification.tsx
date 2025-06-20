@@ -1,3 +1,5 @@
+import { AuthSession } from "@/services/authSession";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import React, { useEffect, useState } from "react";
 import {
@@ -9,13 +11,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import OTPTextInput from "react-native-otp-textinput";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-const INITIAL_TIME = 90;
+const INITIAL_TIME = 60;
+
 const AccountVerification = () => {
   const [otp, setOtp] = useState("");
   const [secondsRemaining, setSecondsRemaining] = useState(INITIAL_TIME);
@@ -34,6 +36,10 @@ const AccountVerification = () => {
   };
 
   useEffect(() => {
+    Router.clearHistory();
+  }, []);
+
+  useEffect(() => {
     if (!startTimer) return; // Timer only starts when `startTimer` is true
 
     if (secondsRemaining <= 0) {
@@ -48,12 +54,16 @@ const AccountVerification = () => {
     return () => clearInterval(interval);
   }, [secondsRemaining, startTimer]);
 
-  const simulateApiReq = () => {
+  const handleVerifyOtp = async () => {
     setOtpLoader(true);
-    setTimeout(() => {
-      setOtpLoader(false);
-      Router.push("/(tabs)/auth/login");
-    }, 1000);
+    const success = await AuthSession.verifyEmail(otp);
+    if (success) {
+      Router.push("/(tabs)/mainApp");
+    } else {
+      // TODO :: replace it with toast message to user
+      Logger.error("Email verification failed");
+    }
+    setOtpLoader(false);
   };
 
   const resendStyles = StyleSheet.create({
@@ -89,6 +99,12 @@ const AccountVerification = () => {
     },
   });
 
+  const handleResend = () => {
+    AuthSession.sendVerifyCode();
+    setSecondsRemaining(INITIAL_TIME);
+    setShowResend(false);
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -101,22 +117,9 @@ const AccountVerification = () => {
         style={{
           flex: 1,
           paddingHorizontal: 16, // px-4
+          paddingVertical: 36,
         }}
       >
-        <TouchableOpacity
-          onPress={() => {
-            Router.back();
-          }}
-          style={{
-            paddingLeft: 3,
-            marginBottom: 24, // mb-6 → 6 × 4
-            width: 30, // w-[30px]
-            borderRadius: 9999,
-          }}
-        >
-          <ChevronLeftIcon size={25} color={"#292D32"} />
-        </TouchableOpacity>
-
         <Text
           style={{
             fontSize: 24, // text-2xl
@@ -125,7 +128,17 @@ const AccountVerification = () => {
             color: "#020B12",
           }}
         >
-          Recover Account
+          Verify Account
+        </Text>
+
+        <Text
+          style={{
+            color: "#000000",
+            marginTop: 30,
+            marginBottom: 10,
+          }}
+        >
+          Enter OTP sent to your email address.
         </Text>
 
         <View
@@ -169,9 +182,7 @@ const AccountVerification = () => {
           ) : (
             <View style={resendStyles.resendContainer}>
               <Text style={resendStyles.errorText}>Didn't get the email?</Text>
-              <TouchableOpacity
-              // onPress={handleResend}
-              >
+              <TouchableOpacity onPress={handleResend}>
                 <Text style={resendStyles.resendText}>Resend</Text>
               </TouchableOpacity>
             </View>
@@ -179,13 +190,14 @@ const AccountVerification = () => {
         </View>
 
         <TouchableOpacity
-          onPress={()=>simulateApiReq()}
+          onPress={handleVerifyOtp}
+          disabled={otp.length < 6}
           style={{
             width: "99%",
             height: 56,
             borderRadius: 100,
             padding: 10,
-            backgroundColor: "#1D9BF0",
+            backgroundColor: !(otp.length < 6) ? "#1D9BF0" : "#8F8F8F",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",

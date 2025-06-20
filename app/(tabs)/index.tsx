@@ -1,6 +1,7 @@
+import { Device } from "@/services/device";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
-import { getFirstTimeInstallationDetail, getTokenFromStorage, setFirstTimeInstallation } from "@/services/storageHelpers";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ArrowLeftIcon, ArrowRightIcon } from "react-native-heroicons/outline";
 import {
@@ -11,71 +12,45 @@ import texts from "../../constants/text";
 import StepIndicator from "./auth/StepIndicator";
 import SplashScreen from "./splashScreen";
 
-
-interface IOnBoarding {
-  children: ReactNode;
-}
-const Onboarding = ({ children }: IOnBoarding) => {
+const Onboarding = () => {
   const step1Img = require("../../assets/images/onboarding-step1.png");
   const step2Img = require("../../assets/images/onboarding-step2.png");
   const step3Img = require("../../assets/images/onboarding-step3.png");
   const [step, setStep] = useState(1);
-  const [isOnBoarded, setIsOnBoarded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFirstTime,setIsFirstTime] = useState(true);
-  const [approve,setIsApprove] = useState(true);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   useEffect(() => {
     checkForFirstTimeInstallation();
-    CheckOnBoardingStatus();
   }, []);
 
-  useEffect(()=>{
-     checkApproval();
-  },[isFirstTime])
+  useEffect(() => {
+    checkApproval();
+  }, [isFirstTime]);
 
-  const CheckOnBoardingStatus = async () => {
-    const userData = await getTokenFromStorage();
-    if (userData) {
-      setIsOnBoarded(true);
-      setIsLoading(false);
-    } else {
-      setIsOnBoarded(false);
-      setIsLoading(false);
+  const checkForFirstTimeInstallation = async () => {
+    setIsLoading(true);
+
+    const hasInstalledBefore = await Device.isRegistered();
+    Logger.info("First‐time flag from storage:", hasInstalledBefore);
+
+    setIsFirstTime(!hasInstalledBefore);
+
+    setIsLoading(false);
+    Logger.info("Loading", isLoading);
+  };
+
+  const checkApproval = () => {
+    if (!isFirstTime) {
+      Router.push("/(tabs)/auth/auth-home");
     }
   };
 
- const checkForFirstTimeInstallation = async () => {
-  setIsLoading(true);
-
-  const hasInstalledBefore = await getFirstTimeInstallationDetail();
-  console.log('First‐time flag from storage:', hasInstalledBefore);
-
-  if (hasInstalledBefore != null) {
-    setIsFirstTime(false);
-  } else {
-    setIsFirstTime(true);
-    await setFirstTimeInstallation();
-  }
-
-  setIsLoading(false);
-};
-
-const checkApproval = () => {
-  if (isOnBoarded) {
-    Router.push('/(tabs)/explore');
-  } else if (!isFirstTime) {
-    Router.push('/(tabs)/auth/auth-home');
-  } else {  
-    setIsApprove(false);
-  }
-};
-
-  const nextStep = () => {
-    console.log(step);
+  const nextStep = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
+      await Device.register();
       Router.push("/auth/auth-home");
     }
   };
@@ -88,7 +63,7 @@ const checkApproval = () => {
 
   return isLoading ? (
     <SplashScreen />
-  ) :  approve ? <SplashScreen/> : (
+  ) : (
     <>
       (
       <View

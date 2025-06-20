@@ -5,25 +5,27 @@ import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { AuthSession } from "@/services/authSession";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
+import { SessionUser, User } from "@/services/user";
 import { BackHandler, Image } from "react-native";
-import Arena from '../../../assets/icons/arena.png';
-import Home from '../../../assets/icons/home.png';
-import UserImg from '../../../assets/icons/no-pic.png';
-import Notification from '../../../assets/icons/notification.png';
-import OnArena from '../../../assets/icons/onArena.png';
-import OnHome from '../../../assets/icons/onHome.png';
-import OnNotification from '../../../assets/icons/onNotification.png';
-import OnWallet from '../../../assets/icons/onWallet.png';
-import Wallet from '../../../assets/icons/wallet.png';
-
+import Arena from "../../../assets/icons/arena.png";
+import Home from "../../../assets/icons/home.png";
+import UserImg from "../../../assets/icons/no-pic.png";
+import Notification from "../../../assets/icons/notification.png";
+import OnArena from "../../../assets/icons/onArena.png";
+import OnHome from "../../../assets/icons/onHome.png";
+import OnNotification from "../../../assets/icons/onNotification.png";
+import OnWallet from "../../../assets/icons/onWallet.png";
+import Wallet from "../../../assets/icons/wallet.png";
+import SplashScreen from "../splashScreen";
 
 interface IMainAppTabLayout {
   children: ReactNode;
 }
 
-
-
+let isLoading = true;
 export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
   const colorScheme = useColorScheme();
 
@@ -34,13 +36,29 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
     };
 
     const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      onBackPress,
+      "hardwareBackPress",
+      onBackPress
     );
+
+    User.Load(() => {
+      if (SessionUser) {
+        if (!SessionUser.isVerified) {
+          Logger.info("User not verified, routing to email verification page");
+          AuthSession.sendVerifyCode();
+          Router.push("/(tabs)/auth/accountVerification");
+        } else {
+          isLoading = false;
+          Router.push("/(tabs)/mainApp")
+        }
+      }
+    });
+
     return () => subscription.remove();
   }, []);
-  console.log(typeof Home)
-  return (
+
+  return isLoading ? (
+    <SplashScreen />
+  ) : (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -49,7 +67,7 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
           height: 65,
-          paddingTop: 5
+          paddingTop: 5,
         },
       }}
     >
@@ -60,9 +78,9 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
           tabBarIcon: ({ color, focused }) => (
             <Image
               source={focused ? OnHome : Home}
-               style={{ width: 25, height: 25 }}
+              style={{ width: 25, height: 25 }}
               resizeMode="contain"
-            /> 
+            />
           ),
         }}
       />
@@ -70,12 +88,12 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
         name="arena"
         options={{
           title: "Arena",
-          tabBarIcon: ({ color,focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Image
               source={focused ? OnArena : Arena}
               style={{ width: 25, height: 25 }}
               resizeMode="contain"
-            /> 
+            />
           ),
         }}
       />
@@ -83,12 +101,12 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
         name="notification"
         options={{
           title: "Notification",
-          tabBarIcon: ({ color,focused }) => (
-             <Image
-              source={focused ? OnNotification: Notification}
+          tabBarIcon: ({ color, focused }) => (
+            <Image
+              source={focused ? OnNotification : Notification}
               style={{ width: 25, height: 25 }}
               resizeMode="contain"
-            /> 
+            />
           ),
         }}
       />
@@ -96,25 +114,25 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
         name="wallet"
         options={{
           title: "Wallet",
-          tabBarIcon: ({ color,focused }) => (
-             <Image
-              source={focused ? OnWallet: Wallet}
+          tabBarIcon: ({ color, focused }) => (
+            <Image
+              source={focused ? OnWallet : Wallet}
               style={{ width: 25, height: 25 }}
               resizeMode="contain"
-            /> 
+            />
           ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color,focused }) => (
-             <Image
+          tabBarIcon: ({ color, focused }) => (
+            <Image
               source={UserImg}
               style={{ width: 25, height: 25 }}
               resizeMode="contain"
-            /> 
+            />
           ),
         }}
       />

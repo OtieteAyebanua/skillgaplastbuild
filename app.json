@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bosslifeempire.skillgap",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +21,7 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "ayebanua.com"
+      "package": "com.bosslifeempire.skillgap"
     },
     "web": {
       "bundler": "metro",
@@ -42,8 +46,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "0a4e3f72-ecfd-4f9c-8f91-7d83a8657a19"
+        "projectId": "a0233566-7538-40c7-ba74-ac857d034504"
       }
-    }
+    },
+    "owner": "skillgap"
   }
 }

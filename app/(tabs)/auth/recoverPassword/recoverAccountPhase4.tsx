@@ -1,13 +1,16 @@
 import PageContainer from "@/components/Containers";
 import { Router } from "@/services/router";
+import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import successImg from "../../../../assets/images/success-img.png";
 
-const RecoverAccountPhase4 =()=>{
-    return <PageContainer
-      style={{ paddingTop: 40 }}
-      backgroundColor={"#ffffff"}
-    >
+const RecoverAccountPhase4 = () => {
+  useEffect(() => {
+    Router.clearHistory();
+  }, []);
+
+  return (
+    <PageContainer style={{ paddingTop: 40 }} backgroundColor={"#ffffff"}>
       <View
         style={{
           flex: 1,
@@ -48,7 +51,7 @@ const RecoverAccountPhase4 =()=>{
         <TouchableOpacity
           onPress={() => {
             Router.clearHistory();
-            Router.push('/(tabs)/auth/login')
+            Router.push("/(tabs)/auth/auth-home");
           }}
         >
           <Text
@@ -62,6 +65,7 @@ const RecoverAccountPhase4 =()=>{
         </TouchableOpacity>
       </View>
     </PageContainer>
-}
+  );
+};
 
 export default RecoverAccountPhase4;

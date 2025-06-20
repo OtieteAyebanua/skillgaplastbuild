@@ -1,6 +1,7 @@
+import { AuthSession } from "@/services/authSession";
 import { Router } from "@/services/router";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -13,18 +14,37 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import SplashScreen from "../splashScreen";
 
 const AuthHome = () => {
   const [fontsLoaded] = useFonts({
     SpaceGrotesk: require("../../../assets/fonts/SpaceGrotesk-SemiBold.ttf"),
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   useEffect(() => {
     // reset routing history, this is a base-page
     Router.clearHistory();
+
+    setIsLoading(true);
+    // load auth state
+    AuthSession.loadState()
+      .then(() => {
+        AuthSession.isAuthenticated().then((isAuthenticated) => {
+          if (isAuthenticated) {
+            Router.push("/(tabs)/mainApp");
+          }
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
-  return (
+  return isLoading ? (
+    <SplashScreen />
+  ) : (
     <ScrollView>
       <ImageBackground
         source={require("../../../assets/images/auth-home-bg.png")}

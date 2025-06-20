@@ -1,8 +1,10 @@
 import Input from "@/components/ui/Input";
+import { AuthSession } from "@/services/authSession";
 import {
   passwordExactness,
   passwordValidation,
 } from "@/services/formValidation";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { useState } from "react";
 import {
@@ -15,22 +17,25 @@ import {
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-
 const RecoverAccountPhase3 = () => {
   const [passwordLoader, setPasswordLoader] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const simulateApiReq = () => {
+  const simulateApiReq = async () => {
     setPasswordLoader(true);
-    setTimeout(() => {
-      setPasswordLoader(false);
-      Router.push('/(tabs)/auth/recoverPassword/recoverAccountPhase4')
-    }, 1000);
+    const success = await AuthSession.resetPassword(password);
+    if (success) {
+      Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase4");
+    } else {
+      // TODO :: replace it with toast message to user
+      Logger.error("Something went wrong, please try that again.");
+    }
+
+    setPasswordLoader(false);
   };
 
-  return  (
+  return (
     <SafeAreaView
       style={{
         paddingTop: 40,
@@ -46,7 +51,7 @@ const RecoverAccountPhase3 = () => {
       >
         <TouchableOpacity
           onPress={() => {
-            Router.back()
+            Router.back();
           }}
           style={{
             paddingLeft: 3,
@@ -71,38 +76,54 @@ const RecoverAccountPhase3 = () => {
 
         {/* Password Field */}
         <View style={{ width: "100%", marginBottom: 16 }}>
-          <Text style={{color:"#344054"}}>Password</Text>
+          <Text style={{ color: "#344054" }}>Password</Text>
           <Input
             type="password"
             placeholder="Enter new password"
             value={(e) => setPassword(e)}
           />
-           <View style={{display: !passwordValidation(password) && password !== "" ? "flex" :"none" }}>
-          {!passwordValidation(password) && password !== "" ? (
-            <Text style={{ color: "#F04438" }}>
-              Password must be 8–12 characters long and include at least one
-              uppercase letter, one lowercase letter, and one number
-            </Text>
-          ):null}</View>
+          <View
+            style={{
+              display:
+                !passwordValidation(password) && password !== ""
+                  ? "flex"
+                  : "none",
+            }}
+          >
+            {!passwordValidation(password) && password !== "" ? (
+              <Text style={{ color: "#F04438" }}>
+                Password must be 8–12 characters long.
+              </Text>
+            ) : null}
+          </View>
         </View>
 
         {/* Confirm Password Field */}
         <View style={{ width: "100%", marginBottom: 20 }}>
-        <Text style={{color:"#344054"}}>Confirm Password</Text>
+          <Text style={{ color: "#344054" }}>Confirm Password</Text>
           <Input
             type="password"
             placeholder="Confirm password"
             value={(e) => setConfirmPassword(e)}
           />
-          <View style={{display: !passwordExactness(password, confirmPassword) ? "flex" :"none" }}>
-          {!passwordExactness(password, confirmPassword)?(
-            <Text style={{ color: "#F04438" }}>Password does not match</Text>
-          ):null}</View>
+          <View
+            style={{
+              display: !passwordExactness(password, confirmPassword)
+                ? "flex"
+                : "none",
+            }}
+          >
+            {!passwordExactness(password, confirmPassword) ? (
+              <Text style={{ color: "#F04438" }}>Password does not match</Text>
+            ) : null}
+          </View>
         </View>
 
         {/* Save Button */}
         <TouchableOpacity
-          onPress={()=>{simulateApiReq()}}
+          onPress={() => {
+            simulateApiReq();
+          }}
           disabled={
             !(
               passwordValidation(password) &&
