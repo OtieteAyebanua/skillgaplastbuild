@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react'
-import { View, Animated } from 'react-native'
+import React, { useEffect, useRef } from 'react';
+import { Animated, View } from 'react-native';
 
 interface IStepIndicator{
     currentStep: number;
@@ -18,7 +18,7 @@ const StepIndicator = ({ currentStep }:IStepIndicator) => {
     }, [currentStep])
 
     return (
-        <View className='flex-row gap-2'>
+        <View style={{flexDirection:"row",gap:5}}>
             {[1, 2, 3].map((step, index) => {
                 const width = animatedValues[index].interpolate({
                     inputRange: [0, 1],

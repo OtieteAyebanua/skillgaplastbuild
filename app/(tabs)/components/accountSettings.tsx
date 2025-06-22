@@ -7,16 +7,16 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ImageBackground,
-    KeyboardAvoidingView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -116,6 +116,7 @@ const AccountSettings = () => {
   };
   return (
     <PageContainer backgroundColor={theme === "light" ? "#FAFAFA" : "#141414"}>
+      <ScrollView>
       <View
         style={{
           flexDirection: "row",
@@ -150,8 +151,8 @@ const AccountSettings = () => {
         >
           Account Settings
         </Text>
+      
       </View>
-      <ScrollView>
         <KeyboardAvoidingView>
           <ImageBackground
             source={
@@ -424,7 +425,7 @@ const AccountSettings = () => {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </ScrollView>
+      
       <View style={{ width: "100%", marginBottom: 16 }}>
         <TouchableOpacity
           onPress={handleSave}
@@ -451,6 +452,7 @@ const AccountSettings = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </PageContainer>
   );
 };

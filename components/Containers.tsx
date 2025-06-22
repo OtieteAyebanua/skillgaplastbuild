@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
+import { View } from "react-native";
 import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
@@ -32,9 +32,7 @@ const PageContainer = ({
         style,
       ]}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <>{children}</>
-      </TouchableWithoutFeedback>
+        <View>{children}</View>
     </View>
   );
 };

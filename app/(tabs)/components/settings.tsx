@@ -2,13 +2,13 @@ import { AuthSession } from "@/services/authSession";
 import { Router } from "@/services/router";
 import { useState } from "react";
 import {
-    Image,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 const settingsOptions = [
@@ -23,7 +23,7 @@ const settingsOptions = [
     id: "2",
     title: "Personalized Setting",
     icon: require("../../../assets/icons/personalized-settings-icon.png"),
-    route: "/(tabs)/profile/personalizedSettings",
+    route: "/(tabs)/components/personalizedSettings",
     tags: ["Block user", "Arena beep"],
   },
 ];

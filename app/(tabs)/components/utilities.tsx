@@ -1,11 +1,16 @@
+import { preferences } from "@/services/preferences";
 import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import { Switch, Text, useColorScheme, View } from "react-native";
 
 const Utilities = () => {
-  const theme = useColorScheme()
-  const [isOpenToContest,setIsOpenToContest] = useState(SessionUser?.preferences.openToContest);
-  const [isDarkMode,setIsDarkMode] = useState(SessionUser?.preferences.darkMode)
+  const theme = useColorScheme();
+  const [isOpenToContest, setIsOpenToContest] = useState(
+    SessionUser?.preferences.openToContest ?? true
+  );
+  const [isDarkMode, setIsDarkMode] = useState(
+    SessionUser?.preferences.darkMode ?? true
+  );
   return (
     <View
       style={{
@@ -45,9 +50,9 @@ const Utilities = () => {
           </Text>
           <Switch
             value={isOpenToContest}
-            onValueChange={(e) => {
-              setIsOpenToContest(prev=> !prev);
-
+            onValueChange={() => {
+              setIsOpenToContest((prev) => !prev);
+              preferences.update(isOpenToContest, isDarkMode);
             }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
           />
@@ -90,7 +95,10 @@ const Utilities = () => {
           </Text>
           <Switch
             value={isDarkMode}
-            onValueChange={() => {setIsDarkMode(prev=> !prev)}}
+            onValueChange={() => {
+              setIsDarkMode((prev) => !prev);
+              preferences.update(isOpenToContest,isDarkMode)
+            }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
           />
         </View>

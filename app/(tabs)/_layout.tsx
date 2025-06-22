@@ -8,6 +8,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Router } from "@/services/router";
 import { BackHandler } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -26,6 +27,7 @@ useEffect(() => {
   }, []);
 
   return (
+    <SafeAreaView style={{flex:1}}>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -56,5 +58,6 @@ useEffect(() => {
         }}
       />
     </Tabs>
+    </SafeAreaView>
   );
 }

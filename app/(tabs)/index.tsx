@@ -1,6 +1,7 @@
 import { Device } from "@/services/device";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ArrowLeftIcon, ArrowRightIcon } from "react-native-heroicons/outline";
@@ -13,13 +14,15 @@ import StepIndicator from "./auth/StepIndicator";
 import SplashScreen from "./splashScreen";
 
 const Onboarding = () => {
+router.push('/(tabs)/components/personalizedSettings')
+
   const step1Img = require("../../assets/images/onboarding-step1.png");
   const step2Img = require("../../assets/images/onboarding-step2.png");
   const step3Img = require("../../assets/images/onboarding-step3.png");
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState(true);
-
+  Router.push('/(tabs)/components/personalizedSettings')
   useEffect(() => {
     checkForFirstTimeInstallation();
   }, []);
@@ -50,8 +53,9 @@ const Onboarding = () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      await Device.register();
-      Router.push("/auth/auth-home");
+     // await Device.register();
+   //   Router.push("/auth/auth-home");
+     router.push('/(tabs)/components/personalizedSettings')
     }
   };
 
