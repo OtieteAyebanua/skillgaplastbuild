@@ -93,7 +93,7 @@ const NotEnoughCash = ({ close }: INotEnoughCash) => {
       <View style={ModalStyles.modalContainer}>
         <View style={ModalStyles.modalContent}>
           <TouchableOpacity style={{width:"100%",display:"flex",alignItems:"flex-end"}} onPress={()=>{close()}}>
-            <XMarkIcon />
+            <XMarkIcon/>
           </TouchableOpacity>
           <Image
             source={

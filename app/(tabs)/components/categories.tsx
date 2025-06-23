@@ -88,7 +88,7 @@ const Categories = ({ close, openSub }: ICategories) => {
           <Text
             style={{ fontSize: 16, fontWeight: 600 }}
             className={`  ${
-              theme === "light" ? "text-[#020B12]" : "text-white"
+              theme === "light" ? "#000000" : "#ffffff"
             }`}
           >
             Categories
