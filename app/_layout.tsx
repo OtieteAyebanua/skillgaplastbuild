@@ -9,7 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SplashScreen from "./(tabs)/splashScreen";
 
 export default function RootLayout() {
@@ -19,13 +19,13 @@ export default function RootLayout() {
   });
   const [one, setOne] = useState<number>(4);
 
-  // //schedule the change inside a useEffect so React re-renders
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setOne(0);
-  //   }, 2500);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  //schedule the change inside a useEffect so React re-renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setOne(0);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (one != 0) {
     return <SplashScreen/>;

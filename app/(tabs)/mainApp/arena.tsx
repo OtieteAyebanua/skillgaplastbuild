@@ -10,7 +10,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import Categories from "../components/categories";
 import ContestDetails from "../components/contest/contestDetails";
 import SubCategories from "../components/subCategories";
@@ -148,19 +147,7 @@ const Arena = () => {
             marginBottom: 12,
           }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              Router.back();
-            }}
-            style={{
-              paddingLeft: 3,
-              marginBottom: 24, // mb-6 → 6 × 4
-              width: 30, // w-[30px]
-              borderRadius: 9999,
-            }}
-          >
-            <ChevronLeftIcon size={25} color={"#292D32"} />
-          </TouchableOpacity>
+
 
           <Text
             style={{
