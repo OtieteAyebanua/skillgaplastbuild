@@ -19,7 +19,7 @@ export default function RootLayout() {
   });
   const [one, setOne] = useState<number>(4);
 
-  // schedule the change inside a useEffect so React re-renders
+  //schedule the change inside a useEffect so React re-renders
   useEffect(() => {
     const timer = setTimeout(() => {
       setOne(0);
