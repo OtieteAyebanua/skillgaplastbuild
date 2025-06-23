@@ -1,7 +1,9 @@
+import { clearTokenFromStorage } from '@/services/storageHelpers';
 import React from 'react';
 import { Image, SafeAreaView, Text, View } from 'react-native';
 
 export default function SplashScreen() {
+  clearTokenFromStorage();
   return (
     <SafeAreaView className="flex-1 bg-[#032B69] justify-center items-center">
       {/* Optional: customize the status bar */}

@@ -17,7 +17,7 @@ interface IWarningModal {
   cancel: () => void;
   text: string;
 }
-export const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
+const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
   const theme = useColorScheme();
 
   const ModalStyles = StyleSheet.create({
@@ -231,3 +231,5 @@ export const ConfirmModal = ({ proceed, cancel, text }: IWarningModal) => {
     </Modal>
   );
 };
+
+export default WarningModal;
