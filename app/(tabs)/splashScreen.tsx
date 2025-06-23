@@ -12,7 +12,7 @@ export default function SplashScreen() {
           className="w-10 h-10"
           resizeMode="contain"
         />
-        <Text style={{fontSize:14,fontWeight:"500",color:"#fff"}}>Bank on your skill</Text>
+        <Text style={{fontSize:16,fontWeight:"600",color:"#fff",position:"absolute",bottom:30}}>.....Bank on your skill</Text>
       </View>
     </SafeAreaView>
   );

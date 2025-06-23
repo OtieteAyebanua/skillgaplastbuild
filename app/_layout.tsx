@@ -10,7 +10,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
-import Arena from "./(tabs)/mainApp/arena";
+import SplashScreen from "./(tabs)/splashScreen";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -28,7 +28,7 @@ export default function RootLayout() {
   // }, []);
 
   if (one != 0) {
-    return <Arena/>;
+    return <SplashScreen/>;
   }
 
   return (

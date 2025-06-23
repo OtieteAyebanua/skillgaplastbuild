@@ -1,7 +1,6 @@
 import { Device } from "@/services/device";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
-import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ArrowLeftIcon, ArrowRightIcon } from "react-native-heroicons/outline";
@@ -20,7 +19,6 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState(true);
-  Router.push('/(tabs)/components/personalizedSettings')
   useEffect(() => {
     checkForFirstTimeInstallation();
   }, []);
@@ -51,9 +49,8 @@ const Onboarding = () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-     // await Device.register();
-   //   Router.push("/auth/auth-home");
-     router.push('/(tabs)/components/personalizedSettings')
+     await Device.register();
+   Router.push("/auth/auth-home");
     }
   };
 
