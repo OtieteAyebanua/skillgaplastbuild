@@ -187,7 +187,7 @@ const Arena = () => {
 
           <TouchableOpacity
             onPress={() => {
-              //router.push("/(tabs)/contest");
+              Router.push("/(tabs)/components/contest");
             }}
             style={{
               flexDirection: "row",
