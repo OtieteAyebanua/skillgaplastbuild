@@ -1,5 +1,6 @@
 import { AuthSession } from "./authSession";
 import { Logger } from "./logger";
+import { Router } from "./router";
 
 const ApiBaseUrl = "https://skapi-dev.azurewebsites.net/api";
 
@@ -31,7 +32,7 @@ export class API {
       });
   };
 
-  static POST = async (path: string, body: any) => {
+  static POST = async (path: string, body?: any) => {
     const url = ApiBaseUrl + path;
     return fetchWithRetry(url, {
       method: "POST",
@@ -68,7 +69,8 @@ async function fetchWithRetry(
       Logger.info(response);
       if (response.status === 401) {
         // TODO: refresh token
-
+          AuthSession.logout();
+          Router.push('/(tabs)/auth/auth-home')
         throw new Error(
           `HTTP error ${response.status}: ${response.statusText}`
         );
