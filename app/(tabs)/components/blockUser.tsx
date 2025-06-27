@@ -5,11 +5,11 @@ import { Logger } from "@/services/logger";
 import { SessionUser } from "@/services/user";
 import { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface IBlockUser {
@@ -25,7 +25,7 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
 
   const handleConfirm = () => {
     setIsLoading(true);
-    Debounce.blockUser(32).then(async (response) => {
+    Debounce.blockUser(otherUserRecord?.id ?? 0).then(async (response) => {
         setIsLoading(false);
         Logger.error(response);
        userBlocked(response)
@@ -38,13 +38,13 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
         setError(!response.data);
         setOtherUserRecord(response.data);
       });
-    }, 100),
+    }, 1000),
     [skillTag]
   );
   useEffect(() => {
     const handler = setTimeout(() => {
       debouncedSearch();
-    }, 100);
+    }, 1000);
     return () => clearTimeout(handler);
   }, [skillTag]);
 
@@ -122,7 +122,7 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
         </Text>
       ) : null}
       <TouchableOpacity
-        disabled={skillTag == "" || error ? true : false}
+        //disabled={skillTag == "" || error ? true : false}
         style={BlockUserStyles.confirmButton}
         onPress={handleConfirm}
       >

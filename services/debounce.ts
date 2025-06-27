@@ -2,23 +2,23 @@ import { API } from "./api";
 import { Logger } from "./logger";
 
 export interface IOtherUserRecord {
-  id: 3;
-  fullName: "string";
-  country: "ngn";
-  tag: "string";
-  bio: "string";
+  id: number;
+  fullName: string;
+  country: string;
+  tag: string;
+  bio: string;
   isOnline: true;
   socials: {
-    twitter: "string";
-    instagram: "string";
-    tikTok: "string";
-    youtube: "string";
+    twitter: string;
+    instagram: string;
+    tikTok: string;
+    youtube: string;
   };
   stats: {
-    contests: 0;
-    wins: 0;
-    losses: 0;
-    disputes: 0;
+    contests: number;
+    wins: number;
+    losses: number;
+    disputes: number;
   };
 }
 
@@ -45,7 +45,21 @@ export class Debounce {
 
           return false;
         }
-        return response.errorCode;
+        return response;
+      })
+      .catch((e) => {
+        Logger.info("i got here too");
+        Logger.error(e);
+        return;
+      });
+  };
+  static getBlockedList = (page: number) => {
+    return API.GET(`/profile/block/${page}`)
+      .then(async (response) => {
+        if (!response.success) {
+          return false;
+        }
+        return response;
       })
       .catch((e) => {
         Logger.error(e);

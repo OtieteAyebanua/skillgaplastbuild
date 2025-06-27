@@ -12,9 +12,9 @@ import {
   View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
+import BlockedList from "./blockedList";
 import BlockUser from "./blockUser";
 import { ConfirmModal } from "./modals";
-import UnblockUsers from "./unblockusers";
 
 const Personalized = () => {
   const theme = useColorScheme();
@@ -100,7 +100,7 @@ const Personalized = () => {
           >
             Personalized Settings
           </Text>
-        </View>    
+        </View>
 
         <View style={styles.container}>
           <TouchableOpacity
@@ -119,7 +119,7 @@ const Personalized = () => {
       </View>
       <ScrollView>
         {blockUser ? (
-          <UnblockUsers />
+          <BlockedList />
         ) : (
           <BlockUser userBlocked={(e) => setIsBlockProcessSuccessful(e)} />
         )}

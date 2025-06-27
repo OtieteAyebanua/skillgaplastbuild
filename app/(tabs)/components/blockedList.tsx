@@ -1,40 +1,20 @@
+import { Debounce, IOtherUserRecord } from "@/services/debounce";
 import { SessionUser } from "@/services/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import WarningModal from "./modals";
 
-const UnblockUsers = () => {
+const BlockedList = () => {
   const theme = SessionUser?.preferences.darkMode;
   const [modalVisible, setModalVisible] = useState(false);
-  const [blockedList, setBlockList] = useState([
-    {
-      id: "",
-      fullName: "dasdsda",
-      country: "",
-      imageUri: "",
-      tag: "ayebanua",
-      bio: null,
-      socials: {
-        twitter: "",
-        facebook: "",
-        tikTok: "",
-        youtube: "",
-      },
-      stats: {
-        contests: 0,
-        wins: 0,
-        losses: 0,
-        disputes: 0,
-      },
-    },
-  ]);
+  const [blockedList, setBlockList] = useState<IOtherUserRecord[]>([]);
 
   const BlockedStyles = StyleSheet.create({
     itemContainer: {
@@ -88,6 +68,12 @@ const UnblockUsers = () => {
     },
   });
 
+  useEffect(() => {
+    Debounce.getBlockedList(1).then((response) => {
+      setBlockList(response.data);
+    });
+  }, []);
+
   return (
     <View>
       <View style={{ paddingTop: 30, paddingLeft: 20, paddingBottom: 10 }}>
@@ -103,14 +89,15 @@ const UnblockUsers = () => {
       </View>
       <View>
         <ScrollView>
-          {blockedList.map((item: any) => (
+          {blockedList.map((item: IOtherUserRecord) => (
             <View style={BlockedStyles.itemContainer}>
               <View style={BlockedStyles.userInfo}>
                 <Image
                   source={
-                    item.imageUri
-                      ? { uri: item.imageUri }
-                      : require("../../../assets/images/profile-img.png")
+                    // item.imageUri
+                    //   ? { uri: item.imageUri }
+                    //   :
+                    require("../../../assets/images/profile-img.png")
                   }
                   style={BlockedStyles.avatar}
                 />
@@ -144,4 +131,4 @@ const UnblockUsers = () => {
   );
 };
 
-export default UnblockUsers;
+export default BlockedList;
