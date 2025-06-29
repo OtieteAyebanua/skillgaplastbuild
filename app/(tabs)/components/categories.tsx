@@ -1,10 +1,10 @@
+import { SessionUser } from "@/services/user";
 import {
   Image,
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import {
   ChevronLeftIcon,
@@ -43,14 +43,14 @@ interface ICategories {
   openSub: () => void;
 }
 const Categories = ({ close, openSub }: ICategories) => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   return (
     <View
       style={{
         position: "absolute",
         width: "100%",
         bottom: 0,
-        backgroundColor: theme === "light" ? "#ffffff" : "#141414",
+        backgroundColor: theme == false ? "#ffffff" : "#141414",
       }}
     >
       <View
@@ -59,7 +59,7 @@ const Categories = ({ close, openSub }: ICategories) => {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           justifyContent: "center",
-          backgroundColor: theme === "light" ? "#F8F8F8" : "#1D1F20",
+          backgroundColor: theme == false ? "#F8F8F8" : "#1D1F20",
         }}
       >
         <View
@@ -80,7 +80,7 @@ const Categories = ({ close, openSub }: ICategories) => {
             >
               <ChevronLeftIcon
                 size={25}
-                color={theme === "light" ? "#292D32" : "#ffffff"}
+                color={theme == false ? "#292D32" : "#ffffff"}
               />
             </TouchableOpacity>
           </View>
@@ -88,7 +88,7 @@ const Categories = ({ close, openSub }: ICategories) => {
           <Text
             style={{ fontSize: 16, fontWeight: 600 }}
             className={`  ${
-              theme === "light" ? "#000000" : "#ffffff"
+              theme == false ? "#000000" : "#ffffff"
             }`}
           >
             Categories
@@ -131,7 +131,7 @@ const Categories = ({ close, openSub }: ICategories) => {
                 style={{
                   fontSize: 16, // text-base
                   fontWeight: "600", // font-semibold
-                  color: theme === "light" ? "#000000" : "#ffffff",
+                  color: theme == false ? "#000000" : "#ffffff",
                 }}
               >
                 {item.title}

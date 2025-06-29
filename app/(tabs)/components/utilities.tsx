@@ -1,10 +1,10 @@
 import { preferences } from "@/services/preferences";
 import { SessionUser } from "@/services/user";
 import { useState } from "react";
-import { Switch, Text, useColorScheme, View } from "react-native";
+import { Switch, Text, View } from "react-native";
 
 const Utilities = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [isOpenToContest, setIsOpenToContest] = useState(
     SessionUser?.preferences.openToContest ?? true
   );
@@ -19,8 +19,8 @@ const Utilities = () => {
         paddingVertical: 16, // py-4
         borderRadius: 10, // rounded-2xl
         marginBottom: 12, // mb-3
-        backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
-        borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
+        borderColor: theme == false ? "#E7F4FD" : "#27292B",
       }}
     >
       {/* First setting block */}
@@ -29,7 +29,7 @@ const Utilities = () => {
           paddingHorizontal: 8, // px-2
           paddingVertical: 12, // py-3
           borderBottomWidth: 1,
-          borderColor: theme === "light" ? "#F7F7F7" : "#27292B",
+          borderColor: theme == false ? "#F7F7F7" : "#27292B",
         }}
       >
         <View
@@ -43,7 +43,7 @@ const Utilities = () => {
             style={{
               fontSize: 16,
               fontWeight: "500",
-              color: theme === "light" ? "#000" : "#FFFFFF",
+              color: theme == false ? "#000" : "#FFFFFF",
             }}
           >
             Open to contest
@@ -60,7 +60,7 @@ const Utilities = () => {
         <Text
           style={{
             fontSize: 11,
-            color: theme === "light" ? "#333333" : "#8F8F8F",
+            color: theme == false ? "#333333" : "#8F8F8F",
           }}
         >
           This will enable other users know when you are available to take a
@@ -74,7 +74,7 @@ const Utilities = () => {
           paddingHorizontal: 8, // px-2
           paddingVertical: 12, // py-3
           borderBottomWidth: 1,
-          borderColor: theme === "light" ? "#F7F7F7" : "#27292B",
+          borderColor: theme == false ? "#F7F7F7" : "#27292B",
         }}
       >
         <View
@@ -88,7 +88,7 @@ const Utilities = () => {
             style={{
               fontSize: 12,
               fontWeight: "500",
-              color: theme === "light" ? "#000" : "#FFFFFF",
+              color: theme == false ? "#000" : "#FFFFFF",
             }}
           >
             Light or Dark Mode
@@ -105,7 +105,7 @@ const Utilities = () => {
         <Text
           style={{
             fontSize: 10,
-            color: theme === "light" ? "#333333" : "#8F8F8F",
+            color: theme == false ? "#333333" : "#8F8F8F",
           }}
         >
           Be your own lead, switch any mode that matches your interest.

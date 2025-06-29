@@ -3,31 +3,36 @@
 //import Utilities from "@/components/profile/utilities";
 import PageContainer from "@/components/Containers";
 import { Router } from "@/services/router";
-import { User } from "@/services/user";
-import { useEffect } from "react";
-import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  useColorScheme,
-  View,
-} from "react-native";
+import { SessionUser, User } from "@/services/user";
+import { useEffect, useState } from "react";
+import { Image, ImageBackground, RefreshControl, ScrollView, View } from "react-native";
 import Settings from "../components/settings";
 import UserDetails from "../components/userDetails";
 import Utilities from "../components/utilities";
 
 const Profile = () => {
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
+
+  const onRefresh = () => {
+    User.Load()
+  };
+
+
   useEffect(() => {
     Router.clearHistory();
 
     User.Load();
   }, []);
 
-  const theme = useColorScheme();
-  
+  const theme = SessionUser?.preferences.darkMode;
+
   return (
-    <PageContainer backgroundColor={theme === "light" ? "" : "#141414"}>
-      <ScrollView>
+    <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
+       <ScrollView  refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      } >
         <ImageBackground
           source={require("../../../assets/images/profile-bg.png")}
           style={{

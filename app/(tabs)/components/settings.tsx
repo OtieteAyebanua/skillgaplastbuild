@@ -1,5 +1,6 @@
 import { AuthSession } from "@/services/authSession";
 import { Router } from "@/services/router";
+import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import {
   Image,
@@ -7,8 +8,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 
 const settingsOptions = [
@@ -29,7 +29,7 @@ const settingsOptions = [
 ];
 
 const Settings = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
@@ -47,8 +47,8 @@ const Settings = () => {
           paddingVertical: 16,
           borderRadius: 10,
           marginBottom: 12,
-          backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
         }}
       >
         {settingsOptions.map((setting, index) => (
@@ -61,7 +61,7 @@ const Settings = () => {
               gap: 12,
               flexDirection: "row",
               borderBottomWidth: 1,
-              borderColor: theme === "light" ? "#F7F7F7" : "#27292B",
+              borderColor: theme == false ? "#F7F7F7" : "#27292B",
             }}
           >
             <Image source={setting.icon} style={{ width: 20, height: 20 }} />
@@ -72,7 +72,7 @@ const Settings = () => {
                   marginBottom: 4,
                   fontSize: 12,
                   fontWeight: "500",
-                  color: theme === "light" ? "#000" : "#FFFFFF",
+                  color: theme == false ? "#000" : "#FFFFFF",
                 }}
               >
                 {setting.title}
@@ -91,7 +91,7 @@ const Settings = () => {
                     key={index}
                     style={{
                       fontSize: 10,
-                      color: theme === "light" ? "#333333" : "#8F8F8F",
+                      color: theme == false ? "#333333" : "#8F8F8F",
                     }}
                   >
                     {tag} .
@@ -114,8 +114,8 @@ const Settings = () => {
           paddingVertical: 16,
           borderRadius: 24,
           marginBottom: 12,
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
-          backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
         }}
       >
         <View style={{ flexDirection: "row", paddingHorizontal: 8 }}>
@@ -127,7 +127,7 @@ const Settings = () => {
             style={{
               fontSize: 12,
               fontWeight: "500",
-              color: theme === "light" ? "#000" : "#FFFFFF",
+              color: theme == false ? "#000" : "#FFFFFF",
             }}
           >
             Log Out
@@ -143,8 +143,8 @@ const Settings = () => {
           paddingVertical: 16,
           borderRadius: 24,
           marginBottom: 12,
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
-          backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
         }}
       >
         <TouchableOpacity
@@ -162,7 +162,7 @@ const Settings = () => {
             style={{
               fontSize: 12,
               fontWeight: "500",
-              color: theme === "light" ? "#000" : "#FFFFFF",
+              color: theme == false ? "#000" : "#FFFFFF",
             }}
           >
             Delete Account

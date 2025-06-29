@@ -1,10 +1,10 @@
+import { SessionUser } from "@/services/user";
 import {
   Image,
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 
@@ -67,14 +67,14 @@ interface ICategories {
   close: () => void;
 }
 const SubCategories = ({ close }: ICategories) => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   return (
     <View
       style={{
         position: "absolute",
         width: "100%",
         bottom: 0,
-        backgroundColor: theme === "light" ? "#ffffff" : "#141414",
+        backgroundColor: theme == false ? "#ffffff" : "#141414",
         height: "auto",
         maxHeight: "90%",
       }}
@@ -85,7 +85,7 @@ const SubCategories = ({ close }: ICategories) => {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           justifyContent: "center",
-          backgroundColor: theme === "light" ? "#F8F8F8" : "#1D1F20",
+          backgroundColor: theme == false ? "#F8F8F8" : "#1D1F20",
         }}
       >
         <View
@@ -107,7 +107,7 @@ const SubCategories = ({ close }: ICategories) => {
             >
               <ChevronLeftIcon
                 size={25}
-                color={theme === "light" ? "#292D32" : "#ffffff"}
+                color={theme == false ? "#292D32" : "#ffffff"}
               />
             </TouchableOpacity>
           </View>
@@ -116,7 +116,7 @@ const SubCategories = ({ close }: ICategories) => {
             style={{
               fontSize: 16,
               fontWeight: "600",
-              color: theme === "light" ? "#020B12" : "#ffffff",
+              color: theme == false ? "#020B12" : "#ffffff",
             }}
           >
             Sub Categories
@@ -154,7 +154,7 @@ const SubCategories = ({ close }: ICategories) => {
                 style={{
                   fontSize: 16, // text-base
                   fontWeight: "600", // font-semibold
-                  color: theme === "light" ? "#000000" : "#ffffff",
+                  color: theme == false ? "#000000" : "#ffffff",
                 }}
               >
                 {item.title}

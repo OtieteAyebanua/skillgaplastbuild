@@ -2,14 +2,14 @@ import PageContainer from "@/components/Containers";
 //import { useDebounce } from "@/services/helpers/formValidation";
 
 import { Router } from "@/services/router";
+import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import BlockedList from "./blockedList";
@@ -17,7 +17,7 @@ import BlockUser from "./blockUser";
 import { ConfirmModal } from "./modals";
 
 const Personalized = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
 
   const [blockUser, setBlockUser] = useState(false);
   const [skillTag, setSkillTag] = useState("");
@@ -27,7 +27,7 @@ const Personalized = () => {
   const styles = StyleSheet.create({
     container: {
       flexDirection: "row",
-      backgroundColor: theme === "light" ? "#EDEFF1" : "#1D1F20",
+      backgroundColor: theme == false ? "#EDEFF1" : "#1D1F20",
       borderRadius: 100,
       padding: 5,
       alignItems: "center",
@@ -43,7 +43,7 @@ const Personalized = () => {
       alignItems: "center",
       backgroundColor: blockUser
         ? "transparent"
-        : theme === "light"
+        : theme == false
         ? "#FFFFFF"
         : "#141414",
     },
@@ -52,7 +52,7 @@ const Personalized = () => {
       paddingVertical: 10,
       borderRadius: 100,
       backgroundColor: blockUser
-        ? theme === "light"
+        ? theme == false
           ? "#FFFFFF"
           : "#141414"
         : "transparent",
@@ -65,7 +65,7 @@ const Personalized = () => {
   });
 
   return (
-    <PageContainer backgroundColor={theme === "light" ? "" : "#141414"}>
+    <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
       <View>
         <View
           style={{
@@ -95,7 +95,7 @@ const Personalized = () => {
             style={{
               fontSize: 16, // text-base
               fontWeight: "600", // font-semibold
-              color: theme === "light" ? "#020B12" : "#FFFFFF",
+              color: theme == false ? "#020B12" : "#FFFFFF",
             }}
           >
             Personalized Settings

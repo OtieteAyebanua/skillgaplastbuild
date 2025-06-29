@@ -1,17 +1,17 @@
+import { SessionUser } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import {
-    heightPercentageToDP as hp,
-    widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
 interface ICategories {
@@ -21,7 +21,7 @@ interface ICategories {
 }
 
 const OfflineContest = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [isGrouped, setIsGrouped] = useState(false);
   const [characterValue, setCharacterValue] = useState("");
   const maxChars = 50;
@@ -61,8 +61,8 @@ const OfflineContest = () => {
     <>
       <View
         style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
           borderWidth: 1,
           borderRadius: 8,
           width: "90%",
@@ -89,7 +89,7 @@ const OfflineContest = () => {
                 fontSize: 16,
                 textAlign: "left",
                 fontWeight: "600",
-                color: theme === "light" ? "#000" : "#fff",
+                color: theme == false ? "#000" : "#fff",
               }}
             >
               Group Contest
@@ -145,14 +145,14 @@ const OfflineContest = () => {
                 flexGrow: 0,
                 marginLeft: "auto",
                 marginRight: "auto",
-                color: theme === "light" ? "#000" : "#fff",
+                color: theme == false ? "#000" : "#fff",
               }}
             >
               Opponent's skillgap tag
             </Text>
             <TextInput
               placeholder="e.g @skillgap"
-              placeholderTextColor={theme === "light" ? "#000000" : "#ffffff"}
+              placeholderTextColor={theme == false ? "#000000" : "#ffffff"}
               style={{
                 borderWidth: 1,
                 borderRadius: 20,
@@ -161,7 +161,7 @@ const OfflineContest = () => {
                 height: 40,
                 marginLeft: "auto",
                 marginRight: "auto",
-                color: theme === "light" ? "#000000" : "#ffffff",
+                color: theme == false ? "#000000" : "#ffffff",
                 marginTop: 10,
                 padding: 5,
                 paddingLeft: 10,
@@ -184,7 +184,7 @@ const OfflineContest = () => {
                 flexGrow: 0,
                 marginLeft: "auto",
                 marginRight: "auto",
-                color: theme === "light" ? "#000" : "#fff",
+                color: theme == false ? "#000" : "#fff",
               }}
             >
               Opponent’s skillgap tag
@@ -240,8 +240,8 @@ const OfflineContest = () => {
 
       <View
         style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
           borderWidth: 1,
           borderRadius: 8,
           width: "90%",
@@ -264,7 +264,7 @@ const OfflineContest = () => {
             flexGrow: 0,
             marginLeft: "auto",
             marginRight: "auto",
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           Select Categories
@@ -313,7 +313,7 @@ const OfflineContest = () => {
                 borderRadius: 16,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: theme === "light" ? "#fff" : "#27292B",
+                backgroundColor: theme == false ? "#fff" : "#27292B",
               }}
             >
               <Text
@@ -356,7 +356,7 @@ const OfflineContest = () => {
             marginLeft: "auto",
             marginRight: "auto",
             marginTop: 10,
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           Selected Categories
@@ -408,8 +408,8 @@ const OfflineContest = () => {
       </View>
       <View
         style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-          borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+          backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+          borderColor: theme == false ? "#E7F4FD" : "#27292B",
           borderWidth: 1,
           borderRadius: 8,
           width: "90%",
@@ -434,7 +434,7 @@ const OfflineContest = () => {
             marginLeft: "auto",
             marginRight: "auto",
             marginTop: 10,
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           Stake
@@ -442,7 +442,7 @@ const OfflineContest = () => {
 
         <TextInput
           placeholder="$5"
-          placeholderTextColor={theme === "light" ? "#000000" : "#ffffff"}
+          placeholderTextColor={theme == false ? "#000000" : "#ffffff"}
            inputMode="numeric"
           style={{
             borderWidth: 1,
@@ -452,7 +452,7 @@ const OfflineContest = () => {
             height: 40,
             marginLeft: "auto",
             marginRight: "auto",
-            color: theme === "light" ? "#000000" : "#ffffff",
+            color: theme == false ? "#000000" : "#ffffff",
             marginTop: 10,
             padding: 5,
             paddingLeft: 10,
@@ -491,7 +491,7 @@ const OfflineContest = () => {
               fontWeight: "400",
               fontSize: 11,
               lineHeight: 16.5,
-              color: theme === "light" ? "#000" : "#fff",
+              color: theme == false ? "#000" : "#fff",
             }}
           >
             $300
@@ -512,7 +512,7 @@ const OfflineContest = () => {
             marginLeft: "auto",
             marginRight: "auto",
             marginTop: 10,
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           Terms and Description

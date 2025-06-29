@@ -1,11 +1,11 @@
+import { SessionUser } from "@/services/user";
 import {
   Image,
   Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 
 import {
@@ -18,7 +18,7 @@ interface IWarningModal {
   text: string;
 }
 const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
 
   const ModalStyles = StyleSheet.create({
     modalContainer: {
@@ -28,7 +28,7 @@ const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
       backgroundColor: "rgba(0,0,0,0.7)",
     },
     modalContent: {
-      backgroundColor: theme === "light" ? "#ffffff" : "#1A1A1A",
+      backgroundColor: theme == false ? "#ffffff" : "#1A1A1A",
       padding: 20,
       borderRadius: 10,
       alignItems: "center",
@@ -42,7 +42,7 @@ const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
     modalTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme === "light" ? "#000000" : "#FFF",
+      color: theme == false ? "#000000" : "#FFF",
     },
     modalText: {
       color: "#AAA",
@@ -122,7 +122,7 @@ const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
 };
 
 export const ConfirmModal = ({ proceed, cancel, text }: IWarningModal) => {
-  const theme = useColorScheme()
+  const theme = SessionUser?.preferences.darkMode
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -131,7 +131,7 @@ export const ConfirmModal = ({ proceed, cancel, text }: IWarningModal) => {
       backgroundColor: "rgba(0,0,0,0.7)",
     },
     modalContent: {
-      backgroundColor: theme === "light" ? "#ffffff" : "#1A1A1A",
+      backgroundColor: theme == false ? "#ffffff" : "#1A1A1A",
       padding: 20,
       borderRadius: 10,
       alignItems: "center",
@@ -145,7 +145,7 @@ export const ConfirmModal = ({ proceed, cancel, text }: IWarningModal) => {
     modalTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme === "light" ? "#000000" : "#FFF",
+      color: theme == false ? "#000000" : "#FFF",
     },
     modalText: {
       color: "#AAA",
@@ -198,7 +198,7 @@ export const ConfirmModal = ({ proceed, cancel, text }: IWarningModal) => {
         <View style={ModalStyles.modalContent}>
           <Image
             source={
-              theme === "light"
+              theme == false
                 ? require("../../../assets/icons/confirmLight.png")
                 : require("../../../assets/icons/confirmDark.png")
             }

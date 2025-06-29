@@ -5,8 +5,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import {
@@ -14,6 +13,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 // import NotEnoughCash from "./notEnoughCash";
+import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import NotEnoughCash from "../notEnoughCash";
 
@@ -23,13 +23,13 @@ interface IContestDetails {
 }
 
 const ContestDetails = ({contestID,close}: IContestDetails) => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [showModal, setShowModal] = useState(false);
   const amount = 9;
   return (
    <PageContainer
   paddingBottom="0"
-  backgroundColor={theme === "light" ? "#FAFAFA" : "#141414"}
+  backgroundColor={theme == false ? "#FAFAFA" : "#141414"}
 >
   <ScrollView>
     <View style={{ justifyContent: "center" }}>
@@ -46,7 +46,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
         >
           <ChevronLeftIcon
             size={25}
-            color={theme === "light" ? "#292D32" : "#ffffff"}
+            color={theme == false ? "#292D32" : "#ffffff"}
           />
         </TouchableOpacity>
       </View>
@@ -61,7 +61,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
 
     <View
       style={{
-        backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
+        backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
         width: "90%",
         marginHorizontal: "auto",
         marginTop: 10,
@@ -79,13 +79,13 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
           justifyContent: "space-between",
           paddingHorizontal: 16,
           paddingVertical: 8,
-          backgroundColor: theme === "light" ? "#ffffff" : "#27292B",
+          backgroundColor: theme == false ? "#ffffff" : "#27292B",
           borderRadius:10
         }}
       >
         <View style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 4, borderRadius: 2 }}>
           <Text
-            style={{ fontSize: 8, fontWeight: "600", backgroundColor: theme === "light" ? "#FFFAE5" : "#E2FEE6", color: "#22C55E" }}
+            style={{ fontSize: 8, fontWeight: "600", backgroundColor: theme == false ? "#FFFAE5" : "#E2FEE6", color: "#22C55E" }}
           >
             Online
           </Text>
@@ -95,7 +95,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
 
         <View style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 4, borderRadius: 2 }}>
           <Text
-            style={{ fontSize: 8, fontWeight: "600", backgroundColor: theme === "light" ? "#FFFAE5" : "#27292B", color: "#FFDA44" }}
+            style={{ fontSize: 8, fontWeight: "600", backgroundColor: theme == false ? "#FFFAE5" : "#27292B", color: "#FFDA44" }}
           >
             Pending
           </Text>
@@ -107,14 +107,14 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
           flexDirection: "row",
           justifyContent: "space-evenly",
           alignItems: "center",
-          backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
+          backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
           padding: 16,
           borderRadius: 12,
         }}
       >
         <View
           style={{
-            backgroundColor: theme === "light" ? "#ffffff" : "#27292B",
+            backgroundColor: theme == false ? "#ffffff" : "#27292B",
             paddingHorizontal: 30,
             paddingVertical: 15,
             borderRadius: 10,
@@ -130,9 +130,9 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
           </View>
           <Text style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}>@qubigs</Text>
           <View
-            style={{ backgroundColor: theme === "light" ? "#E7F4FD" : "#27292B", paddingHorizontal: 16, paddingVertical: 4, borderRadius: 6 }}
+            style={{ backgroundColor: theme == false ? "#E7F4FD" : "#27292B", paddingHorizontal: 16, paddingVertical: 4, borderRadius: 6 }}
           >
-            <Text style={{ color: theme === "light" ? "#1D9BF0" : "#ffffff", fontSize: 14, fontWeight: "500" }}>$500</Text>
+            <Text style={{ color: theme == false ? "#1D9BF0" : "#ffffff", fontSize: 14, fontWeight: "500" }}>$500</Text>
           </View>
         </View>
 
@@ -143,7 +143,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
 
         <View
           style={{
-            backgroundColor: theme === "light" ? "#ffffff" : "#27292B",
+            backgroundColor: theme == false ? "#ffffff" : "#27292B",
             paddingHorizontal: 30,
             paddingVertical: 15,
             borderRadius: 10,
@@ -156,9 +156,9 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
           />
           <Text style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}>?</Text>
           <View
-            style={{ backgroundColor: theme === "light" ? "#E7F4FD" : "#27292B", paddingHorizontal: 16, paddingVertical: 4, borderRadius: 6 }}
+            style={{ backgroundColor: theme == false ? "#E7F4FD" : "#27292B", paddingHorizontal: 16, paddingVertical: 4, borderRadius: 6 }}
           >
-            <Text style={{ color: theme === "light" ? "#1D9BF0" : "#ffffff", fontSize: 14, fontWeight: "500" }}>$500</Text>
+            <Text style={{ color: theme == false ? "#1D9BF0" : "#ffffff", fontSize: 14, fontWeight: "500" }}>$500</Text>
           </View>
         </View>
       </View>
@@ -166,7 +166,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
 
     <View
       style={{
-        backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
+        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
         position: "relative",
         bottom: 40,
         width: "90%",
@@ -176,7 +176,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
         padding: 10,
       }}
     >
-      <Text style={{ color: theme === "light" ? "#000000" : "#ffffff", fontSize: 18, fontWeight: "600" }}>Description</Text>
+      <Text style={{ color: theme == false ? "#000000" : "#ffffff", fontSize: 18, fontWeight: "600" }}>Description</Text>
       <Text style={{ color: "#8F8F8F", width: "100%", fontSize: 11, fontFamily: "General Sans Variable" }}>
         Bank (Amount, bank, account no) crypto (Network, address, scan QR code, amount, available balance, fee per $ ) Preview
       </Text>
@@ -184,7 +184,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
 
     <View
       style={{
-        backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
+        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
         position: "relative",
         bottom: 30,
         width: "90%",
@@ -194,7 +194,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
         padding: 10,
       }}
     >
-      <Text style={{ color: theme === "light" ? "#020B12" : "#ffffff", fontSize: 18, fontWeight: "600" }}>Contest Details</Text>
+      <Text style={{ color: theme == false ? "#020B12" : "#ffffff", fontSize: 18, fontWeight: "600" }}>Contest Details</Text>
       <View style={{ marginTop: 12 }}>
         {[
           { label: "Created by:", value: "@qubigs" },
@@ -203,7 +203,7 @@ const ContestDetails = ({contestID,close}: IContestDetails) => {
           { label: "SkillGap Fee:", value: "3.0%" },
         ].map((item, index) => (
           <View key={index} style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
-            <Text style={{ color: theme === "light" ? "#020B12" : "#ffffff", fontSize: 14 }}>{item.label}</Text>
+            <Text style={{ color: theme == false ? "#020B12" : "#ffffff", fontSize: 14 }}>{item.label}</Text>
             <Text style={{ color: item.label === "Created by:" ? "#3B82F6" : "#9CA3AF", fontSize: 14 }}>{item.value}</Text>
           </View>
         ))}

@@ -18,14 +18,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 const AccountSettings = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [getProfileImg, setGetProfileImg] = useState<any>();
   const [getCoverImg, setGetCoverImg] = useState<any>();
   const [coverImageUrl, setCoverImageUrl] = useState("");
@@ -49,7 +48,7 @@ const AccountSettings = () => {
       padding: 10,
       borderRadius: 100,
       borderWidth: 1,
-      borderColor: theme === "light" ? "#D0D5DD" : "#fff",
+      borderColor: theme == false ? "#D0D5DD" : "#fff",
       width: "100%",
       alignSelf: "center",
     },
@@ -131,7 +130,7 @@ const AccountSettings = () => {
     return () => clearTimeout(handler);
   }, [tag]);
   return (
-    <PageContainer backgroundColor={theme === "light" ? "#FAFAFA" : "#141414"}>
+    <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#141414"}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
@@ -166,7 +165,7 @@ const AccountSettings = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "600",
-                color: theme === "light" ? "#020B12" : "#FFFFFF",
+                color: theme == false ? "#020B12" : "#FFFFFF",
               }}
             >
               Account Settings
@@ -260,7 +259,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Full Name
@@ -277,7 +276,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Bio
@@ -294,7 +293,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                     paddingBottom: 10,
                   }}
                 >
@@ -356,7 +355,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Twitter (x)
@@ -380,7 +379,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Tiktok
@@ -404,7 +403,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Instagram
@@ -429,7 +428,7 @@ const AccountSettings = () => {
                   style={{
                     fontSize: 14, // text-2xl
                     fontWeight: "400", // font-semibold
-                    color: theme === "light" ? "#020B12" : "#fff",
+                    color: theme == false ? "#020B12" : "#fff",
                   }}
                 >
                   Youtube

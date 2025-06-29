@@ -1,3 +1,4 @@
+import { SessionUser } from "@/services/user";
 import { styled } from "nativewind";
 import React from "react";
 import {
@@ -6,8 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import { XMarkIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -18,7 +18,7 @@ interface INotEnoughCash {
   close: () => void;
 }
 const NotEnoughCash = ({ close }: INotEnoughCash) => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -27,7 +27,7 @@ const NotEnoughCash = ({ close }: INotEnoughCash) => {
       backgroundColor: "rgba(0,0,0,0.7)",
     },
     modalContent: {
-      backgroundColor: theme === "light" ? "#ffffff" : "#1A1A1A",
+      backgroundColor: theme == false ? "#ffffff" : "#1A1A1A",
       padding: 20,
       borderRadius: 10,
       alignItems: "center",
@@ -41,7 +41,7 @@ const NotEnoughCash = ({ close }: INotEnoughCash) => {
     modalTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme === "light" ? "#000000" : "#FFF",
+      color: theme == false ? "#000000" : "#FFF",
     },
     modalText: {
       color: "#AAA",
@@ -97,7 +97,7 @@ const NotEnoughCash = ({ close }: INotEnoughCash) => {
           </TouchableOpacity>
           <Image
             source={
-              theme === "light"
+              theme == false
                 ? require("../../../assets/images/cloudW.png")
                 : require("../../../assets/images/cloud.png")
             }

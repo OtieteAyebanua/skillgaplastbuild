@@ -1,3 +1,4 @@
+import { create } from 'zustand';
 import { API, ApiErrorCodes } from "./api";
 import { Logger } from "./logger";
 
@@ -33,6 +34,11 @@ interface IUserRecord {
 export let SessionUser: IUserRecord | null;
 
 let loadingUser = false;
+
+export const useSessionStore = create((set)=>({
+  user: null as IUserRecord | null,
+  setUser: (u: IUserRecord | null) => set({ user: u }),
+}))
 
 export class User {
   static Load = (onLoaded?: () => void) => {

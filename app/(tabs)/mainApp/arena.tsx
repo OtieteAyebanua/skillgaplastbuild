@@ -1,15 +1,17 @@
 import PageContainer from "@/components/Containers";
 import { Router } from "@/services/router";
+import { SessionUser, User } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Categories from "../components/categories";
 import ContestDetails from "../components/contest/contestDetails";
 import SubCategories from "../components/subCategories";
@@ -118,11 +120,18 @@ const AvailableContest = [
 ];
 
 const Arena = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [openCategories, setOpenCategories] = useState(false);
   const [openSubCategory, setOpenSubCategory] = useState(false);
   const [showContestDetails, setShowContestDetails] = useState(false);
   const [contestID, setContestID] = useState("");
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
+
+  const onRefresh = () => {
+    User.Load();
+  };
 
   useEffect(() => {
     Router.clearHistory();
@@ -136,9 +145,14 @@ const Arena = () => {
   ) : (
     <PageContainer
       paddingBottom="0"
-      backgroundColor={theme === "light" ? "#FAFAFA" : "#141414"}
+      backgroundColor={theme == false ? "#FAFAFA" : "#141414"}
     >
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {" "}
         <View
           style={{
             flexDirection: "row",
@@ -147,13 +161,11 @@ const Arena = () => {
             marginBottom: 12,
           }}
         >
-
-
           <Text
             style={{
               fontSize: 16,
               fontWeight: "600",
-              color: theme === "light" ? "#020B12" : "#ffffff",
+              color: theme == false ? "#020B12" : "#ffffff",
             }}
           >
             Arena
@@ -170,53 +182,19 @@ const Arena = () => {
         >
           <TouchableOpacity
             style={{
-              backgroundColor: theme === "light" ? "#F2F2F7" : "#27292B",
+              backgroundColor: theme == false ? "#F2F2F7" : "#27292B",
               flexDirection: "row",
               alignItems: "center",
               borderRadius: 12,
               paddingHorizontal: 16,
               paddingVertical: 8,
+              width:wp("50%"),
             }}
             onPress={() => setOpenCategories((prev) => !prev)}
           >
             <Feather name="filter" size={16} color="#A3A3A3" />
             <Text style={{ color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
               Categories
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              Router.push("/(tabs)/components/contest");
-            }}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#3B82F6",
-              borderRadius: 8,
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              marginLeft: 8,
-            }}
-          >
-            <Text
-              style={{
-                color: "#ffffff",
-                fontSize: 16,
-                marginRight: 8,
-                textAlign: "center",
-              }}
-            >
-              +
-            </Text>
-            <Text
-              style={{
-                color: "#ffffff",
-                fontSize: 16,
-                fontWeight: "600",
-              }}
-            >
-              Create Skill test
             </Text>
           </TouchableOpacity>
         </View>
@@ -231,7 +209,7 @@ const Arena = () => {
               fontSize: 16, // text-base
               lineHeight: 24,
               letterSpacing: -0.16, // -0.01em * 16px
-              color: theme === "light" ? "#020B12" : "#ffffff",
+              color: theme == false ? "#020B12" : "#ffffff",
               flex: 0,
               flexGrow: 0,
               paddingLeft: 10,
@@ -248,7 +226,7 @@ const Arena = () => {
               <TouchableOpacity
                 key={index}
                 style={{
-                  backgroundColor: theme === "light" ? "#ffffff" : "#27292B",
+                  backgroundColor: theme == false ? "#ffffff" : "#27292B",
                   marginRight: 5,
                   padding: 4,
                   width: 130,
@@ -274,7 +252,7 @@ const Arena = () => {
                     fontSize: 12,
                     fontWeight: "600",
                     marginTop: 1,
-                    color: theme === "light" ? "#000000" : "#ffffff",
+                    color: theme == false ? "#000000" : "#ffffff",
                   }}
                 >
                   {item.title}
@@ -308,7 +286,7 @@ const Arena = () => {
                       <Text
                         style={{
                           fontSize: 12, // text-xs
-                          color: theme === "light" ? "#000000" : "#ffffff",
+                          color: theme == false ? "#000000" : "#ffffff",
                         }}
                       >
                         {item.tag}
@@ -317,7 +295,7 @@ const Arena = () => {
                         style={{
                           fontSize: 12,
                           marginTop: 0,
-                          color: theme === "light" ? "#000000" : "#ffffff",
+                          color: theme == false ? "#000000" : "#ffffff",
                         }}
                       >
                         Stake:{" "}
@@ -374,7 +352,7 @@ const Arena = () => {
               fontSize: 16, // text-base
               lineHeight: 24,
               letterSpacing: -0.16, // -0.01em * 16px
-              color: theme === "light" ? "#020B12" : "#ffffff",
+              color: theme == false ? "#020B12" : "#ffffff",
               flex: 0,
               flexGrow: 0,
               paddingLeft: 10,
@@ -392,7 +370,7 @@ const Arena = () => {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
+                backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
                 borderRadius: 12,
                 padding: 12,
                 margin: 10,
@@ -447,7 +425,7 @@ const Arena = () => {
                   <View style={{ marginLeft: 12 }}>
                     <Text
                       style={{
-                        color: theme === "light" ? "#000000" : "#FFFFFF",
+                        color: theme == false ? "#000000" : "#FFFFFF",
                         fontWeight: "600",
                         fontSize: 12,
                       }}
@@ -497,7 +475,7 @@ const Arena = () => {
                 </Text>
                 <Text
                   style={{
-                    color: theme === "light" ? "#000000" : "#FFFFFF",
+                    color: theme == false ? "#000000" : "#FFFFFF",
                     fontWeight: "500",
                     fontSize: 14,
                   }}

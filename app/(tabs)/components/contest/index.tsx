@@ -1,4 +1,5 @@
 import PageContainer from "@/components/Containers";
+import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -10,8 +11,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import {
   heightPercentageToDP as hp,
@@ -27,7 +27,7 @@ interface ICategories {
 
 const Contest = () => {
   const [isOnline, setIsOnline] = useState(true);
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   const [characterValue, setCharacterValue] = useState("");
   const maxChars = 50;
   const [isLoading, setIsLoading] = useState(false);
@@ -68,7 +68,7 @@ const Contest = () => {
   const styles = StyleSheet.create({
     container: {
       flexDirection: "row",
-      backgroundColor: theme === "light" ? "#EDEFF1" : "#1D1F20",
+      backgroundColor: theme == false ? "#EDEFF1" : "#1D1F20",
       borderRadius: 100,
       padding: 5,
       alignItems: "center",
@@ -83,7 +83,7 @@ const Contest = () => {
       alignItems: "center",
       backgroundColor: isOnline
         ? "transparent"
-        : theme === "light"
+        : theme == false
         ? "#FFFFFF"
         : "#141414",
     },
@@ -92,7 +92,7 @@ const Contest = () => {
       paddingVertical: 8,
       borderRadius: 100,
       backgroundColor: isOnline
-        ? theme === "light"
+        ? theme == false
           ? "#FFFFFF"
           : "#141414"
         : "transparent",
@@ -110,7 +110,7 @@ const Contest = () => {
       style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // adjust as needed
     >
-      <PageContainer backgroundColor={theme === "light" ? "" : "#141414"}>
+      <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
         <ScrollView
           style={{
             marginBottom: 2,
@@ -142,7 +142,7 @@ const Contest = () => {
               style={{
                 fontSize: 16, // 'text-base' → 16px
                 fontWeight: "600", // 'font-semibold'
-                color: theme === "light" ? "#020B12" : "#ffffff",
+                color: theme == false ? "#020B12" : "#ffffff",
                 paddingTop: 30
               }}
             >
@@ -169,8 +169,8 @@ const Contest = () => {
             <>
               <View
                 style={{
-                  backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-                  borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+                  backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+                  borderColor: theme == false ? "#E7F4FD" : "#27292B",
                   width: "90%",
                   borderWidth: 1,
                   borderRadius: 8,
@@ -195,7 +195,7 @@ const Contest = () => {
                         fontSize: 16,
                         textAlign: "left",
                         fontWeight: "600",
-                        color: theme === "light" ? "#000" : "#fff",
+                        color: theme == false ? "#000" : "#fff",
                         paddingBottom: 5,
                       }}
                     >
@@ -227,7 +227,7 @@ const Contest = () => {
                     width: 306,
                     height: 0,
                     borderTopWidth: 1,
-                    borderColor: theme === "light" ? "#F7F7F7" : "#27292B",
+                    borderColor: theme == false ? "#F7F7F7" : "#27292B",
                     marginTop: 10,
                     paddingBottom: 10,
                   }}
@@ -242,7 +242,7 @@ const Contest = () => {
                         fontStyle: "normal",
                         fontWeight: "500",
                         fontSize: 14,
-                        color: theme === "light" ? "#000" : "#fff",
+                        color: theme == false ? "#000" : "#fff",
                       }}
                     >
                       Opponent's skillgap tag
@@ -250,7 +250,7 @@ const Contest = () => {
                     <TextInput
                       placeholder="e.g @skillgap"
                       placeholderTextColor={
-                        theme === "light" ? "#000000" : "#ffffff"
+                        theme == false ? "#000000" : "#ffffff"
                       }
                       style={{
                         borderWidth: 1,
@@ -260,7 +260,7 @@ const Contest = () => {
                         height: 40,
                         marginLeft: "auto",
                         marginRight: "auto",
-                        color: theme === "light" ? "#000000" : "#ffffff",
+                        color: theme == false ? "#000000" : "#ffffff",
                         marginTop: 10,
                         padding: 5,
                         paddingLeft: 10,
@@ -315,8 +315,8 @@ const Contest = () => {
               </View>
               <View
                 style={{
-                  backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-                  borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+                  backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+                  borderColor: theme == false ? "#E7F4FD" : "#27292B",
                   borderWidth: 1,
                   borderRadius: 8,
                   width: "90%",
@@ -339,7 +339,7 @@ const Contest = () => {
                     flexGrow: 0,
                     marginLeft: "auto",
                     marginRight: "auto",
-                    color: theme === "light" ? "#000" : "#fff",
+                    color: theme == false ? "#000" : "#fff",
                   }}
                 >
                   Select Categories
@@ -383,7 +383,7 @@ const Contest = () => {
                         alignItems: "center",
                         borderWidth: 1,
                         borderRadius: 16,
-                        backgroundColor: theme === "light" ? "#fff" : "#27292B",
+                        backgroundColor: theme == false ? "#fff" : "#27292B",
                       }}
                       onPress={() => {
                         setSelectedCategories((prev) => [...prev, item]);
@@ -431,7 +431,7 @@ const Contest = () => {
                     marginLeft: "auto",
                     marginRight: "auto",
                     marginTop: 10,
-                    color: theme === "light" ? "#000" : "#fff",
+                    color: theme == false ? "#000" : "#fff",
                   }}
                 >
                   Selected Categories
@@ -483,8 +483,8 @@ const Contest = () => {
               </View>
               <View
                 style={{
-                  backgroundColor: theme === "light" ? "#ffffff" : "#1D1F20",
-                  borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+                  backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
+                  borderColor: theme == false ? "#E7F4FD" : "#27292B",
                   borderWidth: 1,
                   borderRadius: 8,
                   width: "90%",
@@ -508,7 +508,7 @@ const Contest = () => {
                     marginLeft: "auto",
                     marginRight: "auto",
                     marginTop: 10,
-                    color: theme === "light" ? "#000" : "#fff",
+                    color: theme == false ? "#000" : "#fff",
                   }}
                 >
                   Stake
@@ -517,7 +517,7 @@ const Contest = () => {
                 <TextInput
                   placeholder="$5"
                   placeholderTextColor={
-                    theme === "light" ? "#000000" : "#ffffff"
+                    theme == false ? "#000000" : "#ffffff"
                   }
                   inputMode="numeric"
                   style={{
@@ -528,7 +528,7 @@ const Contest = () => {
                     height: 40,
                     marginLeft: "auto",
                     marginRight: "auto",
-                    color: theme === "light" ? "#000000" : "#ffffff",
+                    color: theme == false ? "#000000" : "#ffffff",
                     marginTop: 10,
                     padding: 5,
                     paddingLeft: 10,
@@ -567,7 +567,7 @@ const Contest = () => {
                       fontWeight: "400",
                       fontSize: 11,
                       lineHeight: 16.5,
-                      color: theme === "light" ? "#000" : "#fff",
+                      color: theme == false ? "#000" : "#fff",
                     }}
                   >
                     $300
@@ -588,7 +588,7 @@ const Contest = () => {
                     marginLeft: "auto",
                     marginRight: "auto",
                     marginTop: 10,
-                    color: theme === "light" ? "#000" : "#fff",
+                    color: theme == false ? "#000" : "#fff",
                   }}
                 >
                   Terms and Description

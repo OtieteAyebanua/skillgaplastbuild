@@ -4,8 +4,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 import CountryPicker from "react-native-country-picker-modal";
 
@@ -33,7 +32,7 @@ const socials = [
 ];
 
 const UserDetails = () => {
-  const theme = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
   return (
     <View
       style={{
@@ -42,8 +41,8 @@ const UserDetails = () => {
         paddingVertical: 16,
         borderRadius: 10,
         marginBottom: 12,
-        backgroundColor: theme === "light" ? "#FFFFFF" : "#1D1F20",
-        borderColor: theme === "light" ? "#E7F4FD" : "#27292B",
+        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
+        borderColor: theme == false ? "#E7F4FD" : "#27292B",
       }}
     >
       <View
@@ -72,7 +71,7 @@ const UserDetails = () => {
             fontWeight: "600",
             textAlign: "center",
             textTransform: "capitalize",
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           {SessionUser?.fullName}
@@ -81,7 +80,7 @@ const UserDetails = () => {
           style={{
             fontSize: 12,
             textAlign: "center",
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           @{SessionUser?.tag}
@@ -106,7 +105,7 @@ const UserDetails = () => {
             style={{
               fontSize: 10,
               fontWeight: "500",
-              color: theme === "light" ? "#020B12" : "#fff",
+              color: theme == false ? "#020B12" : "#fff",
             }}
           >
             No. of dispute
@@ -114,7 +113,7 @@ const UserDetails = () => {
           <Text
             style={{
               fontSize: 10,
-              color: theme === "light" ? "#000" : "#fff",
+              color: theme == false ? "#000" : "#fff",
             }}
           >
             {SessionUser?.stats.disputes}
@@ -132,7 +131,7 @@ const UserDetails = () => {
             style={{
               fontSize: 10,
               fontWeight: "500",
-              color: theme === "light" ? "#020B12" : "#fff",
+              color: theme == false ? "#020B12" : "#fff",
             }}
           >
             No. of Contest
@@ -140,7 +139,7 @@ const UserDetails = () => {
           <Text
             style={{
               fontSize: 10,
-              color: theme === "light" ? "#000" : "#fff",
+              color: theme == false ? "#000" : "#fff",
             }}
           >
             {SessionUser?.stats.disputes}
@@ -158,7 +157,7 @@ const UserDetails = () => {
             style={{
               fontSize: 10,
               fontWeight: "500",
-              color: theme === "light" ? "#020B12" : "#fff",
+              color: theme == false ? "#020B12" : "#fff",
             }}
           >
             No. of Wins
@@ -166,7 +165,7 @@ const UserDetails = () => {
           <Text
             style={{
               fontSize: 10,
-              color: theme === "light" ? "#000" : "#fff",
+              color: theme == false ? "#000" : "#fff",
             }}
           >
             {SessionUser?.stats.wins}
@@ -184,7 +183,7 @@ const UserDetails = () => {
             style={{
               fontSize: 10,
               fontWeight: "500",
-              color: theme === "light" ? "#020B12" : "#fff",
+              color: theme == false ? "#020B12" : "#fff",
             }}
           >
             No of losses
@@ -192,7 +191,7 @@ const UserDetails = () => {
           <Text
             style={{
               fontSize: 10,
-              color: theme === "light" ? "#000" : "#fff",
+              color: theme == false ? "#000" : "#fff",
             }}
           >
             {SessionUser?.stats.losses}
@@ -205,8 +204,8 @@ const UserDetails = () => {
           borderRadius: 10,
           padding: 16,
           borderWidth: 1,
-          borderColor: theme === "light" ? "#E7F4FD" : "#313335",
-          backgroundColor: theme === "light" ? "#FAFAFA" : "#27292B",
+          borderColor: theme == false ? "#E7F4FD" : "#313335",
+          backgroundColor: theme == false ? "#FAFAFA" : "#27292B",
         }}
       >
         <Text
@@ -214,7 +213,7 @@ const UserDetails = () => {
             marginBottom: 8,
             fontWeight: "500",
             textAlign: "center",
-            color: theme === "light" ? "#000" : "#fff",
+            color: theme == false ? "#000" : "#fff",
           }}
         >
           Bio
