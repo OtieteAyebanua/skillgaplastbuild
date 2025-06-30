@@ -9,6 +9,14 @@ export interface IContestCategory {
   parentId?: number | null
 }
 
+export interface ITrendingCategory {
+  id: number;
+  name: string;
+  description: string;
+  contests: number;
+  users: number;
+}
+
 export class Contest {
   static getCategories = (parentId?: number | null) => {
     const url = parentId
@@ -27,4 +35,18 @@ export class Contest {
         return [] as IContestCategory[];
       });
   };
+
+  static getTrendingCategories = () => {
+    return API.GET(`/contests/trending-categories`)
+      .then(async (response) => {
+        if (response.success && Array.isArray(response.data)) {
+          return response.data as ITrendingCategory[];
+        }
+        return [] as ITrendingCategory[];
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return [] as ITrendingCategory[];
+      });
+  }
 }

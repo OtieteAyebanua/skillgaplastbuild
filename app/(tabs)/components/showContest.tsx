@@ -30,20 +30,20 @@ const ShowContest = () => {
   const getMyContestList = () => {
     if (loading || !hasMore) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  setTimeout(() => {
-    const data = fetchTestData(currentPage);
+    setTimeout(() => {
+      const data = fetchTestData(currentPage);
 
-    if (data == null) {
-      setHasMore(false);
-    } else {
-      setAvailableContest((prev) => [...prev, ...data]);
-      setCurrentPage((prev) => prev + 1);
-    }
+      if (data == null) {
+        setHasMore(false);
+      } else {
+        setAvailableContest((prev) => [...prev, ...data]);
+        setCurrentPage((prev) => prev + 1);
+      }
 
-    setLoading(false);
-  }, 2000);
+      setLoading(false);
+    }, 2000);
   };
 
   const renderMyContestItem = ({ item }: { item: any }) => (
@@ -300,100 +300,36 @@ const ShowContest = () => {
 
   return (
     <>
-      <View
+      <Text
         style={{
-          borderRadius: 100,
-          flexDirection: "row",
-          backgroundColor: theme == false ? "#EDEFF1" : "#1D1F20",
-          width: 200,
-          overflow: "hidden",
-          justifyContent: "space-between",
+          fontFamily: "General Sans Variable",
+          fontStyle: "normal",
+          fontWeight: "700", // font-semibold
+          fontSize: 16, // text-base
+          letterSpacing: -0.16, // ~-0.01em
+          color: theme == false ? "#020B12" : "#8F8F8F",
+          marginBottom: 10,
+          textAlign: "left",
+          marginTop: 10,
         }}
       >
-        <View
-          style={{
-            backgroundColor: isMyContest ? "#E7F4FD" : "transparent",
-            borderRadius: 100,
-            paddingHorizontal: 15,
-          }}
-        >
-          <TouchableOpacity onPress={() => setIsMyContest(true)}>
-            <Text
-              style={{
-                fontFamily: "General Sans Variable",
-                fontStyle: "normal",
-                fontWeight: "700", // font-semibold
-                fontSize: 16, // text-base
-                letterSpacing: -0.16, // ~-0.01em
-                color: theme == false ? "#020B12" : "#8F8F8F",
-                marginBottom: 10,
-                marginTop: 10,
-              }}
-            >
-              My Contest
-            </Text>
-          </TouchableOpacity>
-        </View>
+        My Contest
+      </Text>
 
-        <View
-          style={{
-            backgroundColor: isMyContest ? "transparent" : "#E7F4FD",
-            borderRadius: 100,
-            paddingHorizontal: 10,
-          }}
-        >
-          <TouchableOpacity onPress={() => setIsMyContest(false)}>
-            <Text
-              style={{
-                fontFamily: "General Sans Variable",
-                fontStyle: "normal",
-                fontWeight: "700", // font-semibold
-                fontSize: 16, // text-base
-                letterSpacing: -0.16, // ~-0.01em
-                color: theme == false ? "#020B12" : "#8F8F8F",
-                marginBottom: 10,
-                marginTop: 10,
-              }}
-            >
-              Available Contest
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {isMyContest ? (
-        <FlatList
-          data={AvailableContest}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          renderItem={renderMyContestItem}
-          onEndReached={getMyContestList}
-          onEndReachedThreshold={0.3}
-          ListFooterComponent={
-            loading ? <ActivityIndicator size={"large"} color={"#aaa"} /> : null
-          }
-          contentContainerStyle={{
-            paddingBottom: 10,
-            flexGrow: 1,
-          }}
-
-        />
-      ) : (
-        <FlatList
-         data={AvailableContest}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          renderItem={renderAvailableContestItem}
-          onEndReached={getMyContestList}
-          onEndReachedThreshold={0.3}
-          ListFooterComponent={
-            loading ? <ActivityIndicator size={"large"} color={"#aaa"} /> : null
-          }
-          contentContainerStyle={{
-            paddingBottom: 900,
-            flexGrow: 1,
-          }}
-          ListHeaderComponent={ListHeader}
-        />
-      )}
+      <FlatList
+        data={AvailableContest}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        renderItem={renderMyContestItem}
+        onEndReached={getMyContestList}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={
+          loading ? <ActivityIndicator size={"large"} color={"#aaa"} /> : null
+        }
+        contentContainerStyle={{
+          paddingBottom: 10,
+          flexGrow: 1,
+        }}
+      />
     </>
   );
 };

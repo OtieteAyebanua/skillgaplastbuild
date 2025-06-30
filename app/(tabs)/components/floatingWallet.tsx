@@ -1,6 +1,22 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SessionUser } from "@/services/user";
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const FloatingWallet = () => {
+
+  const getBalance = (): { left: string; right: string } => {
+    const value = SessionUser?.balance ?? 0;
+
+    const [left, right] = value.toFixed(2).split(".");
+    return { left, right };
+  }
+
   return (
     <ImageBackground
       source={require("../../../assets/images/sk-bg.png")}
@@ -42,9 +58,9 @@ const FloatingWallet = () => {
                 textAlign: "center",
               }}
             >
-              $600
+              #{getBalance().left}
             </Text>
-            <Text style={{ fontSize: 14, color: "#FFFFFF" }}>.24</Text>
+            <Text style={{ fontSize: 14, color: "#FFFFFF" }}>.{getBalance().right}</Text>
           </View>
         </View>
 
@@ -89,9 +105,9 @@ const FloatingWallet = () => {
                 fontSize: 10,
                 position: "relative",
                 bottom: 15,
-                textDecorationLine:"underline"
+                textDecorationLine: "underline",
               }}
-             // onPress={() => router.push("/(tabs)/wallet/history")}
+              // onPress={() => router.push("/(tabs)/wallet/history")}
             >
               Transaction History
             </Text>

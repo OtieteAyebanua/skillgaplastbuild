@@ -50,8 +50,9 @@ const Utilities = () => {
           <Switch
             value={isOpenToContest}
             onValueChange={() => {
-              setIsOpenToContest((prev) => !prev);
-              User.updatePreferences(isOpenToContest, isDarkMode);
+              const newContest = !isOpenToContest;
+              setIsOpenToContest(newContest);
+              User.updatePreferences(newContest, isDarkMode);
             }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
           />

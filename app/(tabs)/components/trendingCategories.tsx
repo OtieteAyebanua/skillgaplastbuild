@@ -1,39 +1,21 @@
+import { Contest, ITrendingCategory } from "@/services/contest";
+import { Media } from "@/services/media";
 import { SessionUser } from "@/services/user";
-import { Image, ScrollView, Text, View } from "react-native";
-
-const trendingCategories = [
-  {
-    index: 1,
-    image: require("../../../assets/images/profile-bg.png"),
-    name: "Sports",
-    bets: 500,
-    users: 200,
-  },
-  {
-    index: 1,
-    image: require("../../../assets/images/profile-bg.png"),
-    name: "Sports",
-    bets: 500,
-    users: 200,
-  },
-  {
-    index: 1,
-    image: require("../../../assets/images/profile-bg.png"),
-    name: "Sports",
-    bets: 500,
-    users: 200,
-  },
-  {
-    index: 1,
-    image: require("../../../assets/images/profile-bg.png"),
-    name: "Sports",
-    bets: 500,
-    users: 200,
-  },
-];
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import NetworkImage from "./networkImage";
 
 const TrendingCategory = () => {
-    const theme = SessionUser?.preferences.darkMode;
+  const theme = SessionUser?.preferences.darkMode;
+
+  const [categories, setCategories] = useState<ITrendingCategory[]>([]);
+
+  useEffect(() => {
+    Contest.getTrendingCategories().then((data) => {
+      setCategories(data ?? []);
+    });
+  }, []);
+
   return (
     <View
       style={{
@@ -49,13 +31,13 @@ const TrendingCategory = () => {
           color: theme == false ? "#020B12" : "#ffffff",
         }}
       >
-        Leader Board
+        Trending Categories
       </Text>
 
       <View style={{ flexDirection: "row" }}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: "row", paddingBottom: 5 }}>
-            {trendingCategories.map((item) => {
+            {categories.map((item) => {
               return (
                 <View
                   key={item.name}
@@ -69,13 +51,14 @@ const TrendingCategory = () => {
                     marginRight: 10,
                   }}
                 >
-                  <Image
+                  <NetworkImage
+                    loadingUri={require("../../../assets/images/icon.png")}
+                    uri={Media.GetCategoryImageUris(item.id)?.large}
                     style={{
                       width: 130,
                       height: 80,
                       borderRadius: 2,
                     }}
-                    source={item.image}
                   />
                   <Text
                     style={{
@@ -104,7 +87,7 @@ const TrendingCategory = () => {
                       >
                         Bets :
                       </Text>{" "}
-                      {item.bets}
+                      {item.contests}
                     </Text>
                     <Text
                       style={{

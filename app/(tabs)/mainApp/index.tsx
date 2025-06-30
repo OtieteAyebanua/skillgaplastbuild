@@ -1,17 +1,18 @@
 import PageContainer from "@/components/Containers";
+import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { useEffect, useState } from "react";
 import {
-  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import FloatingWallet from "../components/floatingWallet";
+import NetworkImage from "../components/networkImage";
 import ShowContest from "../components/showContest";
 import TrendingCategory from "../components/trendingCategories";
 
@@ -79,18 +80,14 @@ export default function HomePage() {
                   zIndex: 1,
                 }}
               />
-              <Image
+              <NetworkImage
                 style={{
                   width: 50,
                   height: 50,
                   borderRadius: 50,
                 }}
-                source={
-                  // SessionUser?.imageUri
-                  //   ? { uri: user.data.imageUri }
-                  //   :
-                  require("../../../assets/images/no-image.png")
-                }
+                uri={Media.GetProfileImageUris(SessionUser?.id ?? 0)?.medium}
+                loadingUri={require("../../../assets/images/profile-img.png")}
               />
             </View>
 
@@ -113,6 +110,7 @@ export default function HomePage() {
                 style={{
                   fontWeight: "600",
                   color: theme == false ? "#000000" : "#ffffff",
+                  textTransform: "capitalize"
                 }}
               >
                 {SessionUser?.fullName}

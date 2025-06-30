@@ -114,8 +114,11 @@ const Categories = ({ close, onSelected }: ICategories) => {
           </View>
 
           <Text
-            style={{ fontSize: 16, fontWeight: 600 }}
-            className={`  ${!theme ? "#000000" : "#ffffff"}`}
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: `${!theme ? "#000000" : "#ffffff"}`,
+            }}
           >
             {stage}
           </Text>
@@ -238,7 +241,7 @@ const Categories = ({ close, onSelected }: ICategories) => {
                     style={{
                       fontSize: 16, // text-base
                       fontWeight: "600", // font-semibold
-                      color: theme ? "#000000" : "#ffffff",
+                      color: !theme ? "#000000" : "#ffffff",
                     }}
                   >
                     {item.name}
@@ -294,7 +297,7 @@ const Categories = ({ close, onSelected }: ICategories) => {
                   style={{
                     fontSize: 16, // text-base
                     fontWeight: "600", // font-semibold
-                    color: theme ? "#000000" : "#ffffff",
+                    color: !theme ? "#000000" : "#ffffff",
                   }}
                 >
                   {item.name}
