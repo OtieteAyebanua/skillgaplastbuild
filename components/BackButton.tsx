@@ -1,10 +1,11 @@
+import { SessionUser } from "@/services/user";
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity, useColorScheme } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 
 const BackButton = () => {
-  const theme  = useColorScheme();
+  const theme = SessionUser?.preferences.darkMode;
 
   return (
     <TouchableOpacity
@@ -16,7 +17,7 @@ const BackButton = () => {
     >
       <ChevronLeftIcon
         size={25}
-        color={theme === "light" ? "#292D32" : "#ffffff"}
+        color={!theme ? "#292D32" : "#ffffff"}
       />
     </TouchableOpacity>
   );

@@ -1,6 +1,5 @@
 import PageContainer from "@/components/Containers";
 import Input from "@/components/ui/Input";
-import { Debounce } from "@/services/debounce";
 import { useDebounce } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
@@ -18,7 +17,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -34,10 +33,12 @@ const AccountSettings = () => {
   const [instagram, setInstagram] = useState(
     SessionUser?.socials.instagram ?? ""
   );
-  const [tikTok, setTikTok] = useState(SessionUser?.socials.tiktok ?? "");
+  const [tikTok, setTikTok] = useState(SessionUser?.socials.tikTok ?? "");
   const [youtube, setYoutube] = useState(SessionUser?.socials.youtube ?? "");
   const [bio, setBio] = useState(SessionUser?.bio ?? "");
-  const [canChangeTag, setCanChangeTag] = useState(SessionUser?.canChangeTag ??  false);
+  const [canChangeTag, setCanChangeTag] = useState(
+    SessionUser?.canChangeTag ?? false
+  );
   const [error, setError] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -71,6 +72,7 @@ const AccountSettings = () => {
       setCoverImageUrl(result.assets[0].uri);
     }
   };
+
   const pickProfileImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
@@ -87,7 +89,20 @@ const AccountSettings = () => {
 
   const handleSave = async () => {
     setIsLoading(true);
-    const response = await User.update({
+
+    if (getProfileImg) {
+      User.uploadProfileImage(getProfileImg).then((success) => {
+        if (success) setGetProfileImg(null);
+      });
+    }
+
+    if (getCoverImg) {
+      User.uploadCoverImage(getCoverImg).then((success) => {
+        if (success) setGetCoverImg(null);
+      });
+    }
+
+    const result = await User.update({
       fullName: fullName,
       bio: bio,
       tag: tag,
@@ -97,9 +112,10 @@ const AccountSettings = () => {
       tikTok: tikTok,
     });
 
-    if (!response.success) {
-      // TODO :: Replace with toast
-      Logger.error(response.error);
+    Logger.info(tikTok);
+
+    if (!result.success) {
+      Logger.error(result.error);
     }
 
     setIsLoading(false);
@@ -108,27 +124,31 @@ const AccountSettings = () => {
   const formValidation = () => {
     return (
       fullName.length > 0 && tag.length > 0
-      //   validTiktokUrl(tikTok) &&
-      //   validInstagramUrl(instagram) &&
-      //   validYoutubeUrl(youtube) &&
-      //   validTwitterUrl(twitter) &&
+      // validTiktokUrl(tikTok) &&
+      // validInstagramUrl(instagram) &&
+      // validYoutubeUrl(youtube) &&
+      // validTwitterUrl(twitter) &&
       //   error == false
     );
   };
+
   const debouncedSearch = useCallback(
     useDebounce(() => {
-      Debounce.checkTagAvailability(tag).then((response) => {
+      User.checkTagAvailability(tag).then((response) => {
         setError(response.data);
       });
     }, 1000),
     [tag]
   );
+  
   useEffect(() => {
     const handler = setTimeout(() => {
       debouncedSearch();
     }, 1000);
     return () => clearTimeout(handler);
   }, [tag]);
+
+
   return (
     <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#141414"}>
       <KeyboardAvoidingView
@@ -165,7 +185,7 @@ const AccountSettings = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "600",
-                color: theme == false ? "#020B12" : "#FFFFFF",
+                color: theme === false ? "#FFFFFF" : "#020B12",
               }}
             >
               Account Settings
@@ -312,9 +332,7 @@ const AccountSettings = () => {
                       >
                         Tag already in use
                       </Text>
-                    ) : (
-                      null
-                    )}
+                    ) : null}
                   </View>
                 ) : (
                   <View style={NoStyles.container}>
@@ -387,7 +405,7 @@ const AccountSettings = () => {
                 <Input
                   type="text"
                   placeholder={
-                    SessionUser?.socials.tiktok ?? "https://www.tiktok.com"
+                    SessionUser?.socials.tikTok ?? "https://www.tiktok.com"
                   }
                   value={(e) => {
                     setTikTok(e);

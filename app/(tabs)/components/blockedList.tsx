@@ -1,5 +1,4 @@
-import { Debounce, IOtherUserRecord } from "@/services/debounce";
-import { SessionUser } from "@/services/user";
+import { IOtherUserRecord, SessionUser } from "@/services/user";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -69,9 +68,7 @@ const BlockedList = () => {
   });
 
   useEffect(() => {
-    Debounce.getBlockedList(1).then((response) => {
-      setBlockList(response.data);
-    });
+   
   }, []);
 
   return (

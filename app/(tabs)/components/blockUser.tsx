@@ -1,8 +1,7 @@
 import Input from "@/components/ui/Input";
-import { Debounce, IOtherUserRecord } from "@/services/debounce";
 import { useDebounce } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
-import { SessionUser } from "@/services/user";
+import { IOtherUserRecord, SessionUser, User } from "@/services/user";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -25,7 +24,7 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
 
   const handleConfirm = () => {
     setIsLoading(true);
-    Debounce.blockUser(otherUserRecord?.id ?? 0).then(async (response) => {
+    User.blockUser(otherUserRecord?.id ?? 0).then(async (response) => {
         setIsLoading(false);
         Logger.error(response);
        userBlocked(response)
@@ -34,13 +33,14 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
 
   const debouncedSearch = useCallback(
     useDebounce(() => {
-      Debounce.checkTagAvailability(skillTag).then((response) => {
+      User.checkTagAvailability(skillTag).then((response) => {
         setError(!response.data);
         setOtherUserRecord(response.data);
       });
     }, 1000),
     [skillTag]
   );
+
   useEffect(() => {
     const handler = setTimeout(() => {
       debouncedSearch();
@@ -101,6 +101,7 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
       fontWeight: "bold",
     },
   });
+  
   return (
     <View style={BlockUserStyles.container}>
       <Text style={BlockUserStyles.title}>Block a user</Text>

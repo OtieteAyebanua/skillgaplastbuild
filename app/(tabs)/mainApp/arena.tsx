@@ -1,20 +1,24 @@
 import PageContainer from "@/components/Containers";
+import { IContestCategory } from "@/services/contest";
+import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {
   Image,
+  Modal,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  TouchableWithoutFeedback,
+  View
 } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Categories from "../components/categories";
 import ContestDetails from "../components/contest/contestDetails";
-import SubCategories from "../components/subCategories";
 
 const hightestStakeContest = [
   {
@@ -120,6 +124,7 @@ const AvailableContest = [
 ];
 
 const Arena = () => {
+  const [showCategories, setShowCategories] = useState(false);
   const theme = SessionUser?.preferences.darkMode;
   const [openCategories, setOpenCategories] = useState(false);
   const [openSubCategory, setOpenSubCategory] = useState(false);
@@ -136,6 +141,13 @@ const Arena = () => {
   useEffect(() => {
     Router.clearHistory();
   }, []);
+
+  const onCategorySelected = (category: IContestCategory | null) => {
+    setShowCategories(false);
+    if (category) {
+      Logger.info(category);
+    }
+  };
 
   return showContestDetails ? (
     <ContestDetails
@@ -190,7 +202,7 @@ const Arena = () => {
               paddingVertical: 8,
               width:wp("50%"),
             }}
-            onPress={() => setOpenCategories((prev) => !prev)}
+            onPress={() => setShowCategories(!showCategories)}
           >
             <Feather name="filter" size={16} color="#A3A3A3" />
             <Text style={{ color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
@@ -487,17 +499,34 @@ const Arena = () => {
           ))}
         </View>
       </ScrollView>
-      {openCategories ? (
-        <Categories
-          openSub={() => {
-            setOpenSubCategory(true);
-          }}
-          close={() => setOpenCategories(false)}
-        />
-      ) : null}
-      {openSubCategory ? (
-        <SubCategories close={() => setOpenSubCategory(false)} />
-      ) : null}
+      <Modal
+        visible={showCategories}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowCategories(false)}
+      >
+        <TouchableWithoutFeedback>
+          <View
+            style={{
+              height: "100%",
+            }}
+          >
+            <BlurView
+              intensity={80}
+              tint="systemMaterialDark"
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableWithoutFeedback>
+                <Categories onSelected={onCategorySelected} close={() => setShowCategories(false)} />
+              </TouchableWithoutFeedback>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </PageContainer>
   );
 };

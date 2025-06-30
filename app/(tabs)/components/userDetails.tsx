@@ -1,7 +1,9 @@
+import { Logger } from "@/services/logger";
 import { SessionUser } from "@/services/user";
 import React from "react";
 import {
   Image,
+  Linking,
   Text,
   TouchableOpacity,
   View
@@ -10,29 +12,82 @@ import CountryPicker from "react-native-country-picker-modal";
 
 const socials = [
   {
-    id: "1",
-    icon: require("../../../assets/icons/youtube-icon.png"),
-    url: "https://www.youtube.com",
+    id: "3",
+    icon: require("../../../assets/icons/instagram.png"),
+    url: "https://www.instagram.com",
   },
   {
     id: "2",
-    icon: require("../../../assets/icons/twitter-icon.png"),
+    icon: require("../../../assets/icons/twitter.png"),
     url: "https://www.twitter.com",
   },
   {
-    id: "3",
-    icon: require("../../../assets/icons/facebook-icon.png"),
-    url: "https://www.facebook.com",
-  },
-  {
     id: "4",
-    icon: require("../../../assets/icons/tiktok-icon.png"),
+    icon: require("../../../assets/icons/tiktok.png"),
     url: "https://www.tiktok.com",
   },
+  {
+    id: "1",
+    icon: require("../../../assets/icons/youtube.png"),
+    url: "https://www.youtube.com",
+  }
 ];
 
 const UserDetails = () => {
   const theme = SessionUser?.preferences.darkMode;
+
+  const openSocialLink = (social: any) => {
+    let link = "";
+
+    Logger.info(link);
+    switch (social.id) {
+      case "1":
+        link = SessionUser?.socials?.youtube ?? "";
+        break;
+      case "2":
+        link = SessionUser?.socials?.twitter ?? "";
+        break;
+      case "3":
+        link = SessionUser?.socials.instagram ?? "";
+        break;
+      case "4":
+        link = SessionUser?.socials.tikTok ?? "";
+        break;
+    }
+
+    link = link.toLowerCase();
+
+    link &&
+      Linking.canOpenURL(link).then((supported) => {
+        if (supported) {
+          Linking.openURL(link);
+        } else {
+          Logger.error("Failed to open link:", link);
+        }
+      });
+  };
+
+  const hasSocialLink = (social: any) => {
+    let link = "";
+
+    switch (social.id) {
+      case "1":
+        link = SessionUser?.socials?.youtube ?? "";
+        break;
+      case "2":
+        link = SessionUser?.socials?.twitter ?? "";
+        break;
+      case "3":
+        link = SessionUser?.socials.instagram ?? "";
+        break;
+      case "4":
+        link = SessionUser?.socials.tikTok ?? "";
+        break;
+    }
+
+    return link.length > 0;
+  };
+
   return (
     <View
       style={{
@@ -238,14 +293,16 @@ const UserDetails = () => {
           marginVertical: 12,
         }}
       >
-        {socials.map((item, index) => (
-          <TouchableOpacity key={index}>
-            <Image
-              source={item.icon}
-              style={{ width: 15, height: 15, marginHorizontal: 3 }}
-            />
-          </TouchableOpacity>
-        ))}
+        {socials
+          .filter((item) => hasSocialLink(item))
+          .map((item, index) => (
+            <TouchableOpacity key={index} onPress={() => openSocialLink(item)}>
+              <Image
+                source={item.icon}
+                style={{ width: 20, height: 15, marginHorizontal: 3 }}
+              />
+            </TouchableOpacity>
+          ))}
       </View>
     </View>
   );

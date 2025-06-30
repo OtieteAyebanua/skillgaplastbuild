@@ -1,11 +1,10 @@
-//import Settings from "@/components/profile/setting";
-//import UserDetails from "@/components/profile/userDetails";
-//import Utilities from "@/components/profile/utilities";
 import PageContainer from "@/components/Containers";
+import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { useEffect, useState } from "react";
-import { Image, ImageBackground, RefreshControl, ScrollView, View } from "react-native";
+import { ImageBackground, RefreshControl, ScrollView, View } from "react-native";
+import NetworkImage from "../components/networkImage";
 import Settings from "../components/settings";
 import UserDetails from "../components/userDetails";
 import Utilities from "../components/utilities";
@@ -34,7 +33,10 @@ const Profile = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       } >
         <ImageBackground
-          source={require("../../../assets/images/profile-bg.png")}
+          defaultSource={require("../../../assets/images/profile-bg.png")}
+          source={{
+            uri: Media.GetCoverImageUris(SessionUser?.id ?? 0).original,
+          }}
           style={{
             height: 140,
             width: "100%",
@@ -49,8 +51,9 @@ const Profile = () => {
               zIndex: 10,
             }}
           >
-            <Image
-              source={require("../../../assets/images/profile-img.png")}
+            <NetworkImage
+              loadingUri={require("../../../assets/images/profile-img.png")}
+              uri={Media.GetProfileImageUris(SessionUser?.id ?? 0).original}
               style={{
                 height: 120,
                 width: 120,

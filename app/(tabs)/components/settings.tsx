@@ -135,41 +135,6 @@ const Settings = () => {
         </View>
       </TouchableOpacity>
 
-      {/* Delete Account Button */}
-      <View
-        style={{
-          borderWidth: 1,
-          paddingHorizontal: 8,
-          paddingVertical: 16,
-          borderRadius: 24,
-          marginBottom: 12,
-          borderColor: theme == false ? "#E7F4FD" : "#27292B",
-          backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            setDeleteModal(true);
-            console.log("done");
-          }}
-          style={{ flexDirection: "row", paddingHorizontal: 8 }}
-        >
-          <Image
-            source={require("../../../assets/icons/bin-icon.png")}
-            style={{ width: 16, height: 16, marginRight: 8 }}
-          />
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "500",
-              color: theme == false ? "#000" : "#FFFFFF",
-            }}
-          >
-            Delete Account
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Logout Modal */}
       {modalVisible ? (
         <Modal animationType="fade" transparent={true} visible={modalVisible}>
@@ -202,39 +167,6 @@ const Settings = () => {
         </Modal>
       ) : null}
 
-      {/* Delete Modal */}
-      {deleteModal ? (
-        <Modal animationType="fade" transparent={true} visible={modalVisible}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Image
-                source={require("../../../assets/icons/warning.png")}
-                style={styles.warningIcon}
-              />
-              <Text style={styles.modalTitle}>Wait a minute!</Text>
-              <Text style={styles.modalText}>
-                Are you sure you want to Delete your Skillgap account?
-              </Text>
-              <View style={styles.buttonRow}>
-                <TouchableOpacity
-                  style={styles.yesButton}
-                  onPress={() => {
-                    setDeleteModal(false);
-                  }}
-                >
-                  <Text style={styles.yesText}>Yes</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.noButton}
-                  onPress={() => setDeleteModal(false)}
-                >
-                  <Text style={styles.noText}>No</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      ) : null}
     </View>
   );
 };

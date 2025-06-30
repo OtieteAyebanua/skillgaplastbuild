@@ -1,5 +1,4 @@
-import { preferences } from "@/services/preferences";
-import { SessionUser } from "@/services/user";
+import { SessionUser, User } from "@/services/user";
 import { useState } from "react";
 import { Switch, Text, View } from "react-native";
 
@@ -52,7 +51,7 @@ const Utilities = () => {
             value={isOpenToContest}
             onValueChange={() => {
               setIsOpenToContest((prev) => !prev);
-              preferences.update(isOpenToContest, isDarkMode);
+              User.updatePreferences(isOpenToContest, isDarkMode);
             }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
           />
@@ -96,8 +95,9 @@ const Utilities = () => {
           <Switch
             value={isDarkMode}
             onValueChange={() => {
-              setIsDarkMode((prev) => !prev);
-              preferences.update(isOpenToContest,isDarkMode)
+              const newMode = !isDarkMode;
+              setIsDarkMode(newMode);
+              User.updatePreferences(isOpenToContest, newMode);
             }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
           />

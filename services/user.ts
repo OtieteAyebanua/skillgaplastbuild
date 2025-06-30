@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { getMimeType } from "@/utitlity/image";
+import { create } from "zustand";
 import { API, ApiErrorCodes } from "./api";
 import { Logger } from "./logger";
 
@@ -16,7 +17,7 @@ interface IUserRecord {
   socials: {
     twitter: string | null;
     instagram: string | null;
-    tiktok: string | null;
+    tikTok: string | null;
     youtube: string | null;
   };
   stats: {
@@ -31,14 +32,40 @@ interface IUserRecord {
   };
 }
 
+export interface IOtherUserRecord {
+  id: number;
+  fullName: string;
+  country: string;
+  tag: string;
+  bio: string;
+  isOnline: true;
+  socials: {
+    twitter: string;
+    instagram: string;
+    tikTok: string;
+    youtube: string;
+  };
+  stats: {
+    contests: number;
+    wins: number;
+    losses: number;
+    disputes: number;
+  };
+}
+
+interface IPreferences {
+  openToChallenge: boolean;
+  darkMode: boolean;
+}
+
 export let SessionUser: IUserRecord | null;
 
 let loadingUser = false;
 
-export const useSessionStore = create((set)=>({
+export const useSessionStore = create((set) => ({
   user: null as IUserRecord | null,
   setUser: (u: IUserRecord | null) => set({ user: u }),
-}))
+}));
 
 export class User {
   static Load = (onLoaded?: () => void) => {
@@ -97,6 +124,7 @@ export class User {
             SessionUser.socials.instagram = user.instagram;
             SessionUser.socials.youtube = user.youtube;
 
+            reply.success = true;
             return reply;
           }
 
@@ -124,5 +152,98 @@ export class User {
         error: "Something went wrong, please try again.",
       };
     }
+  };
+
+  static updatePreferences = (openToContest: boolean, darkMode: boolean) => {
+    if (SessionUser) {
+      SessionUser.preferences.openToContest = openToContest;
+      SessionUser.preferences.darkMode = darkMode;
+    }
+
+    return API.POST("/identity/preferences", {
+      openToContest: openToContest,
+      darkMode: darkMode,
+    })
+      .then(async (response) => {
+        return response.success;
+      })
+      .catch((e) => {
+        Logger.error(e);
+        return false;
+      });
+  };
+
+  static checkTagAvailability = (tag: string) => {
+    return API.GET(`/profile/tag/${tag}`)
+      .then(async (response) => {
+        if (!response.success) {
+          return false;
+        }
+        return response;
+      })
+      .catch((e) => {
+        Logger.error(e);
+        return;
+      });
+  };
+
+  static blockUser = (userId: number) => {
+    return API.POST(`/profile/block/${userId}`)
+      .then(async (response) => {
+        if (!response.success) {
+          Logger.info("error from this end ");
+
+          return false;
+        }
+        return response.errorCode;
+      })
+      .catch((e) => {
+        Logger.error(e);
+        return;
+      });
+  };
+
+  static uploadProfileImage = (file: any) => {
+    const uri = file.uri;
+    const name = uri.split("/").pop();
+    const type = getMimeType(uri);
+
+    const formData = new FormData();
+    formData.append("file", {
+      uri,
+      name,
+      type,
+    } as any);
+
+    return API.PostFormData("/identity/profileImage", formData)
+      .then(async (response) => {
+        return response?.success ?? false;
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return false;
+      });
+  };
+
+  static uploadCoverImage = (file: any) => {
+    const uri = file.uri;
+    const name = uri.split("/").pop();
+    const type = getMimeType(uri);
+
+    const formData = new FormData();
+    formData.append("file", {
+      uri,
+      name,
+      type,
+    } as any);
+
+    return API.PostFormData("/identity/coverImage", formData)
+      .then(async (response) => {
+        return response?.success ?? false;
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return false;
+      });
   };
 }
