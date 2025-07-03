@@ -1,4 +1,5 @@
 import PageContainer from "@/components/Containers";
+import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import {
@@ -18,6 +19,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import OfflineContest from "./offlineContest";
+
 
 interface ICategories {
   id: number;
@@ -642,7 +644,7 @@ const Contest = () => {
 
               <TouchableOpacity
                 onPress={() => {
-                  //router.push("/(tabs)/contest/completedContestCreation");
+                  Router.push("/(tabs)/components/contest/successfullyCreatedContest");
                 }}
                 style={{
                   width: wp("90%"),

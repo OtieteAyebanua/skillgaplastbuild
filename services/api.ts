@@ -1,7 +1,7 @@
 import { AuthSession } from "./authSession";
 import { Logger } from "./logger";
 
-const ApiBaseUrl = "http://192.168.1.145:5000/api";
+const ApiBaseUrl = "https://skapi-dev.azurewebsites.net/api";
 
 export class ApiErrorCodes {
   static ServerError = "server_error";

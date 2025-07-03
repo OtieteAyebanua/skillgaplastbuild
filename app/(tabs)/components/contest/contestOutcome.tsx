@@ -1,30 +1,18 @@
 import PageContainer from "@/components/Containers";
+import { SessionUser } from "@/services/user";
 import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    ImageBackground,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
-import {
-  heightPercentageToDP as hp
-} from "react-native-responsive-screen";
-// import NotEnoughCash from "./notEnoughCash";
-import { Router } from "@/services/router";
-import { SessionUser } from "@/services/user";
-import { useState } from "react";
-import NotEnoughCash from "../notEnoughCash";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
-interface IContestDetails {
-  contestID: string;
-}
-
-const ContestDetails = ({ contestID }: IContestDetails) => {
+const ContestOutcome = () => {
   const theme = SessionUser?.preferences.darkMode;
-  const [showModal, setShowModal] = useState(false);
-  const amount = 9;
   return (
     <PageContainer
       paddingBottom="0"
@@ -34,7 +22,7 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
         <View style={{ justifyContent: "center" }}>
           <View style={{ left: 8 }}>
             <TouchableOpacity
-              onPress={() => Router.back()}
+              onPress={() => close()}
               style={{
                 marginBottom: 12,
                 width: 30,
@@ -356,11 +344,11 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
             </Text>
           </Text>
         </View>
-        <View style={{flexDirection:"row"}}>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
-          onPress={()=>{Router.push('/(tabs)/components/comment')}}
+            onPress={() => {}}
             style={{
-              width: "40%",
+              width: "43%",
               height: hp("6%"),
               borderRadius: 100,
               padding: 10,
@@ -374,18 +362,12 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
               borderColor: "#1D9BF0",
             }}
           >
-            <Text style={{ color: "#ffffff", fontSize: 16 }}>Comment</Text>
+            <Text style={{ color: "#ffffff", fontSize: 16 }}>Delete</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            onPress={() => {
-              if (amount >= 10) {
-                setShowModal(false);
-              } else {
-                setShowModal(true);
-              }
-            }}
             style={{
-              width: "40%",
+              width: "43%",
               height: hp("6%"),
               borderRadius: 100,
               padding: 10,
@@ -397,13 +379,19 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
               marginBottom: 10,
             }}
           >
-            <Text style={{ color: "#ffffff", fontSize: 16 }}>Join</Text>
+            <Text style={{ color: "#ffffff", fontSize: 16 }}>Edit</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-      {showModal ? <NotEnoughCash close={() => setShowModal(false)} /> : null}
+      {/* {showWarningModal ? (
+        <WarningModal
+          proceed={() => {}}
+          cancel={() => {setShowWarningModal(false)}}
+          text="Are you sure you want to delete this contest"
+        />
+      ) : null} */}
     </PageContainer>
   );
 };
 
-export default ContestDetails;
+export default ContestOutcome;

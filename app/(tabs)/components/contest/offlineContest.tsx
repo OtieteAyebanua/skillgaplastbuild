@@ -1,3 +1,4 @@
+import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
@@ -567,7 +568,7 @@ const OfflineContest = () => {
       </View>
       <TouchableOpacity
         onPress={() => {
-          //router.push("/(tabs)/contest/completedContestCreation");
+           Router.push("/(tabs)/components/contest/successfullyCreatedContest");
         }}
         style={{
           width: wp("90%"),

@@ -1,30 +1,26 @@
 import PageContainer from "@/components/Containers";
-import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { ChevronLeftIcon } from "react-native-heroicons/outline";
-import {
-  heightPercentageToDP as hp
-} from "react-native-responsive-screen";
-// import NotEnoughCash from "./notEnoughCash";
-import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { useState } from "react";
-import NotEnoughCash from "../notEnoughCash";
+import {
+    Image,
+    ImageBackground,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { ChevronLeftIcon } from "react-native-heroicons/outline";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import WarningModal from "../modals";
+import WhoWonModal from "./whowonModal";
 
-interface IContestDetails {
-  contestID: string;
-}
-
-const ContestDetails = ({ contestID }: IContestDetails) => {
+const MyContestDetails = () => {
   const theme = SessionUser?.preferences.darkMode;
-  const [showModal, setShowModal] = useState(false);
-  const amount = 9;
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [didICreateContest, setDidICreateContest] = useState(true);
+  const [canEdit, setCanEdit] = useState(true);
+  const [showDisputeModal,setShowDisputeModal] = useState(false)
+  const [selectWhoWon,setSelectWhoWon] = useState(false);
   return (
     <PageContainer
       paddingBottom="0"
@@ -34,7 +30,7 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
         <View style={{ justifyContent: "center" }}>
           <View style={{ left: 8 }}>
             <TouchableOpacity
-              onPress={() => Router.back()}
+              onPress={() => close()}
               style={{
                 marginBottom: 12,
                 width: 30,
@@ -356,54 +352,107 @@ const ContestDetails = ({ contestID }: IContestDetails) => {
             </Text>
           </Text>
         </View>
-        <View style={{flexDirection:"row"}}>
-          <TouchableOpacity
-          onPress={()=>{Router.push('/(tabs)/components/comment')}}
-            style={{
-              width: "40%",
-              height: hp("6%"),
-              borderRadius: 100,
-              padding: 10,
-              backgroundColor: "transparent",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginHorizontal: "auto",
-              marginBottom: 10,
-              borderWidth: 1,
-              borderColor: "#1D9BF0",
-            }}
-          >
-            <Text style={{ color: "#ffffff", fontSize: 16 }}>Comment</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              if (amount >= 10) {
-                setShowModal(false);
-              } else {
-                setShowModal(true);
-              }
-            }}
-            style={{
-              width: "40%",
-              height: hp("6%"),
-              borderRadius: 100,
-              padding: 10,
-              backgroundColor: "#1D9BF0",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginHorizontal: "auto",
-              marginBottom: 10,
-            }}
-          >
-            <Text style={{ color: "#ffffff", fontSize: 16 }}>Join</Text>
-          </TouchableOpacity>
-        </View>
+        {didICreateContest ? (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => setShowWarningModal(true)}
+              style={{
+                width: "43%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+                borderWidth: 1,
+                borderColor: "#1D9BF0",
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Delete</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              disabled={!canEdit}
+              style={{
+                width: "43%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: canEdit ?  "#1D9BF0" : "#8F8F8F",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Edit</Text>
+            </TouchableOpacity>
+          </View>
+        ) :<View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => setShowDisputeModal(true)}
+              style={{
+                width: "30%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+                borderWidth: 1,
+                borderColor: "#1D9BF0",
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Dispute</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            onPress={()=>setSelectWhoWon(true)}
+              style={{
+                width: "50%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "#1D9BF0" ,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Who won?</Text>
+            </TouchableOpacity>
+          </View>}
       </ScrollView>
-      {showModal ? <NotEnoughCash close={() => setShowModal(false)} /> : null}
+      {showWarningModal ? (
+        <WarningModal
+          proceed={() => {}}
+          cancel={() => {
+            setShowWarningModal(false);
+          }}
+          text="Are you sure you want to delete this contest?"
+        />
+      ) : null}
+      {showDisputeModal ? (
+        <WarningModal
+          proceed={() => {}}
+          cancel={() => {
+            setShowDisputeModal(false);
+          }}
+          text="Are you sure you want to dispute this contest?"
+        />
+      ) : null}
+      {selectWhoWon ? <WhoWonModal done={()=>{}} close={()=> setSelectWhoWon(false)}/> : null}
     </PageContainer>
   );
 };
 
-export default ContestDetails;
+export default MyContestDetails;

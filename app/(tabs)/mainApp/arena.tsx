@@ -7,6 +7,8 @@ import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   Image,
   Modal,
   RefreshControl,
@@ -14,11 +16,10 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Categories from "../components/categories";
-import ContestDetails from "../components/contest/contestDetails";
 
 const hightestStakeContest = [
   {
@@ -126,13 +127,13 @@ const AvailableContest = [
 const Arena = () => {
   const [showCategories, setShowCategories] = useState(false);
   const theme = SessionUser?.preferences.darkMode;
-  const [openCategories, setOpenCategories] = useState(false);
-  const [openSubCategory, setOpenSubCategory] = useState(false);
-  const [showContestDetails, setShowContestDetails] = useState(false);
   const [contestID, setContestID] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
+
+useEffect(()=>{
+  fetchData();
+},[])
 
   const onRefresh = () => {
     User.Load();
@@ -149,12 +150,130 @@ const Arena = () => {
     }
   };
 
-  return showContestDetails ? (
-    <ContestDetails
-      contestID={contestID}
-      close={() => setShowContestDetails(false)}
-    />
-  ) : (
+  const renderAvailableContest = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
+        borderRadius: 12,
+        padding: 12,
+        margin: 10,
+        justifyContent: "space-between",
+        marginBottom: 0,
+      }}
+      onPress={() => {
+        setContestID(item.id);
+        Router.push('/components/contest/contestDetails')
+      }}
+    >
+      {/* Left Section (avatars and info) */}
+      <View style={{ flexDirection: "row" }}>
+        {/* Avatar 1 */}
+        <Image
+          source={item.challengerImg}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 20,
+            position: "relative",
+            left: 5,
+          }}
+        />
+
+        {/* Avatar 2 with "?" */}
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={
+              item.group
+                ? require("../../../assets/images/group.png")
+                : require("../../../assets/images/unknownAvatar.png")
+            }
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 20,
+            }}
+          />
+        </View>
+
+        {/* Contest Info and Status */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "baseline",
+            gap: 10,
+            position: "relative",
+            right: 8,
+          }}
+        >
+          <View style={{ marginLeft: 12 }}>
+            <Text
+              style={{
+                color: theme == false ? "#000000" : "#FFFFFF",
+                fontWeight: "600",
+                fontSize: 12,
+              }}
+            >
+              {item.title}
+            </Text>
+            <Text style={{ color: "#A1A1AA", fontSize: 11 }}>
+              {item.group ? "group Contest" : `${item.challenger} vs ?`}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 4,
+              backgroundColor: "#E2FEE6",
+              borderWidth: 1,
+              borderColor: "#78F98D",
+              borderRadius: 39,
+              width: "auto",
+              height: "auto",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "General Sans Variable",
+                fontStyle: "normal",
+                fontWeight: "500",
+                fontSize: 10,
+                lineHeight: 12,
+                letterSpacing: -0.06,
+                color: "#2A9D0D",
+              }}
+            >
+              {item.isOnline ? "Online" : "Offline"}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Right Section (timestamp + amount) */}
+      <View style={{ alignItems: "flex-end" }}>
+        <Text style={{ color: "#A1A1AA", fontSize: 10 }}>{item.timeStamp}</Text>
+        <Text
+          style={{
+            color: theme == false ? "#000000" : "#FFFFFF",
+            fontWeight: "500",
+            fontSize: 14,
+          }}
+        >
+          ${item.stake}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const fetchData = ()=>{
+
+  }
+
+  return (
     <PageContainer
       paddingBottom="0"
       backgroundColor={theme == false ? "#FAFAFA" : "#141414"}
@@ -200,7 +319,7 @@ const Arena = () => {
               borderRadius: 12,
               paddingHorizontal: 16,
               paddingVertical: 8,
-              width:wp("50%"),
+              width: wp("50%"),
             }}
             onPress={() => setShowCategories(!showCategories)}
           >
@@ -246,7 +365,7 @@ const Arena = () => {
                 }}
                 onPress={() => {
                   setContestID(item.id);
-                  setShowContestDetails(true);
+                   Router.push('/components/contest/contestDetails')
                 }}
               >
                 <Image
@@ -376,127 +495,22 @@ const Arena = () => {
           </Text>
         </View>
         <View style={{ paddingBottom: 15 }}>
-          {AvailableContest.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
-                borderRadius: 12,
-                padding: 12,
-                margin: 10,
-                justifyContent: "space-between",
-                marginBottom: 0,
-              }}
-              onPress={() => {
-                setContestID(item.id);
-                setShowContestDetails(true);
-              }}
-            >
-              {/* Left Section (avatars and info) */}
-              <View style={{ flexDirection: "row" }}>
-                {/* Avatar 1 */}
-                <Image
-                  source={item.challengerImg}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 20,
-                    position: "relative",
-                    left: 5,
-                  }}
-                />
-
-                {/* Avatar 2 with "?" */}
-                <View style={{ alignItems: "center" }}>
-                  <Image
-                    source={
-                      item.group
-                        ? require("../../../assets/images/group.png")
-                        : require("../../../assets/images/unknownAvatar.png")
-                    }
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 20,
-                    }}
-                  />
-                </View>
-
-                {/* Contest Info and Status */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "baseline",
-                    gap: 10,
-                    position: "relative",
-                    right: 8,
-                  }}
-                >
-                  <View style={{ marginLeft: 12 }}>
-                    <Text
-                      style={{
-                        color: theme == false ? "#000000" : "#FFFFFF",
-                        fontWeight: "600",
-                        fontSize: 12,
-                      }}
-                    >
-                      {item.title}
-                    </Text>
-                    <Text style={{ color: "#A1A1AA", fontSize: 11 }}>
-                      {item.group ? "group Contest" : `${item.challenger} vs ?`}
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      paddingHorizontal: 4,
-                      backgroundColor: "#E2FEE6",
-                      borderWidth: 1,
-                      borderColor: "#78F98D",
-                      borderRadius: 39,
-                      width: "auto",
-                      height: "auto",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: "General Sans Variable",
-                        fontStyle: "normal",
-                        fontWeight: "500",
-                        fontSize: 10,
-                        lineHeight: 12,
-                        letterSpacing: -0.06,
-                        color: "#2A9D0D",
-                      }}
-                    >
-                      {item.isOnline ? "Online" : "Offline"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Right Section (timestamp + amount) */}
-              <View style={{ alignItems: "flex-end" }}>
-                <Text style={{ color: "#A1A1AA", fontSize: 10 }}>
-                  {item.timeStamp}
-                </Text>
-                <Text
-                  style={{
-                    color: theme == false ? "#000000" : "#FFFFFF",
-                    fontWeight: "500",
-                    fontSize: 14,
-                  }}
-                >
-                  ${item.stake}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          <FlatList
+            data={AvailableContest}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            renderItem={renderAvailableContest}
+            onEndReached={fetchData}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={
+              loading ? (
+                <ActivityIndicator size={"large"} color={"#aaa"} />
+              ) : null
+            }
+            contentContainerStyle={{
+              paddingBottom: 10,
+              flexGrow: 1,
+            }}
+          />
         </View>
       </ScrollView>
       <Modal
@@ -521,7 +535,10 @@ const Arena = () => {
               }}
             >
               <TouchableWithoutFeedback>
-                <Categories onSelected={onCategorySelected} close={() => setShowCategories(false)} />
+                <Categories
+                  onSelected={onCategorySelected}
+                  close={() => setShowCategories(false)}
+                />
               </TouchableWithoutFeedback>
             </BlurView>
           </View>

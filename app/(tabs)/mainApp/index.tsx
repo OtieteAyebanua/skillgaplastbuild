@@ -125,7 +125,7 @@ export default function HomePage() {
       </ScrollView>
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={()=> Router.push('/(tabs)/components/contest')}
+          onPress={()=> Router.push('/(tabs)/components/contest/createContest')}
         >
           <Text style={styles.plus}>+</Text>
         </TouchableOpacity>
