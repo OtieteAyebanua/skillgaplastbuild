@@ -1,4 +1,4 @@
-import { SessionUser } from "@/services/user";
+import { User } from "@/services/user";
 import {
   Image,
   ImageBackground,
@@ -8,14 +8,12 @@ import {
   View,
 } from "react-native";
 
-const FloatingWallet = () => {
+interface FloatingWalletProps {
+  refreshing: boolean;
+}
 
-  const getBalance = (): { left: string; right: string } => {
-    const value = SessionUser?.balance ?? 0;
-
-    const [left, right] = value.toFixed(2).split(".");
-    return { left, right };
-  }
+const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
+  const balance = User.getBalance();
 
   return (
     <ImageBackground
@@ -58,9 +56,12 @@ const FloatingWallet = () => {
                 textAlign: "center",
               }}
             >
-              #{getBalance().left}
+              {balance.currency}
+              {balance.left}
             </Text>
-            <Text style={{ fontSize: 14, color: "#FFFFFF" }}>.{getBalance().right}</Text>
+            <Text style={{ fontSize: 14, color: "#FFFFFF" }}>
+              .{balance.right}
+            </Text>
           </View>
         </View>
 

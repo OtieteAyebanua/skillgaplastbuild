@@ -1,4 +1,5 @@
 import { getMimeType } from "@/utitlity/image";
+import { formatMoney } from "@/utitlity/string";
 import { create } from "zustand";
 import { API, ApiErrorCodes } from "./api";
 import { Logger } from "./logger";
@@ -173,7 +174,7 @@ export class User {
       });
   };
 
-  static checkTagAvailability = (tag: string) => {
+  static getUserByTag = (tag: string) => {
     return API.GET(`/profile/tag/${tag}`)
       .then(async (response) => {
         if (!response.success) {
@@ -245,5 +246,11 @@ export class User {
         Logger.error(err);
         return false;
       });
+  };
+
+  static getBalance = (): { left: string; right: string; currency: string } => {
+    const { left, right } = formatMoney(SessionUser?.balance ?? 0);
+    const currency = "#";
+    return { left, right, currency };
   };
 }

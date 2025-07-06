@@ -11,7 +11,7 @@ import NetworkImage from "./networkImage";
 
 interface ICategories {
   close: () => void;
-  onSelected: (category: IContestCategory | null) => void;
+  onSelected: (categories: IContestCategory[]) => void;
 }
 
 const Categories = ({ close, onSelected }: ICategories) => {
@@ -67,9 +67,7 @@ const Categories = ({ close, onSelected }: ICategories) => {
   const handleApply = () => {
     // simply close modal if something goes wrong
     if (selectedCategories.length === 0) close();
-
-    const selectedCategory = selectedCategories.pop();
-    onSelected(selectedCategory ?? null);
+    onSelected(selectedCategories);
   };
 
   return (

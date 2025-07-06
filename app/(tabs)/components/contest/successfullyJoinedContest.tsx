@@ -1,23 +1,21 @@
 import { IContest } from "@/services/contest";
 import { Media } from "@/services/media";
 import { SessionUser } from "@/services/user";
-import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import SplashScreen from "../../splashScreen";
 import NetworkImage from "../networkImage";
 
-interface SuccessfullyCreatedContestProps {
+interface SuccessfullyJoinedContestProps {
   contest: IContest;
-  onRoute: () => void
+  onRoute: () => void;
 }
 
-const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
+const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
   contest,
-  onRoute
+  onRoute,
 }) => {
   const theme = SessionUser?.preferences.darkMode;
-
 
   return contest === null ? (
     <SplashScreen />
@@ -87,9 +85,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
             marginBottom: 24, // mb-6
           }}
         >
-          {contest.isOpen
-            ? "Your open contest has been created, you will be notified once an opponent joins."
-            : `Your contest request has been sent to @${contest.opponent?.tag} successfully. You will be notified once they give a response`}
+          You have successfully joined a the contest with @{contest.owner.tag}.
         </Text>
 
         <TouchableOpacity
@@ -110,7 +106,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
             style={{
               color: "#ffffff",
               fontSize: 14,
-              fontWeight: 500
+              fontWeight: 500,
             }}
           >
             My contest
@@ -121,5 +117,4 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
   );
 };
 
-
-export default SuccessfullyCreatedContest;
+export default SuccessfullyJoinedContest;

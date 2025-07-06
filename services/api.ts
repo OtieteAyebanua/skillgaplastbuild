@@ -39,10 +39,11 @@ export class API {
         Authorization: "Bearer " + AuthSession.accessToken(),
         "content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: body && JSON.stringify(body),
     })
       .then(async (response) => {
-        return await response.json();
+        const json = await response.json();
+        return json;
       })
       .catch((err) => {
         Logger.error(err);
@@ -65,6 +66,23 @@ export class API {
       .catch((err) => {
         Logger.error(err);
         return new Promise<any>((resolve, reject) => reject(err));
+      });
+  };
+
+  static DELETE = async (path: string) => {
+    const url = ApiBaseUrl + path;
+    return fetchWithRetry(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + AuthSession.accessToken(),
+      },
+    })
+      .then(async (response) => {
+        return await response.json();
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return null;
       });
   };
 }

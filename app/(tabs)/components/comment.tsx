@@ -1,6 +1,7 @@
+import { IContest } from "@/services/contest";
 import { SessionUser } from "@/services/user";
 import { Ionicons } from "@expo/vector-icons";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FlatList,
   Image,
@@ -11,7 +12,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 const mockMessages = [
@@ -36,12 +37,17 @@ const mockMessages = [
       "Bank (Amount, bank, account no) crypto (Network, address, scan QR code, amount, available balance, fee per $ ) Preview",
   },
 ];
-const Comment = () => {
+
+interface CommentProps {
+  contest: IContest;
+}
+
+const Comment = ({ contest }: CommentProps) => {
   const theme = SessionUser?.preferences.darkMode;
   const [text, setText] = useState("");
   const [data, setData] = useState(mockMessages);
   const flatListRef = useRef(null);
-  
+
   const handleSend = () => {
     const newMessage = {
       id: Date.now().toString(),
@@ -53,63 +59,63 @@ const Comment = () => {
     setText("");
   };
 
-
   const styles = StyleSheet.create({
-  messageWrapper: {
-    marginBottom: 16,
-  },
-  timeText: {
-    alignSelf: "center",
-    fontSize: 11,
-    color: "#888",
-    marginBottom: 6,
-  },
-  chatRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 8,
-  },
-  bubble: {
-    backgroundColor: "#1EA7FD",
-    padding: 10,
-    borderRadius: 15,
-    maxWidth: "85%",
-  },
-  messageText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  inputContainer: {
-position:"absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1C1C1C",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    margin: 10,
-    borderRadius: 999,
-  },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    color: "#ffffff",
-  },
-  sendButton: {
-    backgroundColor: "#1EA7FD",
-    padding: 10,
-    borderRadius: 999,
-    marginLeft: 8,
-  },
-});
-const renderChat = ({ item }: { item: any }) => (
+    messageWrapper: {
+      marginBottom: 16,
+    },
+    timeText: {
+      alignSelf: "center",
+      fontSize: 11,
+      color: "#888",
+      marginBottom: 6,
+    },
+    chatRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+    },
+    avatar: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      marginRight: 8,
+    },
+    bubble: {
+      backgroundColor: "#1EA7FD",
+      padding: 10,
+      borderRadius: 15,
+      maxWidth: "85%",
+    },
+    messageText: {
+      color: "#fff",
+      fontSize: 14,
+    },
+    inputContainer: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#1C1C1C",
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      margin: 10,
+      borderRadius: 999,
+    },
+    input: {
+      flex: 1,
+      fontSize: 14,
+      color: "#ffffff",
+    },
+    sendButton: {
+      backgroundColor: "#1EA7FD",
+      padding: 10,
+      borderRadius: 999,
+      marginLeft: 8,
+    },
+  });
+
+  const renderChat = ({ item }: { item: any }) => (
     <View style={styles.messageWrapper}>
       <Text style={styles.timeText}>{item.time}</Text>
       <View style={styles.chatRow}>
@@ -122,12 +128,12 @@ const renderChat = ({ item }: { item: any }) => (
   );
 
   return (
-    <SafeAreaView style={{flex:1}}>
-   <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 30}
-      style={{ flex: 1, backgroundColor: "#0F0F0F" }}
-    >
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 30}
+        style={{ flex: 1, backgroundColor: "#0F0F0F" }}
+      >
         <View style={{ flex: 1 }}>
           {/* Top Info Bar */}
           <View
@@ -159,12 +165,12 @@ const renderChat = ({ item }: { item: any }) => (
                   color: "#22C55E",
                 }}
               >
-                Online
+                {contest?.owner?.isOnline ? "Online" : "Offline"}
               </Text>
             </View>
 
             <Text style={{ fontSize: 16, color: "#1D9BF0", fontWeight: "700" }}>
-              Table tennis
+              {contest.category.name}
             </Text>
 
             <View
@@ -181,9 +187,10 @@ const renderChat = ({ item }: { item: any }) => (
                   fontWeight: "600",
                   backgroundColor: theme == false ? "#FFFAE5" : "#27292B",
                   color: "#FFDA44",
+                  textTransform: "capitalize",
                 }}
               >
-                Pending
+                {contest.state}
               </Text>
             </View>
           </View>
@@ -213,8 +220,8 @@ const renderChat = ({ item }: { item: any }) => (
               }}
             >
               Contest was created by{" "}
-              <Text style={{ color: "#3B82F6" }}>@qubigs</Text> On 22nd Nov,
-              2023 | 12:24pm
+              <Text style={{ color: "#3B82F6" }}>@{contest?.owner?.tag}</Text>{" "}
+              On {contest.timeStamp}
             </Text>
 
             <View
@@ -232,30 +239,30 @@ const renderChat = ({ item }: { item: any }) => (
           </View>
 
           <FlatList
-        ref={flatListRef}
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={renderChat}
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
+            ref={flatListRef}
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={renderChat}
+            contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+            showsVerticalScrollIndicator={false}
+          />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="Type your thoughts about this contest here"
-          placeholderTextColor="#999999"
-          style={styles.input}
-        />
+          <View style={styles.inputContainer}>
+            <TextInput
+              value={text}
+              onChangeText={setText}
+              placeholder="Type your thoughts about this contest here"
+              placeholderTextColor="#999999"
+              style={styles.input}
+            />
 
-        <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-          <Ionicons name="send" size={18} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-        
+            <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
+              <Ionicons name="send" size={18} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
         </View>
-</KeyboardAvoidingView></SafeAreaView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

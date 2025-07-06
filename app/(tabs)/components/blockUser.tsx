@@ -33,7 +33,7 @@ const BlockUser = ({ userBlocked }: IBlockUser) => {
 
   const debouncedSearch = useCallback(
     useDebounce(() => {
-      User.checkTagAvailability(skillTag).then((response) => {
+      User.getUserByTag(skillTag).then((response) => {
         setError(!response.data);
         setOtherUserRecord(response.data);
       });

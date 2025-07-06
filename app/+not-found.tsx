@@ -1,11 +1,18 @@
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Router } from '@/services/router';
+import { useEffect } from 'react';
 
 export default function NotFoundScreen() {
+
+  const params = useLocalSearchParams();
+
+  useEffect(() => {
+    Router.push("/(tabs)/mainApp")
+  }, [])
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />

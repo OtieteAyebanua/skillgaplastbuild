@@ -1,15 +1,15 @@
 import PageContainer from "@/components/Containers";
-import { IContestCategory } from "@/services/contest";
-import { Logger } from "@/services/logger";
+import { Contest, IContest, IContestCategory } from "@/services/contest";
+import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Modal,
   RefreshControl,
   ScrollView,
@@ -20,258 +20,81 @@ import {
 } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Categories from "../components/categories";
+import { ContestListItem } from "../components/contest/contestListItem";
+import NetworkImage from "../components/networkImage";
 
-const hightestStakeContest = [
-  {
-    id: "dsdasd",
-    image: require("../../../assets/images/image2.png"),
-    title: "   Star Wars (Out Laws)",
-    profileImg: require("../../../assets/images/profile-img.png"),
-    stake: "20",
-    tag: "  @qubigs",
-    isOnline: true,
-  },
-  {
-    id: "dsdasd",
-    image: require("../../../assets/images/image2.png"),
-    title: "   Star Wars (Out Laws)",
-    profileImg: require("../../../assets/images/profile-img.png"),
-    stake: "20",
-    tag: "  @qubigs",
-    isOnline: false,
-  },
-  {
-    id: "dsdasd",
-    image: require("../../../assets/images/image2.png"),
-    title: "   Star Wars (Out Laws)",
-    profileImg: require("../../../assets/images/profile-img.png"),
-    stake: "20",
-    tag: "  @qubigs",
-    isOnline: false,
-  },
-  {
-    id: "dsdasd",
-    image: require("../../../assets/images/image2.png"),
-    title: "   Star Wars (Out Laws)",
-    profileImg: require("../../../assets/images/profile-img.png"),
-    stake: "20",
-    tag: "  @qubigs",
-    isOnline: true,
-  },
-];
-
-const AvailableContest = [
-  {
-    id: "dsdasd",
-    title: "Table tennis",
-    challenger: "@Qubigs",
-    isOnline: false,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "50",
-    timeStamp: "1 mins ago",
-    group: false,
-  },
-  {
-    id: "dsdasd",
-    title: "Table tennis",
-    challenger: "@Qubigs",
-    isOnline: true,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "50",
-    timeStamp: "1 mins ago",
-    group: true,
-  },
-  {
-    id: "dsdasd",
-    title: "Table tennis",
-    challenger: "@Qubigs",
-    isOnline: false,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "50",
-    timeStamp: "1 mins ago",
-    group: false,
-  },
-  {
-    id: "dsdasd",
-    title: "Call of duty",
-    challenger: "@Qubigs",
-    isOnline: true,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "510",
-    timeStamp: "1 mins ago",
-    group: true,
-  },
-
-  {
-    id: "dsdasd",
-    title: "Call of duty",
-    challenger: "@Qubigs",
-    isOnline: true,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "510",
-    timeStamp: "1 mins ago",
-    group: true,
-  },
-  {
-    id: "dsdasd",
-    title: "Call of duty",
-    challenger: "@Qubigs",
-    isOnline: true,
-    challengerImg: require("../../../assets/images/profile-img.png"),
-    stake: "510",
-    timeStamp: "1 mins ago",
-    group: true,
-  },
-];
+let currentPage = 0;
 
 const Arena = () => {
   const [showCategories, setShowCategories] = useState(false);
   const theme = SessionUser?.preferences.darkMode;
-  const [contestID, setContestID] = useState("");
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-useEffect(()=>{
-  fetchData();
-},[])
+  const [contests, setContests] = useState<IContest[]>([]);
+  const [highestContests, setHighestContests] = useState<IContest[]>([]);
+
+  const [id, setId] = useState<number | null>(null);
+  const { categoryId } = useLocalSearchParams();
 
   const onRefresh = () => {
     User.Load();
+    currentPage = 0;
+    setId(null);
   };
 
   useEffect(() => {
     Router.clearHistory();
-  }, []);
+    if (categoryId) {
+      setId(Number(categoryId));
+    }
+  }, [categoryId]);
 
-  const onCategorySelected = (category: IContestCategory | null) => {
+  useEffect(() => {
+    currentPage = 0;
+    fetchData();
+    fetchHighestStakeData();
+  }, [id]);
+
+  const onCategorySelected = (categories: IContestCategory[]) => {
     setShowCategories(false);
-    if (category) {
-      Logger.info(category);
+    if (categories) {
+      currentPage = 0;
+      const category = categories.pop();
+      setId(category?.id ?? null);
     }
   };
 
-  const renderAvailableContest = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: theme == false ? "#FFFFFF" : "#1D1F20",
-        borderRadius: 12,
-        padding: 12,
-        margin: 10,
-        justifyContent: "space-between",
-        marginBottom: 0,
-      }}
-      onPress={() => {
-        setContestID(item.id);
-        Router.push('/components/contest/contestDetails')
-      }}
-    >
-      {/* Left Section (avatars and info) */}
-      <View style={{ flexDirection: "row" }}>
-        {/* Avatar 1 */}
-        <Image
-          source={item.challengerImg}
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 20,
-            position: "relative",
-            left: 5,
-          }}
-        />
-
-        {/* Avatar 2 with "?" */}
-        <View style={{ alignItems: "center" }}>
-          <Image
-            source={
-              item.group
-                ? require("../../../assets/images/group.png")
-                : require("../../../assets/images/unknownAvatar.png")
-            }
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: 20,
-            }}
-          />
-        </View>
-
-        {/* Contest Info and Status */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "baseline",
-            gap: 10,
-            position: "relative",
-            right: 8,
-          }}
-        >
-          <View style={{ marginLeft: 12 }}>
-            <Text
-              style={{
-                color: theme == false ? "#000000" : "#FFFFFF",
-                fontWeight: "600",
-                fontSize: 12,
-              }}
-            >
-              {item.title}
-            </Text>
-            <Text style={{ color: "#A1A1AA", fontSize: 11 }}>
-              {item.group ? "group Contest" : `${item.challenger} vs ?`}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 4,
-              backgroundColor: "#E2FEE6",
-              borderWidth: 1,
-              borderColor: "#78F98D",
-              borderRadius: 39,
-              width: "auto",
-              height: "auto",
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "General Sans Variable",
-                fontStyle: "normal",
-                fontWeight: "500",
-                fontSize: 10,
-                lineHeight: 12,
-                letterSpacing: -0.06,
-                color: "#2A9D0D",
-              }}
-            >
-              {item.isOnline ? "Online" : "Offline"}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Right Section (timestamp + amount) */}
-      <View style={{ alignItems: "flex-end" }}>
-        <Text style={{ color: "#A1A1AA", fontSize: 10 }}>{item.timeStamp}</Text>
-        <Text
-          style={{
-            color: theme == false ? "#000000" : "#FFFFFF",
-            fontWeight: "500",
-            fontSize: 14,
-          }}
-        >
-          ${item.stake}
-        </Text>
-      </View>
-    </TouchableOpacity>
+  const renderContestListItem = ({ item }: { item: IContest }) => (
+    <ContestListItem contest={item} />
   );
 
-  const fetchData = ()=>{
+  const fetchData = async () => {
+    if (loading) return;
 
-  }
+    setLoading(true);
+
+    try {
+      const nextPage = currentPage + 1;
+      const data = await Contest.getOpenContests(nextPage, id);
+      if (nextPage === 1) {
+        setContests(data);
+      } else {
+        setContests((prev) => [...prev, ...data]);
+      }
+
+      if (data.length > 0) {
+        currentPage = nextPage;
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchHighestStakeData = async () => {
+    const data = await Contest.getHighestStakeContests(null);
+    setHighestContests(data);
+  };
 
   return (
     <PageContainer
@@ -329,149 +152,158 @@ useEffect(()=>{
             </Text>
           </TouchableOpacity>
         </View>
-        <View>
-          <Text
-            style={{
-              width: 171,
-              height: 24,
-              fontFamily: "General Sans Variable",
-              fontStyle: "normal",
-              fontWeight: "700", // equivalent to font-semibold
-              fontSize: 16, // text-base
-              lineHeight: 24,
-              letterSpacing: -0.16, // -0.01em * 16px
-              color: theme == false ? "#020B12" : "#ffffff",
-              flex: 0,
-              flexGrow: 0,
-              paddingLeft: 10,
-              marginBottom: 10,
-              marginTop: 15,
-            }}
-          >
-            Highest Stake Contest
-          </Text>
-        </View>
-        <View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {hightestStakeContest.map((item, index) => (
-              <TouchableOpacity
-                key={index}
+        {highestContests.length > 0 && (
+          <>
+            <View>
+              <Text
                 style={{
-                  backgroundColor: theme == false ? "#ffffff" : "#27292B",
-                  marginRight: 5,
-                  padding: 4,
-                  width: 130,
-                  borderRadius: 3,
-                }}
-                onPress={() => {
-                  setContestID(item.id);
-                   Router.push('/components/contest/contestDetails')
+                  width: 171,
+                  height: 24,
+                  fontFamily: "General Sans Variable",
+                  fontStyle: "normal",
+                  fontWeight: "700", // equivalent to font-semibold
+                  fontSize: 16, // text-base
+                  lineHeight: 24,
+                  letterSpacing: -0.16, // -0.01em * 16px
+                  color: theme == false ? "#020B12" : "#ffffff",
+                  flex: 0,
+                  flexGrow: 0,
+                  paddingLeft: 10,
+                  marginBottom: 10,
+                  marginTop: 15,
                 }}
               >
-                <Image
-                  source={item.image}
-                  resizeMode="cover"
-                  style={{
-                    width: "100%",
-                    height: 165,
-                    borderRadius: 5, // rounded-lg
-                  }}
-                />
-
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontWeight: "600",
-                    marginTop: 1,
-                    color: theme == false ? "#000000" : "#ffffff",
-                  }}
-                >
-                  {item.title}
-                </Text>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginTop: 2,
-                  }}
-                >
-                  {/* Avatar and Username */}
-                  <View
+                Highest Stake Contest
+              </Text>
+            </View>
+            <View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {highestContests.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 2,
+                      backgroundColor: theme == false ? "#ffffff" : "#27292B",
+                      marginRight: 5,
+                      padding: 4,
+                      width: 130,
+                      borderRadius: 3,
+                    }}
+                    onPress={() => {
+                      Router.push("/components/contest/contestDetails");
                     }}
                   >
-                    <Image
-                      source={item.profileImg}
+                    <NetworkImage
+                      loadingUri={require("../../../assets/images/icon.png")}
+                      uri={Media.GetCategoryImageUris(item.id)?.original}
                       style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 9999,
+                        width: "100%",
+                        height: 165,
+                        borderRadius: 5, // rounded-lg
                       }}
                     />
-                    <View style={{ flexDirection: "column" }}>
-                      <Text
-                        style={{
-                          fontSize: 12, // text-xs
-                          color: theme == false ? "#000000" : "#ffffff",
-                        }}
-                      >
-                        {item.tag}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          marginTop: 0,
-                          color: theme == false ? "#000000" : "#ffffff",
-                        }}
-                      >
-                        Stake:{" "}
-                        <Text
-                          style={{
-                            color: "#8F8F8F",
-                            fontWeight: "600",
-                          }}
-                        >
-                          ${item.stake}
-                        </Text>
-                      </Text>
-                    </View>
-                  </View>
 
-                  {/* Online/Offline Badge */}
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      paddingHorizontal: 4,
-                      backgroundColor: "#E2FEE6",
-                      borderWidth: 1,
-                      borderColor: "#78F98D",
-                      borderRadius: 39,
-                      height: "auto",
-                      width: "auto",
-                    }}
-                  >
                     <Text
                       style={{
-                        fontFamily: "General Sans Variable",
-                        fontSize: 9,
-                        color: "#2A9D0D",
+                        fontSize: 12,
+                        fontWeight: "600",
+                        marginTop: 1,
+                        color: theme === false ? "#000000" : "#ffffff",
                       }}
                     >
-                      {item.isOnline ? "Online" : "Offline"}
+                      {item.category.name}
                     </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginTop: 2,
+                      }}
+                    >
+                      {/* Avatar and Username */}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 2,
+                        }}
+                      >
+                        <NetworkImage
+                          uri={
+                            Media.GetProfileImageUris(item.owner.id ?? 0).small
+                          }
+                          loadingUri={require("../../../assets/images/unknownAvatar.png")}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            position: "relative",
+                            left: 5,
+                          }}
+                        />
+
+                        <View style={{ flexDirection: "column" }}>
+                          <Text
+                            style={{
+                              fontSize: 12, // text-xs
+                              color: theme === false ? "#000000" : "#ffffff",
+                            }}
+                          >
+                            @{item.owner.tag}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              marginTop: 0,
+                              color: theme === false ? "#000000" : "#ffffff",
+                            }}
+                          >
+                            Stake:{" "}
+                            <Text
+                              style={{
+                                color: "#8F8F8F",
+                                fontWeight: "600",
+                              }}
+                            >
+                              ${item.stake}
+                            </Text>
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Online/Offline Badge */}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          paddingHorizontal: 4,
+                          backgroundColor: "#E2FEE6",
+                          borderWidth: 1,
+                          borderColor: "#78F98D",
+                          borderRadius: 39,
+                          height: "auto",
+                          width: "auto",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "General Sans Variable",
+                            fontSize: 9,
+                            color: "#2A9D0D",
+                          }}
+                        >
+                          {item.owner.isOnline ? "Online" : "Offline"}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </>
+        )}
         <View>
           <Text
             style={{
@@ -483,7 +315,7 @@ useEffect(()=>{
               fontSize: 16, // text-base
               lineHeight: 24,
               letterSpacing: -0.16, // -0.01em * 16px
-              color: theme == false ? "#020B12" : "#ffffff",
+              color: theme === false ? "#020B12" : "#ffffff",
               flex: 0,
               flexGrow: 0,
               paddingLeft: 10,
@@ -496,14 +328,16 @@ useEffect(()=>{
         </View>
         <View style={{ paddingBottom: 15 }}>
           <FlatList
-            data={AvailableContest}
+            data={contests}
             keyExtractor={(item, index) => `${item.id}-${index}`}
-            renderItem={renderAvailableContest}
-            onEndReached={fetchData}
+            renderItem={renderContestListItem}
+            //onEndReached={fetchData}
             onEndReachedThreshold={0.3}
             ListFooterComponent={
               loading ? (
                 <ActivityIndicator size={"large"} color={"#aaa"} />
+              ) : contests.length === 0 ? (
+                <Text>No Data</Text>
               ) : null
             }
             contentContainerStyle={{

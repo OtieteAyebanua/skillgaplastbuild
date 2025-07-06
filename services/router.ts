@@ -30,5 +30,10 @@ export class Router {
     routesHistory.length = 0;
   };
 
+  static replaceHistory = (...routes: string[]) => {
+    routesHistory.length = 0;
+    routes.forEach((route) => routesHistory.push(route));
+  };
+
   currentRoute: any = () => activeRoute;
 }

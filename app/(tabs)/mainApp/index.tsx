@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import FloatingWallet from "../components/floatingWallet";
 import NetworkImage from "../components/networkImage";
@@ -18,10 +18,11 @@ import TrendingCategory from "../components/trendingCategories";
 
 export default function HomePage() {
   const [refreshing, setRefreshing] = useState(false);
-  const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
+  const [refreshToken, setRefreshToken] = useState(false);
 
   const onRefresh = () => {
     User.Load();
+    setRefreshToken(!refreshToken);
   };
 
   const theme = SessionUser?.preferences.darkMode;
@@ -37,7 +38,6 @@ export default function HomePage() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-              
       >
         <View
           style={{
@@ -110,7 +110,7 @@ export default function HomePage() {
                 style={{
                   fontWeight: "600",
                   color: theme == false ? "#000000" : "#ffffff",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
               >
                 {SessionUser?.fullName}
@@ -118,17 +118,17 @@ export default function HomePage() {
             </View>
           </View>
 
-          <FloatingWallet />
-          <TrendingCategory />
-          <ShowContest />
+          <FloatingWallet refreshing={refreshToken}/>
+          <TrendingCategory refreshing={refreshToken} />
+          <ShowContest refreshing={refreshToken}/>
         </View>
       </ScrollView>
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={()=> Router.push('/(tabs)/components/contest/createContest')}
-        >
-          <Text style={styles.plus}>+</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => Router.push("/(tabs)/components/contest/createContest")}
+      >
+        <Text style={styles.plus}>+</Text>
+      </TouchableOpacity>
     </PageContainer>
   );
 }

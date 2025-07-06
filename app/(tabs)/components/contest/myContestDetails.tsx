@@ -1,26 +1,234 @@
 import PageContainer from "@/components/Containers";
+import { Contest, IContest } from "@/services/contest";
+import { Media } from "@/services/media";
+import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
-import { useState } from "react";
+import { formatMoney } from "@/utitlity/string";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import {
-    Image,
-    ImageBackground,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  Linking,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import WarningModal from "../modals";
+import NetworkImage from "../networkImage";
+import NotEnoughCash from "../notEnoughCash";
+import SuccessfullyJoinedContest from "./successfullyJoinedContest";
 import WhoWonModal from "./whowonModal";
+
+type ContestStage = "View" | "OwnerEdit" | "Ongoing" | "Join";
 
 const MyContestDetails = () => {
   const theme = SessionUser?.preferences.darkMode;
+
   const [showWarningModal, setShowWarningModal] = useState(false);
-  const [didICreateContest, setDidICreateContest] = useState(true);
-  const [canEdit, setCanEdit] = useState(true);
-  const [showDisputeModal,setShowDisputeModal] = useState(false)
-  const [selectWhoWon,setSelectWhoWon] = useState(false);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [selectWhoWon, setSelectWhoWon] = useState(false);
+  const [showNoMoney, setShowNoMoney] = useState(false);
+  const [showJoinedMessage, setShowJoinedMessage] = useState(false);
+
+  const [contest, setContest] = useState<IContest | null>(null);
+  const [contestStage, setContestStage] = useState<ContestStage>("Join");
+
+  const { contestId } = useLocalSearchParams();
+
+  useEffect(() => {
+    setShowNoMoney(false);
+    setSelectWhoWon(false);
+    setShowDisputeModal(false);
+    setShowWarningModal(false);
+    setShowJoinedMessage(false);
+
+    if (contestId) {
+      Contest.getContest(Number(contestId))
+        .then((response) => {
+          if (response) {
+            setContest(response);
+            setStage(response);
+          }
+        })
+        .catch(() => {
+          Router.back();
+        });
+    }
+  }, [contestId]);
+
+  const setStage = (contest: IContest) => {
+    let stage: ContestStage = "View";
+
+    switch (contest.state) {
+      case "pending":
+        stage =
+          contest.ownerId === SessionUser?.id
+            ? "OwnerEdit"
+            : contest.opponent?.id === SessionUser?.id || contest.isOpen
+            ? "Join"
+            : stage;
+        break;
+
+      case "ongoing":
+        stage = [contest.ownerId, contest.opponent?.id ?? 0].includes(
+          SessionUser?.id ?? -1
+        )
+          ? "Ongoing"
+          : stage;
+    }
+
+    setContestStage(stage);
+  };
+
+  const menuView = () => {
+    switch (contestStage) {
+      case "View":
+        return <></>;
+
+      case "OwnerEdit":
+        return (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={{
+                width: "80%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "#1D9BF0",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+              }}
+              onPress={() => setShowWarningModal(true)}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        );
+
+      case "Ongoing":
+        return (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => setShowDisputeModal(true)}
+              style={{
+                width: "30%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+                borderWidth: 1,
+                borderColor: "#1D9BF0",
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Dispute</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setSelectWhoWon(true)}
+              style={{
+                width: "50%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "#1D9BF0",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Who won?</Text>
+            </TouchableOpacity>
+          </View>
+        );
+
+      case "Join":
+        return (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={joinContest}
+              style={{
+                width: "80%",
+                height: hp("6%"),
+                borderRadius: 100,
+                padding: 10,
+                backgroundColor: "#1D9BF0",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: "auto",
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>Join</Text>
+            </TouchableOpacity>
+          </View>
+        );
+    }
+  };
+
+  const navigateBack = () => {
+    Router.back();
+  };
+
+  const deleteContest = () => {
+    if (contestId) {
+      Contest.deleteContest(Number(contestId))
+        .then((response) => {
+          if (response) {
+            Router.back();
+          }
+        })
+        .finally(() => {
+          setShowWarningModal(false);
+        });
+    }
+  };
+
+  const joinContest = () => {
+    if (contest) {
+      if (contest.stake > (SessionUser?.balance ?? 0)) {
+        setShowNoMoney(true);
+      } else {
+        Contest.joinContest(Number(contestId)).then((response) => {
+          if (response) {
+            setContest({ ...contest, state: "ongoing", opponent: SessionUser });
+            setShowJoinedMessage(true);
+          }
+        });
+      }
+    }
+  };
+
+  const disputeContest = () => {
+    if (contest) {
+      Contest.disputeContest(Number(contestId)).then((response) => {
+        if (response) {
+          setContest({ ...contest, state: "dispute" });
+          Router.back()
+        }
+      });
+    }
+  };
+
+  if (showJoinedMessage && contest) {
+    return (
+      <SuccessfullyJoinedContest onRoute={navigateBack} contest={contest} />
+    );
+  }
+
   return (
     <PageContainer
       paddingBottom="0"
@@ -30,7 +238,7 @@ const MyContestDetails = () => {
         <View style={{ justifyContent: "center" }}>
           <View style={{ left: 8 }}>
             <TouchableOpacity
-              onPress={() => close()}
+              onPress={navigateBack}
               style={{
                 marginBottom: 12,
                 width: 30,
@@ -48,10 +256,11 @@ const MyContestDetails = () => {
         </View>
 
         <View>
-          <ImageBackground
-            source={require("../../../../assets/images/profile-bg.png")}
+          <NetworkImage
+            loadingUri={require("../../../../assets/images/icon.png")}
+            uri={Media.GetCategoryImageUris(contest?.category.id ?? 0).original}
             style={{ height: 140, width: "100%" }}
-          ></ImageBackground>
+          />
         </View>
 
         <View
@@ -94,12 +303,12 @@ const MyContestDetails = () => {
                   color: "#22C55E",
                 }}
               >
-                Online
+                {contest?.owner.isOnline ? "Online" : "Offline"}
               </Text>
             </View>
 
             <Text style={{ fontSize: 16, color: "#1D9BF0", fontWeight: "700" }}>
-              Table tennis
+              {contest?.category.name}
             </Text>
 
             <View
@@ -116,9 +325,10 @@ const MyContestDetails = () => {
                   fontWeight: "600",
                   backgroundColor: theme == false ? "#FFFAE5" : "#27292B",
                   color: "#FFDA44",
+                  textTransform: "capitalize",
                 }}
               >
-                Pending
+                {`${contest?.state}`}
               </Text>
             </View>
           </View>
@@ -144,21 +354,26 @@ const MyContestDetails = () => {
             >
               <View
                 style={{
-                  backgroundColor: "#FFF1C6",
                   padding: 8,
                   borderRadius: 9999,
                 }}
               >
-                <Image
-                  source={require("../../../../assets/images/profile-bg.png")}
-                  style={{ width: 40, height: 40, borderRadius: 9999 }}
-                  resizeMode="cover"
+                <NetworkImage
+                  loadingUri={require("../../../../assets/images/profile-bg.png")}
+                  uri={
+                    Media.GetProfileImageUris(contest?.owner.id ?? 0).original
+                  }
+                  style={{ width: 50, height: 50, borderRadius: 9999 }}
                 />
               </View>
               <Text
-                style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
+                style={{
+                  color: "#3B82F6",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
               >
-                @qubigs
+                @{contest?.owner.tag}
               </Text>
               <View
                 style={{
@@ -175,7 +390,8 @@ const MyContestDetails = () => {
                     fontWeight: "500",
                   }}
                 >
-                  $500
+                  #{formatMoney(contest?.stake ?? 0).left}.
+                  {formatMoney(contest?.stake ?? 0).right}
                 </Text>
               </View>
             </View>
@@ -187,21 +403,29 @@ const MyContestDetails = () => {
 
             <View
               style={{
-                backgroundColor: theme == false ? "#ffffff" : "#27292B",
+                backgroundColor:
+                  theme == false ? "#ffffff" : "#27SessionUser292B",
                 paddingHorizontal: 30,
                 paddingVertical: 15,
                 borderRadius: 10,
                 alignItems: "center",
               }}
             >
-              <Image
-                source={require("../../../../assets/images/unknownAvatar.png")}
+              <NetworkImage
+                loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+                uri={
+                  Media.GetProfileImageUris(contest?.opponent?.id ?? 0).original
+                }
                 style={{ width: 50, height: 50, borderRadius: 9999 }}
               />
               <Text
-                style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
+                style={{
+                  color: "#3B82F6",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
               >
-                ?
+                {contest?.opponent ? `@${contest.opponent.tag}` : "?"}
               </Text>
               <View
                 style={{
@@ -218,7 +442,8 @@ const MyContestDetails = () => {
                     fontWeight: "500",
                   }}
                 >
-                  $500
+                  #{formatMoney(contest?.stake ?? 0).left}.
+                  {formatMoney(contest?.stake ?? 0).right}
                 </Text>
               </View>
             </View>
@@ -254,8 +479,7 @@ const MyContestDetails = () => {
               fontFamily: "General Sans Variable",
             }}
           >
-            Bank (Amount, bank, account no) crypto (Network, address, scan QR
-            code, amount, available balance, fee per $ ) Preview
+            {contest?.description}
           </Text>
         </View>
 
@@ -282,9 +506,9 @@ const MyContestDetails = () => {
           </Text>
           <View style={{ marginTop: 12 }}>
             {[
-              { label: "Created by:", value: "@qubigs" },
-              { label: "Date & Time:", value: "13 Nov, 2023 | 12:42am" },
-              { label: "Contest ID:", value: "sdsd-dfbkq-bjhede-jjahc-hdj" },
+              { label: "Created by:", value: `@${contest?.owner.tag}` },
+              { label: "Date & Time:", value: `${contest?.timeStamp}` },
+              { label: "Contest ID:", value: `${contest?.id}` },
               { label: "SkillGap Fee:", value: "3.0%" },
             ].map((item, index) => (
               <View
@@ -342,115 +566,49 @@ const MyContestDetails = () => {
           />
           <Text style={{ fontSize: 10, color: "#EA580C", flexShrink: 1 }}>
             We advise you keep all records and evidence during this contest for
-            dispute resolution
+            dispute resolution{" "}
             <Text
-              style={{ fontWeight: "bold", textDecorationLine: "underline" }}
-              onPress={() => {}}
+              style={{
+                fontWeight: "bold",
+                textDecorationLine: "underline",
+              }}
+              onPress={() => {
+                Linking.openURL("https://skillgap.co");
+              }}
             >
               {" "}
               Learn More
             </Text>
           </Text>
         </View>
-        {didICreateContest ? (
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              onPress={() => setShowWarningModal(true)}
-              style={{
-                width: "43%",
-                height: hp("6%"),
-                borderRadius: 100,
-                padding: 10,
-                backgroundColor: "transparent",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                marginHorizontal: "auto",
-                marginBottom: 10,
-                borderWidth: 1,
-                borderColor: "#1D9BF0",
-              }}
-            >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Delete</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              disabled={!canEdit}
-              style={{
-                width: "43%",
-                height: hp("6%"),
-                borderRadius: 100,
-                padding: 10,
-                backgroundColor: canEdit ?  "#1D9BF0" : "#8F8F8F",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                marginHorizontal: "auto",
-                marginBottom: 10,
-              }}
-            >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-        ) :<View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              onPress={() => setShowDisputeModal(true)}
-              style={{
-                width: "30%",
-                height: hp("6%"),
-                borderRadius: 100,
-                padding: 10,
-                backgroundColor: "transparent",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                marginHorizontal: "auto",
-                marginBottom: 10,
-                borderWidth: 1,
-                borderColor: "#1D9BF0",
-              }}
-            >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Dispute</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-            onPress={()=>setSelectWhoWon(true)}
-              style={{
-                width: "50%",
-                height: hp("6%"),
-                borderRadius: 100,
-                padding: 10,
-                backgroundColor: "#1D9BF0" ,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                marginHorizontal: "auto",
-                marginBottom: 10,
-              }}
-            >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Who won?</Text>
-            </TouchableOpacity>
-          </View>}
+        {menuView()}
       </ScrollView>
+
       {showWarningModal ? (
         <WarningModal
-          proceed={() => {}}
+          proceed={deleteContest}
           cancel={() => {
             setShowWarningModal(false);
           }}
           text="Are you sure you want to delete this contest?"
         />
       ) : null}
+
       {showDisputeModal ? (
         <WarningModal
-          proceed={() => {}}
+          proceed={disputeContest}
           cancel={() => {
             setShowDisputeModal(false);
           }}
           text="Are you sure you want to dispute this contest?"
         />
       ) : null}
-      {selectWhoWon ? <WhoWonModal done={()=>{}} close={()=> setSelectWhoWon(false)}/> : null}
+
+      {showNoMoney && <NotEnoughCash close={() => setShowNoMoney(false)} />}
+
+      {selectWhoWon ? (
+        <WhoWonModal done={() => {}} close={() => setSelectWhoWon(false)} />
+      ) : null}
     </PageContainer>
   );
 };

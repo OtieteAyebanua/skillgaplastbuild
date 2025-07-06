@@ -1,12 +1,12 @@
 import { SessionUser } from "@/services/user";
 import React, { useState } from "react";
 import {
-    Image,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 enum TriState {
   True = "true",
@@ -18,6 +18,7 @@ interface IWhoWonModal{
     close: ()=>void;
 }
 const WhoWonModal = ({done,close}: IWhoWonModal) => {
+
   const [agreed, setAgreed] = useState(false);
   const [selectedUser, SetSelectedUser] = useState<TriState>(TriState.None);
   const theme = SessionUser?.preferences.darkMode;
