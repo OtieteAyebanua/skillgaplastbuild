@@ -1,3 +1,4 @@
+import { Router } from "@/services/router";
 import { User } from "@/services/user";
 import {
   Image,
@@ -123,7 +124,7 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
               flexDirection: "row",
               alignItems: "center",
             }}
-            // onPress={() => router.push("/deposit")}
+            onPress={() => Router.push("/(tabs)/components/wallet/deposit")}
           >
             <Text
               style={{

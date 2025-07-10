@@ -205,7 +205,6 @@ const CreateContest = () => {
             </Text>
           </View>
           <View>
-            This screen
             <View style={styles.container}>
               <TouchableOpacity
                 onPress={() => setIsOffline(false)}
