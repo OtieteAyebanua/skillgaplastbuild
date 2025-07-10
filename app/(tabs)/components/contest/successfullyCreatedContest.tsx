@@ -9,15 +9,14 @@ import NetworkImage from "../networkImage";
 
 interface SuccessfullyCreatedContestProps {
   contest: IContest;
-  onRoute: () => void
+  onRoute: () => void;
 }
 
 const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
   contest,
-  onRoute
+  onRoute,
 }) => {
   const theme = SessionUser?.preferences.darkMode;
-
 
   return contest === null ? (
     <SplashScreen />
@@ -39,7 +38,6 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
           paddingHorizontal: 24, // px-6
           paddingVertical: 40, // py-10 = 10 * 4
           width: "100%",
-          maxWidth: 384, // max-w-md = 384px
           alignItems: "center",
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
@@ -51,23 +49,12 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
       >
         <NetworkImage
           uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
-          loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+          loadingUri={require("../../../../assets/images/Group12.png")}
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            position: "relative",
-            left: 5,
+            width: 100,
+            height: 60,
           }}
         />
-
-        <View style={{ alignItems: "center" }}>
-          <NetworkImage
-            uri={Media.GetProfileImageUris(contest.opponent?.id ?? 0).small}
-            loadingUri={require("../../../../assets/images/unknownAvatar.png")}
-            style={{ width: 40, height: 40, borderRadius: 20 }}
-          />
-        </View>
         <Text
           style={{
             color: "#ffffff",
@@ -110,7 +97,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
             style={{
               color: "#ffffff",
               fontSize: 14,
-              fontWeight: 500
+              fontWeight: 500,
             }}
           >
             My contest
@@ -120,6 +107,5 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
     </View>
   );
 };
-
 
 export default SuccessfullyCreatedContest;

@@ -2,8 +2,8 @@ import { AuthSession } from "@/services/authSession";
 import { emailValidation } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
-import { useFonts } from "expo-font";
-import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -26,20 +26,28 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const [fontsLoaded] = useFonts({
-    "GeneralSans-Variable": require("../../../assets/fonts/GeneralSans-Medium.ttf"),
-  });
-
   const routeTo = (url: any) => {
     Router.push(url);
   };
+
+    useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+      setPassword("");
+    }, [])
+  );
+
 
   const handleLogin = async () => {
     setIsLoading(true);
     const success = await AuthSession.login(email, password);
     if (success) {
+      setEmail("");
+      setPassword("");
       Router.push("/(tabs)/mainApp");
     } else {
+      setEmail("");
+      setPassword("");
       // TODO:: REPLACE IT Toast Message to User
       Logger.error("Login failed invalid email or password");
     }

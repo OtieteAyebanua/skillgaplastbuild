@@ -177,19 +177,25 @@ const Arena = () => {
               </Text>
             </View>
             <View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ScrollView
+                horizontal
+                style={{ marginLeft: 10 }}
+                showsHorizontalScrollIndicator={false}
+              >
                 {highestContests.map((item, index) => (
                   <TouchableOpacity
                     key={index}
                     style={{
                       backgroundColor: theme == false ? "#ffffff" : "#27292B",
                       marginRight: 5,
-                      padding: 4,
-                      width: 130,
+                      padding: 2,
+                      width: 160,
                       borderRadius: 3,
                     }}
                     onPress={() => {
-                      Router.push("/components/contest/contestDetails");
+                      Router.push(
+                        "/(tabs)/components/contest/myContestDetails?contestId=${contest.id}"
+                      );
                     }}
                   >
                     <NetworkImage
@@ -225,8 +231,9 @@ const Arena = () => {
                       <View
                         style={{
                           flexDirection: "row",
-                          alignItems: "center",
-                          gap: 2,
+                          alignItems: "flex-start",
+                          gap: 10,
+                          width: "50%",
                         }}
                       >
                         <NetworkImage
@@ -238,8 +245,6 @@ const Arena = () => {
                             width: 40,
                             height: 40,
                             borderRadius: 20,
-                            position: "relative",
-                            left: 5,
                           }}
                         />
 

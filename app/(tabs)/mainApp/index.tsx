@@ -136,7 +136,7 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   floatingButton: {
     position: "absolute",
-    bottom: 30,
+    bottom: 10,
     right: 30,
     backgroundColor: "#2196F3", // blue color
     width: 64,

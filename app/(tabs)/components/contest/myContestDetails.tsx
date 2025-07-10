@@ -106,7 +106,7 @@ const MyContestDetails = () => {
               }}
               onPress={() => setShowWarningModal(true)}
             >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Delete</Text>
+              <Text style={{ color: theme == false ? "#000" : "#ffffff", fontSize: 16 }}>Delete</Text>
             </TouchableOpacity>
           </View>
         );
@@ -131,7 +131,7 @@ const MyContestDetails = () => {
                 borderColor: "#1D9BF0",
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Dispute</Text>
+              <Text style={{ color: theme == false ? "#000" : "#ffffff", fontSize: 16 }}>Dispute</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -426,21 +426,28 @@ const MyContestDetails = () => {
 
             <View
               style={{
-                backgroundColor:
-                  theme == false ? "#ffffff" : "#27SessionUser292B",
+                backgroundColor: theme == false ? "#ffffff" : "#27292B",
                 paddingHorizontal: 30,
                 paddingVertical: 15,
                 borderRadius: 10,
                 alignItems: "center",
               }}
             >
-              <NetworkImage
-                loadingUri={require("../../../../assets/images/unknownAvatar.png")}
-                uri={
-                  Media.GetProfileImageUris(contest?.opponent?.id ?? 0).original
-                }
-                style={{ width: 50, height: 50, borderRadius: 9999 }}
-              />
+              <View
+                style={{
+                  padding: 8,
+                  borderRadius: 9999,
+                }}
+              >
+                <NetworkImage
+                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+                  uri={
+                    Media.GetProfileImageUris(contest?.opponent?.id ?? 0)
+                      .original
+                  }
+                  style={{ width: 50, height: 50, borderRadius: 9999 }}
+                />
+              </View>
               <Text
                 style={{
                   color: "#3B82F6",
