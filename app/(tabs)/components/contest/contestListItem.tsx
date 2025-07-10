@@ -27,13 +27,13 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
       ? "Disputed"
       : contest.state === "ongoing"
       ? "ongoing"
-      : contest.winnedId === SessionUser?.id
+      : contest.winnerId === SessionUser?.id
       ? "Won"
       : "Lost";
 
   const stateColor = ["pending", "disputed", "ongoing"].includes(contest.state)
     ? "#A1A1AA"
-    : contest.winnedId === SessionUser?.id
+    : contest.winnerId === SessionUser?.id
     ? "#2A9D0D"
     : "#FB5631";
 

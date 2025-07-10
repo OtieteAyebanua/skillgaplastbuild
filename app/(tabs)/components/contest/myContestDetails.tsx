@@ -216,8 +216,31 @@ const MyContestDetails = () => {
     if (contest) {
       Contest.disputeContest(Number(contestId)).then((response) => {
         if (response) {
-          setContest({ ...contest, state: "dispute" });
-          Router.back()
+          setContest({ ...contest, state: "disputed" });
+          Router.back();
+        }
+      });
+    }
+  };
+
+  const selectWinner = (userId: number) => {
+    if (contest) {
+      Contest.selectContestWinner(contest.id, userId).then((response) => {
+        if (response) {
+          const winnerId = response.winnerId;
+          // selection has been made
+          if (winnerId) {
+            if (winnerId === SessionUser?.id) {
+              // TODO: display contest won component
+            } else {
+              // TODO: display contest lost component
+            }
+          } else {
+            // TODO: waiting for final decision component
+          }
+
+          // TODO : remove this
+          Router.back();
         }
       });
     }
@@ -607,7 +630,11 @@ const MyContestDetails = () => {
       {showNoMoney && <NotEnoughCash close={() => setShowNoMoney(false)} />}
 
       {selectWhoWon ? (
-        <WhoWonModal done={() => {}} close={() => setSelectWhoWon(false)} />
+        <WhoWonModal
+          contest={contest}
+          confirmed={selectWinner}
+          close={() => setSelectWhoWon(false)}
+        />
       ) : null}
     </PageContainer>
   );

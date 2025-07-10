@@ -27,7 +27,7 @@ export interface IContest {
   isOffline: boolean;
   stake: number;
   state: ContestState;
-  winnedId: number | null;
+  winnerId: number | null;
   category: {
     id: number;
     name: string;
@@ -288,7 +288,7 @@ export class Contest {
     return API.POST(url, {})
       .then(async (response) => {
         if (response.success && response.data) {
-          return response.data as boolean;
+          return response.data
         }
         return false;
       })

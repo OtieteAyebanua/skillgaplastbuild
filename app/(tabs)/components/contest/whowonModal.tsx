@@ -1,3 +1,5 @@
+import { IContest } from "@/services/contest";
+import { Media } from "@/services/media";
 import { SessionUser } from "@/services/user";
 import React, { useState } from "react";
 import {
@@ -6,21 +8,16 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-enum TriState {
-  True = "true",
-  False = "false",
-  None = "none",
+import NetworkImage from "../networkImage";
+interface IWhoWonModal {
+  confirmed: (userId: number) => void;
+  close: () => void;
+  contest: IContest | null;
 }
-interface IWhoWonModal{
-    done: ()=> void;
-    close: ()=>void;
-}
-const WhoWonModal = ({done,close}: IWhoWonModal) => {
-
-  const [agreed, setAgreed] = useState(false);
-  const [selectedUser, SetSelectedUser] = useState<TriState>(TriState.None);
+const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
+  const [selectedUser, setSelectedUser] = useState<number | null>();
   const theme = SessionUser?.preferences.darkMode;
   const ModalStyles = StyleSheet.create({
     modalContainer: {
@@ -91,9 +88,18 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
     },
   });
 
+  const handleConfirm = () => {
+    if (!selectedUser) return;
+
+    confirmed(selectedUser);
+  };
+
   return (
     <Modal animationType="fade" transparent={true}>
-      <TouchableOpacity onPress={()=>close()} style={ModalStyles.modalContainer}>
+      <TouchableOpacity
+        onPress={() => close()}
+        style={ModalStyles.modalContainer}
+      >
         <View style={ModalStyles.modalContent}>
           <Text
             style={{
@@ -128,9 +134,12 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
             }}
           >
             <TouchableOpacity
-              onPress={() => SetSelectedUser(TriState.True)}
+              onPress={() => setSelectedUser(contest?.ownerId)}
               style={{
-                backgroundColor: selectedUser === "true" ? "#1D9BF033" : "transparent",
+                backgroundColor:
+                  selectedUser === contest?.ownerId
+                    ? "#1D9BF033"
+                    : "transparent",
                 paddingHorizontal: 25,
                 paddingVertical: 20,
                 borderRadius: 7,
@@ -146,16 +155,18 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
                   borderRadius: 9999,
                 }}
               >
-                <Image
-                  source={require("../../../../assets/images/profile-bg.png")}
+                <NetworkImage
+                  uri={
+                    Media.GetProfileImageUris(contest?.owner?.id ?? 0).original
+                  }
+                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
                   style={{ width: 50, height: 50, borderRadius: 9999 }}
-                  resizeMode="cover"
                 />
               </View>
               <Text
                 style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
               >
-                @qubigs
+                @{contest?.owner?.tag}
               </Text>
             </TouchableOpacity>
             <Image
@@ -163,9 +174,12 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
               style={{ position: "relative", bottom: 15 }}
             />
             <TouchableOpacity
-              onPress={() => SetSelectedUser(TriState.False)}
+              onPress={() => setSelectedUser(contest?.opponent?.id)}
               style={{
-                backgroundColor: selectedUser === "false" ? "#1D9BF033" : "transparent",
+                backgroundColor:
+                  selectedUser === contest?.opponent?.id
+                    ? "#1D9BF033"
+                    : "transparent",
                 paddingHorizontal: 25,
                 paddingVertical: 20,
                 borderRadius: 7,
@@ -181,16 +195,19 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
                   borderRadius: 9999,
                 }}
               >
-                <Image
-                  source={require("../../../../assets/images/profile-bg.png")}
+                <NetworkImage
+                  uri={
+                    Media.GetProfileImageUris(contest?.opponent?.id ?? 0)
+                      .original
+                  }
+                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
                   style={{ width: 50, height: 50, borderRadius: 9999 }}
-                  resizeMode="cover"
                 />
               </View>
               <Text
                 style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
               >
-                @qubigs
+                @{contest?.opponent?.tag}
               </Text>
             </TouchableOpacity>
           </View>
@@ -205,9 +222,7 @@ const WhoWonModal = ({done,close}: IWhoWonModal) => {
               width: "50%",
               marginTop: 20,
             }}
-            onPress={() => {
-              // handle winner confirmation
-            }}
+            onPress={handleConfirm}
           >
             <Text
               style={{

@@ -122,13 +122,12 @@ const CreateContest = () => {
 
   const isFormValid = () => {
     return (
-      (!isLoading && // not valid while loading
-        categoryId !== null && // category is needed
-        stake > 0 && // stake must be greater than 0
-        stake <= (SessionUser?.balance ?? 0) &&
-        characterValue.length > 0 &&
-        isChallengeOpen) ||
-      opponentRecord
+      !isLoading && // not valid while loading
+      categoryId !== null && // category is needed
+      stake > 0 && // stake must be greater than 0
+      stake <= (SessionUser?.balance ?? 0) &&
+      characterValue.length > 0 &&
+      (isChallengeOpen || opponentRecord)
     );
   };
 
@@ -205,7 +204,8 @@ const CreateContest = () => {
               Create Contest
             </Text>
           </View>
-          <View>This screen
+          <View>
+            This screen
             <View style={styles.container}>
               <TouchableOpacity
                 onPress={() => setIsOffline(false)}
