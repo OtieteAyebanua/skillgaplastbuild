@@ -177,14 +177,25 @@ export class User {
   static getUserByTag = (tag: string) => {
     return API.GET(`/profile/tag/${tag}`)
       .then(async (response) => {
-        if (!response.success) {
-          return false;
+        if (response.success && response.data) {
+          return response.data as IOtherUserRecord;
         }
-        return response;
+        return null;
       })
       .catch((e) => {
         Logger.error(e);
-        return;
+        return null;
+      });
+  };
+
+  static tagAvailable = (tag: string) => {
+    return API.GET(`/identity/tag-available?tag=${tag}`)
+      .then(async (response) => {
+        return response.data;
+      })
+      .catch((e) => {
+        Logger.error(e);
+        return false;
       });
   };
 

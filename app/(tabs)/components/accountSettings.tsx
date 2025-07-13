@@ -5,7 +5,6 @@ import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -60,31 +59,29 @@ const AccountSettings = () => {
   });
 
   const pickCoverImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setGetCoverImg(result.assets[0]);
-      setCoverImageUrl(result.assets[0].uri);
-    }
+    // const result = await ImagePicker.launchImageLibraryAsync({
+    //   mediaTypes: "images",
+    //   allowsEditing: true,
+    //   aspect: [4, 3],
+    //   quality: 1,
+    // });
+    // if (!result.canceled) {
+    //   setGetCoverImg(result.assets[0]);
+    //   setCoverImageUrl(result.assets[0].uri);
+    // }
   };
 
   const pickProfileImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setGetProfileImg(result.assets[0]);
-      setProfileImageUrl(result.assets[0].uri);
-    }
+    // const result = await ImagePicker.launchImageLibraryAsync({
+    //   mediaTypes: "images",
+    //   allowsEditing: true,
+    //   aspect: [4, 3],
+    //   quality: 1,
+    // });
+    // if (!result.canceled) {
+    //   setGetProfileImg(result.assets[0]);
+    //   setProfileImageUrl(result.assets[0].uri);
+    // }
   };
 
   const handleSave = async () => {
@@ -134,20 +131,19 @@ const AccountSettings = () => {
 
   const debouncedSearch = useCallback(
     useDebounce(() => {
-      User.checkTagAvailability(tag).then((response) => {
-        setError(response.data);
+      User.tagAvailable(tag).then((response) => {
+        setError(!response.data);
       });
     }, 1000),
     [tag]
   );
-  
+
   useEffect(() => {
     const handler = setTimeout(() => {
       debouncedSearch();
     }, 1000);
     return () => clearTimeout(handler);
   }, [tag]);
-
 
   return (
     <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#141414"}>
