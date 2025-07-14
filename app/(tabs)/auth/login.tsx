@@ -2,6 +2,7 @@ import { AuthSession } from "@/services/authSession";
 import { emailValidation } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
+import { ToastBox } from "@/services/toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import {
@@ -9,7 +10,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import {
@@ -24,34 +25,43 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
 
   const routeTo = (url: any) => {
     Router.push(url);
   };
 
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       setEmail("");
       setPassword("");
     }, [])
   );
 
+  function checkForError() {
+    if (!emailValidation(email)) {
+      ToastBox("error", "Hello user", "Email is not valid");
+      return false;
+    }
+    return true;
+  }
 
   const handleLogin = async () => {
-    setIsLoading(true);
-    const success = await AuthSession.login(email, password);
-    if (success) {
-      setEmail("");
-      setPassword("");
-      Router.push("/(tabs)/mainApp");
-    } else {
-      setEmail("");
-      setPassword("");
-      // TODO:: REPLACE IT Toast Message to User
-      Logger.error("Login failed invalid email or password");
+    if (checkForError()) {
+      setIsLoading(true);
+      const success = await AuthSession.login(email, password);
+      if (success) {
+        setEmail("");
+        setPassword("");
+        Router.push("/(tabs)/mainApp");
+      } else {
+        setEmail("");
+        setPassword("");
+        // TODO:: REPLACE IT Toast Message to User
+        Logger.error("Login failed invalid email or password");
+      }
+      setIsLoading(false);
     }
-    setIsLoading(false);
+    return false;
   };
 
   return (
@@ -100,25 +110,23 @@ const Login = () => {
             <Input
               type="email"
               placeholder="Enter email address"
-              value={(e) => setEmail(e)}
-              isError={error}
+              value={setEmail}
+              text={email}
             />
           </View>
-
           <View style={{ width: "100%", marginBottom: 80 }}>
             <Label>Password</Label>
-            <PasswordTextBox value={(e) => setPassword(e)} />
+            <PasswordTextBox text={password} value={setPassword} />
           </View>
 
           <TouchableOpacity
             onPress={handleLogin}
-            disabled={!emailValidation(email)}
             style={{
               width: wp("90%"),
               height: hp("7%"),
               borderRadius: 100,
               padding: 10,
-              backgroundColor: emailValidation(email) ? "#1D9BF0" : "#8F8F8F",
+              backgroundColor: "#1D9BF0",
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",

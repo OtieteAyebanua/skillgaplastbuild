@@ -1,4 +1,3 @@
-import PageContainer from "@/components/Containers";
 import { Router } from "@/services/router";
 import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -10,12 +9,12 @@ const RecoverAccountPhase4 = () => {
   }, []);
 
   return (
-    <PageContainer style={{ paddingTop: 40 }} backgroundColor={"#ffffff"}>
+    <View style={{backgroundColor:"#fff",height:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
       <View
         style={{
-          flex: 1,
           justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
         }}
       >
         <Image
@@ -64,7 +63,7 @@ const RecoverAccountPhase4 = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </PageContainer>
+    </View>
   );
 };
 

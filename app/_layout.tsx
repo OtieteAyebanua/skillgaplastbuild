@@ -9,6 +9,7 @@ import "react-native-reanimated";
 
 import { SessionUser } from "@/services/user";
 import { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 import SplashScreen from "./(tabs)/splashScreen";
 
 export default function RootLayout() {
@@ -39,6 +40,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
+      <Toast/>
       <StatusBar style="auto" />
     </ThemeProvider>
   );

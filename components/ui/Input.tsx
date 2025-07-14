@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
-import {
-  ExclamationCircleIcon,
-  EyeIcon,
-  EyeSlashIcon,
-} from "react-native-heroicons/outline";
+import { EyeIcon, EyeSlashIcon } from "react-native-heroicons/outline";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-
 interface IInput {
   type?: string;
   className?: string;
-  isError?: boolean;
   icon?: string;
   placeholder: string;
   value?: (value: string) => void;
+  text?: string;
 }
 
-const Input = ({ type, value, isError, icon, placeholder }: IInput) => {
+const Input = ({ type, value, icon, placeholder,text }: IInput) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -33,85 +28,65 @@ const Input = ({ type, value, isError, icon, placeholder }: IInput) => {
   };
 
   return (
-   <View
-  style={{
-    overflow: 'hidden',
-    borderWidth: isFocused
-      ? 1
-      : isError
-      ? 0.5
-      : 1,
-    borderColor: isFocused
-      ? '#338AF3'
-      : isError
-      ? '#F87171' // red-500
-      : '#D0D5DD',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    borderRadius: 24, // rounded-3xl ≈ 24px
-    paddingHorizontal: 12, // px-3 ≈ 12px
-    marginTop: 8, // mt-2 = 2 * 4 hb 
-    position: 'relative',
-    ...(isFocused && {
-      borderWidth: 2,
-    }),
-  }}
->
-  <TextInput
-    secureTextEntry={type === 'password' && !showPassword}
-    onFocus={handleFocus}
-    onBlur={handleBlur}
-    placeholder={placeholder}
-    placeholderTextColor={'#8F8F8F'}
-    onChangeText={value}
-    style={{
-      color:'#8F8F8F',
-      width: wp('90%'),
-      height: hp('5.5%'),
-    
-    }}
-  />
-
-  {icon && (
     <View
       style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 4,
+        overflow: "hidden",
+        borderWidth: 1,
+        borderColor: isFocused ? "#338AF3" : "#D0D5DD",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        borderRadius: 24, // rounded-3xl ≈ 24px
+        paddingHorizontal: 12, // px-3 ≈ 12px
+        marginTop: 8, // mt-2 = 2 * 4 hb
+        position: "relative",
+        ...(isFocused && {
+          borderWidth: 2,
+        }),
       }}
     >
-      {icon}
-    </View>
-  )}
+      <TextInput
+        secureTextEntry={type === "password" && !showPassword}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        placeholder={placeholder}
+        placeholderTextColor={"#8F8F8F"}
+        onChangeText={value}
+        value={text}
+        style={{
+          color: "#8F8F8F",
+          width: wp("90%"),
+          height: hp("5.5%"),
+          alignItems:"center"
+        }}
+      />
 
-  {isError ? (
-    <View
-      style={{
-        position: 'absolute',
-        right: 8,
-        top: 8,
-      }}
-    >
-      <ExclamationCircleIcon size={20} color="#F04438" />
-    </View>
-  ) : type === 'password' ? (
-    <TouchableOpacity
-      onPress={() => setShowPassword(!showPassword)}
-      style={{
-        position: 'absolute',
-        right: 8,
-        top: 8,
-      }}
-    >
-      {showPassword ? (
-        <EyeSlashIcon size={20} color="#1D9BF0" />
-      ) : (
-        <EyeIcon size={20} color="#1D9BF0" />
+      {icon && (
+        <View
+          style={{
+            marginRight: 4,
+          }}
+        >
+          {icon}
+        </View>
       )}
-    </TouchableOpacity>
-  ) : null}
-</View>
+
+      {type === "password" ? (
+        <TouchableOpacity
+          onPress={() => setShowPassword(!showPassword)}
+          style={{
+            position: "absolute",
+            right: 8,
+          }}
+        >
+          {showPassword ? (
+            <EyeSlashIcon size={20} color="#1D9BF0" />
+          ) : (
+            <EyeIcon size={20} color="#1D9BF0" />
+          )}
+        </TouchableOpacity>
+      ) : null}
+    </View>
   );
 };
 
@@ -119,9 +94,10 @@ export default Input;
 
 interface IPassWordTextBox {
   value?: (value: string) => void;
+  text?: string ;
 }
 
-export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
+export const PasswordTextBox = ({ value,text }: IPassWordTextBox) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = () => {
@@ -132,18 +108,18 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
     setIsFocused(false);
   };
   return (
-   <View
+    <View
       style={{
         borderWidth: 1,
-        borderColor: isFocused ? '#338AF3' : '#D0D5DD',
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        borderRadius: 24, 
+        borderColor: isFocused ? "#338AF3" : "#D0D5DD",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        borderRadius: 24,
         paddingHorizontal: 12,
         marginTop: 8,
-        position: 'relative',
-        backgroundColor: 'transparent',
+        position: "relative",
+        backgroundColor: "transparent",
       }}
     >
       <TextInput
@@ -151,19 +127,20 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder="Enter password"
-        placeholderTextColor={'#8F8F8F'}
-        style={{
-          color:  '#8F8F8F',
-          width: wp('90%'),
-          height: hp('5.5%'),
-        }}
+        placeholderTextColor={"#8F8F8F"}
         onChangeText={value}
+        value={text}
+        style={{
+          color: "#8F8F8F",
+          width: wp("90%"),
+          height: hp("5.5%"),
+        }}
       />
 
       <TouchableOpacity
         onPress={() => setShowPassword(!showPassword)}
         style={{
-          position: 'absolute',
+          position: "absolute",
           right: 8,
         }}
       >
@@ -176,5 +153,3 @@ export const PasswordTextBox = ({ value }: IPassWordTextBox) => {
     </View>
   );
 };
-
-

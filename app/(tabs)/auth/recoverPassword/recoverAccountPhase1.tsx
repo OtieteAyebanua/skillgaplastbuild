@@ -3,7 +3,8 @@ import { AuthSession } from "@/services/authSession";
 import { emailValidation } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
-import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -30,6 +31,13 @@ const RecoverAccountPhase1 = () => {
     }
     setProceedLoader(false);
   };
+
+   useFocusEffect(
+        useCallback(() => {
+          setEmail("");
+        }, [])
+      );
+  
 
   return (
     <SafeAreaView
@@ -86,6 +94,7 @@ const RecoverAccountPhase1 = () => {
             type="email"
             placeholder="Enter Email"
             value={(e) => setEmail(e)}
+            text={email}
           />
 
           <TouchableOpacity

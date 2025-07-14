@@ -1,6 +1,6 @@
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -26,7 +26,9 @@ import {
 import { AuthSession } from "@/services/authSession";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
+import { ToastBox } from "@/services/toast";
 import { IUserDetail } from "@/types/auth";
+import { useFocusEffect } from "@react-navigation/native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 
 const SignUp = () => {
@@ -57,32 +59,55 @@ const SignUp = () => {
       country,
       password,
     }));
-
-    if (
-      emailValidation(email) &&
-      passwordValidation(password) &&
-      fullName != "" &&
-      passwordExactness(password, confirmPassword)
-    ) {
-      setAllValid(true);
-    } else {
-      setAllValid(false);
-    }
   }, [password, email, fullName, confirmPassword]);
 
-  const handleSignup = async () => {
-    setIsLoading(true);
-    const response = await AuthSession.signup(email, fullName, password, false);
-    if (response.success) {
-      const loginSuccess = await AuthSession.login(email, password);
-      if (loginSuccess) {
-        Router.push("/(tabs)/auth/accountVerification");
-      }
-    } else {
-      // TODO :: REPLACE WITH Toast
-      Logger.error(response.error);
+    useFocusEffect(
+      useCallback(() => {
+        setEmail("");
+        setPassword("");
+        setFullName("")
+        setConfirmPassword("")
+      }, [])
+    );
+
+  function checkForError() {
+    if (fullName == "") {
+      ToastBox("error","Hello user","Fullname box is empty",);
+      return false;
+    } else if (!emailValidation(email)) {
+      ToastBox("error","Hello user","Email is not valid",);
+      return false;
+    } else if (!passwordValidation(password)) {
+    ToastBox("error","Hello user","Password must be 8-12 characters long",);
+      return false;
+    } else if (!passwordExactness(password, confirmPassword)) {
+      ToastBox("error","Hello user","Password does not match",);
+      return false;
     }
-    setIsLoading(false);
+    return true;
+  }
+
+  const handleSignup = async () => {
+    if (checkForError()) {
+      setIsLoading(true);
+      const response = await AuthSession.signup(
+        email,
+        fullName,
+        password,
+        false
+      );
+      if (response.success) {
+        const loginSuccess = await AuthSession.login(email, password);
+        if (loginSuccess) {
+          Router.push("/(tabs)/auth/accountVerification");
+        }
+      } else {
+        ToastBox("error","Hello user",response.error,);
+        Logger.error(response.error);
+      }
+      setIsLoading(false);
+    }
+    return false;
   };
 
   return (
@@ -130,6 +155,7 @@ const SignUp = () => {
               type="text"
               placeholder="Enter full name"
               value={(e) => setFullName(e)}
+              text={fullName}
             />
           </View>
 
@@ -139,14 +165,8 @@ const SignUp = () => {
               type="email"
               placeholder="Enter email address"
               value={(e) => setEmail(e)}
+              text={email}
             />
-            <View style={{ display: !inValidEmailText ? "none" : "flex" }}>
-              <Text style={{ color: "#F04438", paddingLeft: 10 }}>
-                {!inValidEmailText
-                  ? null
-                  : "Incorrect email or already been used"}
-              </Text>
-            </View>
           </View>
           <View style={{ width: wp("93%"), margin: "auto", marginBottom: 10 }}>
             <Label>Password</Label>
@@ -154,6 +174,7 @@ const SignUp = () => {
               type="password"
               placeholder="Enter password"
               value={(e) => setPassword(e)}
+              text={password}
             />
             <View
               style={{
@@ -163,11 +184,6 @@ const SignUp = () => {
                     : "none",
               }}
             >
-              <Text style={{ color: "#F04438" }}>
-                {!passwordValidation(password) && password != ""
-                  ? "Password must be 8-12 characters long."
-                  : null}
-              </Text>
             </View>
           </View>
 
@@ -177,6 +193,7 @@ const SignUp = () => {
               type="password"
               placeholder="Confirm password"
               value={(e) => setConfirmPassword(e)}
+              text={confirmPassword}
             />
             <View
               style={{
@@ -185,24 +202,16 @@ const SignUp = () => {
                   : "none",
               }}
             >
-              <Text>
-                {!passwordExactness(password, confirmPassword) ? (
-                  <Text style={{ color: "#F04438" }}>
-                    "Password does not match"
-                  </Text>
-                ) : null}
-              </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={handleSignup}
-            disabled={allValid ? false : true}
             style={{
               width: wp("90%"),
               height: hp("7%"),
               borderRadius: 100,
               padding: 10,
-              backgroundColor: allValid ? "#1D9BF0" : "#8F8F8F",
+              backgroundColor: "#1D9BF0",
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",

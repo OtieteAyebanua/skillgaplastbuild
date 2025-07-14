@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
-  ScrollView,
+  Modal,
   Text,
   TouchableOpacity,
   View,
@@ -45,36 +45,36 @@ const AuthHome = () => {
   return isLoading ? (
     <SplashScreen />
   ) : (
-    <ScrollView>
-      <ImageBackground
-        source={require("../../../assets/images/auth-home-bg.png")}
-        resizeMode="cover"
-        className="flex-1 h-full"
+    <ImageBackground
+      source={require("../../../assets/images/auth-home-bg.png")}
+      resizeMode="cover"
+      className="flex-1 h-full"
+    >
+      <View
+      style={{backgroundColor:"transparent"}}
       >
-        <View
+        <Image
+          source={require("../../../assets/images/auth-home-min.png")}
           style={{
-            flex: 1, // flex-1
-            alignItems: "center", // items-center
-            justifyContent: "flex-end", // justify-end
+            width: wp("100%"),
+            height: hp("60%"),
+            resizeMode: "contain",
+ 
           }}
-        >
-          <Image
-            source={require("../../../assets/images/auth-home-min.png")}
-            style={{
-              width: wp("100%"),
-              height: hp("60%"),
-              resizeMode: "contain",
-              transform: [{ translateY: 80 }], // translate-y-20 → 20 * 4 = 80
-            }}
-          />
-        </View>
+        />
+      </View>
+      <Modal transparent>
         <View
           style={{
             backgroundColor: "#FFFFFF",
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
             padding: 24,
-            height: "100%",
+            height: hp("15%"),
+            position: "absolute",
+            bottom:"30%",
+            zIndex:1
+     
           }}
         >
           <View style={{ alignItems: "center", paddingTop: 32 }}>
@@ -147,8 +147,8 @@ const AuthHome = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
-    </ScrollView>
+      </Modal>
+    </ImageBackground>
   );
 };
 

@@ -4,9 +4,10 @@ import {
   passwordExactness,
   passwordValidation,
 } from "@/services/formValidation";
-import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
-import { useState } from "react";
+import { ToastBox } from "@/services/toast";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -22,17 +23,36 @@ const RecoverAccountPhase3 = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const simulateApiReq = async () => {
-    setPasswordLoader(true);
-    const success = await AuthSession.resetPassword(password);
-    if (success) {
-      Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase4");
-    } else {
-      // TODO :: replace it with toast message to user
-      Logger.error("Something went wrong, please try that again.");
+   useFocusEffect(
+        useCallback(() => {
+          setPassword("");
+          setConfirmPassword("")
+        }, [])
+      );
+  
+  function checkForError() {
+    if (!passwordValidation(password)) {
+      ToastBox("error", "Hello user", "Password must be 8-12 characters long");
+      return false;
+    } else if (!passwordExactness(password, confirmPassword)) {
+      ToastBox("error", "Hello user", "Password does not match");
+      return false;
     }
 
-    setPasswordLoader(false);
+    return true;
+  }
+  const simulateApiReq = async () => {
+    if (checkForError()) {
+      setPasswordLoader(true);
+      const success = await AuthSession.resetPassword(password);
+      if (success) {
+        Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase4");
+      } else {
+        ToastBox("error", "Something went wrong", "please try that again");
+      }
+
+      setPasswordLoader(false);
+    }
   };
 
   return (
@@ -81,6 +101,7 @@ const RecoverAccountPhase3 = () => {
             type="password"
             placeholder="Enter new password"
             value={(e) => setPassword(e)}
+            text={password}
           />
           <View
             style={{
@@ -89,13 +110,7 @@ const RecoverAccountPhase3 = () => {
                   ? "flex"
                   : "none",
             }}
-          >
-            {!passwordValidation(password) && password !== "" ? (
-              <Text style={{ color: "#F04438" }}>
-                Password must be 8–12 characters long.
-              </Text>
-            ) : null}
-          </View>
+          ></View>
         </View>
 
         {/* Confirm Password Field */}
@@ -105,6 +120,7 @@ const RecoverAccountPhase3 = () => {
             type="password"
             placeholder="Confirm password"
             value={(e) => setConfirmPassword(e)}
+            text={confirmPassword}
           />
           <View
             style={{
@@ -112,11 +128,7 @@ const RecoverAccountPhase3 = () => {
                 ? "flex"
                 : "none",
             }}
-          >
-            {!passwordExactness(password, confirmPassword) ? (
-              <Text style={{ color: "#F04438" }}>Password does not match</Text>
-            ) : null}
-          </View>
+          ></View>
         </View>
 
         {/* Save Button */}
@@ -124,22 +136,12 @@ const RecoverAccountPhase3 = () => {
           onPress={() => {
             simulateApiReq();
           }}
-          disabled={
-            !(
-              passwordValidation(password) &&
-              passwordExactness(password, confirmPassword)
-            )
-          }
           style={{
             width: "99%",
             height: 56,
             borderRadius: 100,
             padding: 10,
-            backgroundColor:
-              passwordValidation(password) &&
-              passwordExactness(password, confirmPassword)
-                ? "#1D9BF0"
-                : "#8F8F8F",
+            backgroundColor: "#1D9BF0",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
