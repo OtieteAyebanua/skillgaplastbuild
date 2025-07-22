@@ -1,18 +1,18 @@
 import PageContainer from "@/components/Containers";
-import { SessionUser } from "@/services/user";
+import { useTheme } from "@/hooks/useThemeContext";
 import {
-    Image,
-    ImageBackground,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ImageBackground,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 const ContestOutcome = () => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   return (
     <PageContainer
       paddingBottom="0"

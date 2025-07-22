@@ -3,7 +3,10 @@ import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import successImg from "../../../../assets/images/success-img.png";
 
-const RecoverAccountPhase4 = () => {
+interface IPhase4{
+  next: ()=>void;
+}
+const RecoverAccountPhase4 = ({next}:IPhase4) => {
   useEffect(() => {
     Router.clearHistory();
   }, []);
@@ -49,8 +52,9 @@ const RecoverAccountPhase4 = () => {
 
         <TouchableOpacity
           onPress={() => {
+            next()
             Router.clearHistory();
-            Router.push("/(tabs)/auth/auth-home");
+            Router.push("/(tabs)/auth/login");
           }}
         >
           <Text

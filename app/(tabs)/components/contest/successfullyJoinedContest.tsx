@@ -1,6 +1,6 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
 import { Media } from "@/services/media";
-import { SessionUser } from "@/services/user";
 import { Text, TouchableOpacity, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import SplashScreen from "../../splashScreen";
@@ -15,7 +15,7 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
   contest,
   onRoute,
 }) => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
 
   return contest === null ? (
     <SplashScreen />

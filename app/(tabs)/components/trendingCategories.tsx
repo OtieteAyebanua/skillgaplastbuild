@@ -1,7 +1,7 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, ITrendingCategory } from "@/services/contest";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
-import { SessionUser } from "@/services/user";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import NetworkImage from "./networkImage";
@@ -10,7 +10,7 @@ interface TrendingCategoryProps {
   refreshing: boolean;
 }
 const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
 
   const [categories, setCategories] = useState<ITrendingCategory[]>([]);
 
@@ -69,11 +69,15 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                         width: 130,
                         height: 80,
                         borderRadius: 2,
+                        resizeMode: "cover",
                       }}
                     />
                     <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                       style={{
                         color: theme == false ? "#020B12" : "#ffffff",
+                        width: 125,
                       }}
                     >
                       {item.name}
@@ -85,9 +89,12 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                       }}
                     >
                       <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
                         style={{
                           color: theme == false ? "#000000" : "#8F8F8F",
                           fontSize: 10,
+                          width: 60,
                         }}
                       >
                         <Text
@@ -97,13 +104,16 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                           }}
                         >
                           Bets :
-                        </Text>{" "}
+                        </Text>
                         {item.contests}
                       </Text>
                       <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
                         style={{
                           color: theme == false ? "#000000" : "#8F8F8F",
                           fontSize: 10,
+                          width: 60,
                         }}
                       >
                         <Text

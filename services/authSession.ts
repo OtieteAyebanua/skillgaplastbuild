@@ -177,7 +177,7 @@ export class AuthSession {
         code: code,
       })
         .then(async (response) => {
-          return response.success;
+          return response;
         })
         .catch((err) => {
           Logger.error(err);

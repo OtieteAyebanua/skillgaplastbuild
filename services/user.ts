@@ -1,10 +1,9 @@
 import { getMimeType } from "@/utitlity/image";
-import { formatMoney } from "@/utitlity/string";
 import { create } from "zustand";
 import { API, ApiErrorCodes } from "./api";
 import { Logger } from "./logger";
 
-interface IUserRecord {
+export interface IUserRecord {
   id: number;
   email: string;
   fullName: string;
@@ -70,18 +69,17 @@ export const useSessionStore = create((set) => ({
 
 export class User {
   static Load = (onLoaded?: () => void) => {
+    
     if (loadingUser) return;
 
     try {
       loadingUser = true;
-
       return API.GET("/identity/me")
         .then(async (response) => {
           if (!response.success) {
             return false;
           }
           SessionUser = response.data;
-
           Logger.info(SessionUser);
 
           onLoaded?.();
@@ -257,11 +255,5 @@ export class User {
         Logger.error(err);
         return false;
       });
-  };
-
-  static getBalance = (): { left: string; right: string; currency: string } => {
-    const { left, right } = formatMoney(SessionUser?.balance ?? 0);
-    const currency = "#";
-    return { left, right, currency };
   };
 }

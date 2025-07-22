@@ -1,8 +1,7 @@
 import Input from "@/components/ui/Input";
 import { AuthSession } from "@/services/authSession";
 import { emailValidation } from "@/services/formValidation";
-import { Logger } from "@/services/logger";
-import { Router } from "@/services/router";
+import { ToastBox } from "@/services/toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import {
@@ -14,30 +13,36 @@ import {
   View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
+import { IRecoverAccount } from ".";
 
-const RecoverAccountPhase1 = () => {
+const RecoverAccountPhase1 = ({ next, back }: IRecoverAccount) => {
   const [email, setEmail] = useState("placeholder@gmail.com");
   const [proceedLoader, setProceedLoader] = useState(false);
 
   const handleEmailSubmission = async () => {
-    setProceedLoader(true);
+    if (emailValidation(email)) {
+      setProceedLoader(true);
 
-    const success = await AuthSession.sendPasswordResetCode(email);
-    if (success) {
-      Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase2");
-    } else {
-      // TODO :: replace with Toast
-      Logger.error("Something went wrong, please try again.");
+      const success = await AuthSession.sendPasswordResetCode(email);
+      if (success) {
+        next();
+        return;
+      } else {
+        ToastBox("custom", "Something went wrong try again", {
+          theme: false,
+          types: false,
+        });
+        return;
+      }
     }
-    setProceedLoader(false);
+    ToastBox("custom", "Email is not valid", { theme: false, types: false });
   };
 
-   useFocusEffect(
-        useCallback(() => {
-          setEmail("");
-        }, [])
-      );
-  
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+    }, [])
+  );
 
   return (
     <SafeAreaView
@@ -56,7 +61,7 @@ const RecoverAccountPhase1 = () => {
       >
         <TouchableOpacity
           onPress={() => {
-            Router.back();
+            back();
           }}
           style={{
             paddingLeft: 3,
@@ -99,13 +104,12 @@ const RecoverAccountPhase1 = () => {
 
           <TouchableOpacity
             onPress={handleEmailSubmission}
-            disabled={!emailValidation(email)}
             style={{
               width: "99%",
               height: 56,
               borderRadius: 100,
               padding: 10,
-              backgroundColor: emailValidation(email) ? "#1D9BF0" : "#8F8F8F",
+              backgroundColor: "#1D9BF0",
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",

@@ -1,44 +1,52 @@
 import PageContainer from "@/components/Containers";
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import {
-  RefreshControl,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { PlusIcon } from "react-native-heroicons/outline";
 import FloatingWallet from "../components/floatingWallet";
 import NetworkImage from "../components/networkImage";
 import ShowContest from "../components/showContest";
 import TrendingCategory from "../components/trendingCategories";
+import SplashScreen from "../splashScreen";
 
 export default function HomePage() {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(false);
-
+  const { theme, setTheme } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const { setUser, user } = useUserContext();
   const onRefresh = () => {
     User.Load();
     setRefreshToken(!refreshToken);
+    setUser(SessionUser);
+    setTheme(SessionUser?.preferences.darkMode ?? false);
   };
 
-  const theme = SessionUser?.preferences.darkMode;
-  useEffect(() => {
-    Router.clearHistory();
+  useFocusEffect(
+    useCallback(() => {
+      Router.clearHistory();
+      User.Load(() => {
+        setUser(SessionUser);
+        setTheme(SessionUser?.preferences.darkMode ?? false);
+      });
+    }, [])
+  );
 
-    // RNRestart.Restart();
-  }, []);
-
-  return (
+  return !user ? (
+    <SplashScreen />
+  ) : (
     <PageContainer backgroundColor={theme == false ? "#fff" : "#0A0A0A"}>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
+      
         <View
           style={{
             width: "100%",
@@ -113,21 +121,22 @@ export default function HomePage() {
                   textTransform: "capitalize",
                 }}
               >
-                {SessionUser?.fullName}
+                {user?.fullName}
               </Text>
             </View>
           </View>
 
-          <FloatingWallet refreshing={refreshToken}/>
+          <FloatingWallet refreshing={refreshToken} />
           <TrendingCategory refreshing={refreshToken} />
-          <ShowContest refreshing={refreshToken}/>
+          <ShowContest refreshing={refreshToken} />
         </View>
-      </ScrollView>
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => Router.push("/(tabs)/components/contest/createContest")}
       >
-        <Text style={styles.plus}>+</Text>
+        <Text style={styles.plus}>
+          <PlusIcon size={30} color="#fff" />
+        </Text>
       </TouchableOpacity>
     </PageContainer>
   );

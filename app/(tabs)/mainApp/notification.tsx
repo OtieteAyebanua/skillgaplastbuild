@@ -1,14 +1,13 @@
 import PageContainer from "@/components/Containers";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Router } from "@/services/router";
-import { SessionUser } from "@/services/user";
 import { useEffect } from "react";
-import successImg from "../../../assets/images/success-img.png"
-import darkSuccessImg from "../../../assets/images/dark-success-img.png"
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
+  widthPercentageToDP as wp
 } from "react-native-responsive-screen";
+import darkSuccessImg from "../../../assets/images/dark-success-img.png";
+import successImg from "../../../assets/images/success-img.png";
 const data = [
   {
     time: 2,
@@ -106,7 +105,7 @@ const data = [
   },
 ];
 const Notification = () => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   useEffect(() => {
     Router.clearHistory();
   }, []);

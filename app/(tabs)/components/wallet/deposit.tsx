@@ -1,7 +1,7 @@
 import PageContainer from "@/components/Containers";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Logger } from "@/services/logger";
 import { Transaction } from "@/services/transaction";
-import { SessionUser } from "@/services/user";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -24,7 +24,7 @@ import { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
 
 const CallBackUrl = "http://skillgap.co/paystack";
 const CreateDeposit = () => {
-  const theme = SessionUser?.preferences.darkMode;
+   const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);

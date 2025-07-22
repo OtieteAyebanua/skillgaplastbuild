@@ -4,7 +4,6 @@ import {
   passwordExactness,
   passwordValidation,
 } from "@/services/formValidation";
-import { Router } from "@/services/router";
 import { ToastBox } from "@/services/toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
@@ -17,25 +16,32 @@ import {
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { IRecoverAccount } from ".";
 
-const RecoverAccountPhase3 = () => {
+const RecoverAccountPhase3 = ({ next, back }: IRecoverAccount) => {
   const [passwordLoader, setPasswordLoader] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-   useFocusEffect(
-        useCallback(() => {
-          setPassword("");
-          setConfirmPassword("")
-        }, [])
-      );
-  
+  useFocusEffect(
+    useCallback(() => {
+      setPassword("");
+      setConfirmPassword("");
+    }, [])
+  );
+
   function checkForError() {
     if (!passwordValidation(password)) {
-      ToastBox("error", "Hello user", "Password must be 8-12 characters long");
+      ToastBox("custom", "Password must be 8-12 characters long", {
+        theme: false,
+        types: false,
+      });
       return false;
     } else if (!passwordExactness(password, confirmPassword)) {
-      ToastBox("error", "Hello user", "Password does not match");
+      ToastBox("custom", "Password does not match", {
+        theme: false,
+        types: false,
+      });
       return false;
     }
 
@@ -46,9 +52,12 @@ const RecoverAccountPhase3 = () => {
       setPasswordLoader(true);
       const success = await AuthSession.resetPassword(password);
       if (success) {
-        Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase4");
+        next();
       } else {
-        ToastBox("error", "Something went wrong", "please try that again");
+        ToastBox("custom", "pls try that again", {
+          theme: false,
+          types: false,
+        });
       }
 
       setPasswordLoader(false);
@@ -71,7 +80,7 @@ const RecoverAccountPhase3 = () => {
       >
         <TouchableOpacity
           onPress={() => {
-            Router.back();
+            back();
           }}
           style={{
             paddingLeft: 3,

@@ -1,14 +1,17 @@
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { SessionUser, User } from "@/services/user";
 import { useState } from "react";
 import { Switch, Text, View } from "react-native";
 
 const Utilities = () => {
-  const theme = SessionUser?.preferences.darkMode;
+  const {theme,setTheme} = useTheme();
+  const {user,setUser} = useUserContext()
   const [isOpenToContest, setIsOpenToContest] = useState(
     SessionUser?.preferences.openToContest ?? true
   );
   const [isDarkMode, setIsDarkMode] = useState(
-    SessionUser?.preferences.darkMode ?? true
+    user?.preferences.darkMode ?? true
   );
   return (
     <View
@@ -98,6 +101,7 @@ const Utilities = () => {
             onValueChange={() => {
               const newMode = !isDarkMode;
               setIsDarkMode(newMode);
+              setTheme(newMode)
               User.updatePreferences(isOpenToContest, newMode);
             }}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}

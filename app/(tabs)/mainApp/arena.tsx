@@ -1,8 +1,9 @@
 import PageContainer from "@/components/Containers";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest, IContestCategory } from "@/services/contest";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
-import { SessionUser, User } from "@/services/user";
+import { User } from "@/services/user";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams } from "expo-router";
@@ -27,7 +28,7 @@ let currentPage = 0;
 
 const Arena = () => {
   const [showCategories, setShowCategories] = useState(false);
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 

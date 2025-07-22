@@ -4,12 +4,13 @@ import React, { ReactNode, useEffect } from "react";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useThemeContext";
 import { AuthSession } from "@/services/authSession";
 import { Logger } from "@/services/logger";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
-import { BackHandler, Image } from "react-native";
+import { BackHandler, Image, StatusBar } from "react-native";
 import Arena from "../../../assets/icons/arena.png";
 import Home from "../../../assets/icons/home.png";
 import Notification from "../../../assets/icons/notification.png";
@@ -27,9 +28,10 @@ interface IMainAppTabLayout {
 
 let isLoading = true;
 export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
-  const colorScheme = SessionUser?.preferences.darkMode;
+  const { theme,setTheme } = useTheme();
 
   useEffect(() => {
+    setTheme(SessionUser?.preferences.darkMode??false);
     const onBackPress = () => {
       Router.back();
       return true;
@@ -61,13 +63,14 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
   ) : (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ? "dark" : "light"].tint,
+        tabBarActiveTintColor: Colors[theme ? "dark" : "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
           height: 65,
           paddingTop: 5,
+          backgroundColor: theme ? "#000" : "#fff",
         },
       }}
     >
@@ -129,13 +132,14 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
           title: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <NativeImage
-              style={{ width: 25, height: 25 }}
+              style={{ width: 25, height: 25, borderRadius: 100 }}
               uri={Media.GetProfileImageUris(SessionUser?.id ?? 0)?.original}
               loadingUri={require("../../../assets/icons/no-pic.png")}
             />
           ),
         }}
       />
+     <StatusBar  hidden />
     </Tabs>
   );
 }

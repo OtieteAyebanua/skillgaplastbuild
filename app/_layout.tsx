@@ -1,19 +1,14 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { SessionUser } from "@/services/user";
 import { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 import Toast from "react-native-toast-message";
+import CustomToast from "./(tabs)/components/customToast";
 import SplashScreen from "./(tabs)/splashScreen";
 
 export default function RootLayout() {
-  const colorScheme = SessionUser?.preferences.darkMode;
   const [one, setOne] = useState<number>(4);
   const [appKey, setAppKey] = useState(0);
   const [refreshApp, setRefreshApp] = useState(false);
@@ -25,23 +20,35 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-  if (refreshApp) {
-    setAppKey((prev) => prev + 1); // forces remount
-  }
-}, [SessionUser]);
+    if (refreshApp) {
+      setAppKey((prev) => prev + 1); // forces remount
+    }
+  }, [SessionUser]);
 
   if (one != 0) {
-    return <SplashScreen/>;
+    return <SplashScreen />;
   }
 
   return (
-    <ThemeProvider key={appKey} value={colorScheme === true ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <Toast/>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <>
+      <SafeAreaView style={styles.container}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <Toast
+          config={{
+            custom: (props) => <CustomToast {...props} />,
+          }}
+        />
+      </SafeAreaView>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: "0%",
+  },
+});

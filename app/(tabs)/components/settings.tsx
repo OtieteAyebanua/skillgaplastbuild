@@ -1,6 +1,8 @@
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { AuthSession } from "@/services/authSession";
 import { Router } from "@/services/router";
-import { SessionUser } from "@/services/user";
+import { User } from "@/services/user";
 import { useState } from "react";
 import {
   Image,
@@ -29,12 +31,16 @@ const settingsOptions = [
 ];
 
 const Settings = () => {
-  const theme = SessionUser?.preferences.darkMode;
+   const {theme} = useTheme();
+   const {setUser} = useUserContext()
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
   const handleLogout = async () => {
     setModalVisible(false);
+    setUser(null)
+    User.clear()
+
     await AuthSession.logout();
   };
 

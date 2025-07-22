@@ -1,5 +1,6 @@
 import PageContainer from "@/components/Containers";
 import Input from "@/components/ui/Input";
+import { useTheme } from "@/hooks/useThemeContext";
 import { useDebounce } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
@@ -22,7 +23,7 @@ import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 const AccountSettings = () => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   const [getProfileImg, setGetProfileImg] = useState<any>();
   const [getCoverImg, setGetCoverImg] = useState<any>();
   const [coverImageUrl, setCoverImageUrl] = useState("");

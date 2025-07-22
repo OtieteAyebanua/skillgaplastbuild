@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, SafeAreaView, Text, View } from 'react-native';
+import { Image, SafeAreaView, StatusBar, Text, View } from 'react-native';
 
 export default function SplashScreen() {
   return (
@@ -14,6 +14,7 @@ export default function SplashScreen() {
         />
         <Text style={{fontSize:16,fontWeight:"600",color:"#fff",position:"absolute",bottom:30}}>.....Bank on your skill</Text>
       </View>
+        <StatusBar backgroundColor="#0E80CE" />
     </SafeAreaView>
   );
 }

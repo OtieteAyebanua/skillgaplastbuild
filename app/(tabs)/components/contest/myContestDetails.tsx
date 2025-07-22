@@ -1,11 +1,13 @@
 import PageContainer from "@/components/Containers";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { formatMoney } from "@/utitlity/string";
+import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Image,
   Linking,
@@ -25,7 +27,7 @@ import WhoWonModal from "./whowonModal";
 type ContestStage = "View" | "OwnerEdit" | "Ongoing" | "Join";
 
 const MyContestDetails = () => {
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
 
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showDisputeModal, setShowDisputeModal] = useState(false);
@@ -38,26 +40,29 @@ const MyContestDetails = () => {
 
   const { contestId } = useLocalSearchParams();
 
-  useEffect(() => {
-    setShowNoMoney(false);
-    setSelectWhoWon(false);
-    setShowDisputeModal(false);
-    setShowWarningModal(false);
-    setShowJoinedMessage(false);
+  useFocusEffect(
+    useCallback(() => {
+      setShowNoMoney(false);
+      setSelectWhoWon(false);
+      setShowDisputeModal(false);
+      setShowWarningModal(false);
+      setShowJoinedMessage(false);
 
-    if (contestId) {
-      Contest.getContest(Number(contestId))
-        .then((response) => {
-          if (response) {
-            setContest(response);
-            setStage(response);
-          }
-        })
-        .catch(() => {
-          Router.back();
-        });
-    }
-  }, [contestId]);
+      if (contestId) {
+        Contest.getContest(Number(contestId))
+          .then((response) => {
+            if (response) {
+              setContest(response);
+              setStage(response);
+            }
+          })
+          .catch(() => {
+            Router.back();
+          });
+      }
+    }, [contestId]),
+   
+  );
 
   const setStage = (contest: IContest) => {
     let stage: ContestStage = "View";
@@ -106,7 +111,14 @@ const MyContestDetails = () => {
               }}
               onPress={() => setShowWarningModal(true)}
             >
-              <Text style={{ color: theme == false ? "#000" : "#ffffff", fontSize: 16 }}>Delete</Text>
+              <Text
+                style={{
+                  color: theme == false ? "#000" : "#ffffff",
+                  fontSize: 16,
+                }}
+              >
+                Delete
+              </Text>
             </TouchableOpacity>
           </View>
         );
@@ -131,7 +143,14 @@ const MyContestDetails = () => {
                 borderColor: "#1D9BF0",
               }}
             >
-              <Text style={{ color: theme == false ? "#000" : "#ffffff", fontSize: 16 }}>Dispute</Text>
+              <Text
+                style={{
+                  color: theme == false ? "#000" : "#ffffff",
+                  fontSize: 16,
+                }}
+              >
+                Dispute
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity

@@ -1,8 +1,8 @@
 import PageContainer from "@/components/Containers";
 //import { useDebounce } from "@/services/helpers/formValidation";
 
+import { useTheme } from "@/hooks/useThemeContext";
 import { Router } from "@/services/router";
-import { SessionUser } from "@/services/user";
 import { useState } from "react";
 import {
   ScrollView,
@@ -17,7 +17,7 @@ import BlockUser from "./blockUser";
 import { ConfirmModal } from "./modals";
 
 const Personalized = () => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
 
   const [blockUser, setBlockUser] = useState(false);
   const [skillTag, setSkillTag] = useState("");

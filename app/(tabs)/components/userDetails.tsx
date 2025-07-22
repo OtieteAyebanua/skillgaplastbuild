@@ -1,13 +1,9 @@
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Logger } from "@/services/logger";
 import { SessionUser } from "@/services/user";
 import React from "react";
-import {
-  Image,
-  Linking,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import CountryPicker from "react-native-country-picker-modal";
 
 const socials = [
@@ -30,12 +26,12 @@ const socials = [
     id: "1",
     icon: require("../../../assets/icons/youtube.png"),
     url: "https://www.youtube.com",
-  }
+  },
 ];
 
 const UserDetails = () => {
-  const theme = SessionUser?.preferences.darkMode;
-
+  const { theme } = useTheme();
+  const { user } = useUserContext();
   const openSocialLink = (social: any) => {
     let link = "";
 
@@ -129,7 +125,7 @@ const UserDetails = () => {
             color: theme == false ? "#000" : "#fff",
           }}
         >
-          {SessionUser?.fullName}
+          {user?.fullName}
         </Text>
         <Text
           style={{
@@ -138,7 +134,7 @@ const UserDetails = () => {
             color: theme == false ? "#000" : "#fff",
           }}
         >
-          @{SessionUser?.tag}
+          @{user?.tag}
         </Text>
       </View>
 
@@ -171,7 +167,7 @@ const UserDetails = () => {
               color: theme == false ? "#000" : "#fff",
             }}
           >
-            {SessionUser?.stats.disputes}
+            {user?.stats.disputes}
           </Text>
         </View>
 
@@ -197,7 +193,7 @@ const UserDetails = () => {
               color: theme == false ? "#000" : "#fff",
             }}
           >
-            {SessionUser?.stats.disputes}
+            {user?.stats.disputes}
           </Text>
         </View>
 
@@ -223,7 +219,7 @@ const UserDetails = () => {
               color: theme == false ? "#000" : "#fff",
             }}
           >
-            {SessionUser?.stats.wins}
+            {user?.stats.wins}
           </Text>
         </View>
 
@@ -249,7 +245,7 @@ const UserDetails = () => {
               color: theme == false ? "#000" : "#fff",
             }}
           >
-            {SessionUser?.stats.losses}
+            {user?.stats.losses}
           </Text>
         </View>
       </View>
@@ -281,7 +277,7 @@ const UserDetails = () => {
             lineHeight: 15,
           }}
         >
-          {SessionUser?.bio ?? "- - - "}
+          {user?.bio ?? "- - - "}
         </Text>
       </View>
 

@@ -3,6 +3,7 @@ import { emailValidation } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { ToastBox } from "@/services/toast";
+import { User } from "@/services/user";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import {
@@ -10,7 +11,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import {
@@ -39,7 +40,7 @@ const Login = () => {
 
   function checkForError() {
     if (!emailValidation(email)) {
-      ToastBox("error", "Hello user", "Email is not valid");
+      ToastBox("custom", "Email is not valid", { theme: false, types: false });
       return false;
     }
     return true;
@@ -52,6 +53,7 @@ const Login = () => {
       if (success) {
         setEmail("");
         setPassword("");
+        User.Load()
         Router.push("/(tabs)/mainApp");
       } else {
         setEmail("");
@@ -149,9 +151,7 @@ const Login = () => {
 
           <TouchableOpacity
             style={{ alignItems: "center", paddingTop: 5 }}
-            onPress={() =>
-              Router.push("/auth/recoverPassword/recoverAccountPhase1")
-            }
+            onPress={() => Router.push("/auth/recoverPassword/")}
           >
             <Text
               style={{

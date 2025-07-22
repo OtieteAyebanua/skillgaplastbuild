@@ -1,6 +1,6 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContestCategory } from "@/services/contest";
 import { Media } from "@/services/media";
-import { SessionUser } from "@/services/user";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -15,7 +15,7 @@ interface ICategories {
 }
 
 const Categories = ({ close, onSelected }: ICategories) => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
 
   const [stage, setStage] = useState<
     "Categories" | "Sub Categories" | "Filter"

@@ -1,4 +1,5 @@
-import { IOtherUserRecord, SessionUser } from "@/services/user";
+import { IOtherUserRecord } from "@/services/user";
+import { useTheme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -11,7 +12,7 @@ import {
 import WarningModal from "./modals";
 
 const BlockedList = () => {
-  const theme = SessionUser?.preferences.darkMode;
+   const {theme} = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [blockedList, setBlockList] = useState<IOtherUserRecord[]>([]);
 

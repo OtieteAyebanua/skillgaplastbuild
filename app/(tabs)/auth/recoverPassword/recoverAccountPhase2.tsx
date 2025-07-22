@@ -1,6 +1,5 @@
 import { AuthSession, recovery } from "@/services/authSession";
-import { Logger } from "@/services/logger";
-import { Router } from "@/services/router";
+import { ToastBox } from "@/services/toast";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,9 +16,10 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { IRecoverAccount } from ".";
 
 const INITIAL_TIME = 60;
-const RecoverAccountPhase2 = () => {
+const RecoverAccountPhase2 = ({ next, back }: IRecoverAccount) => {
   const [otp, setOtp] = useState("");
   const [secondsRemaining, setSecondsRemaining] = useState(INITIAL_TIME);
   const [showResend, setShowResend] = useState(false);
@@ -54,11 +54,14 @@ const RecoverAccountPhase2 = () => {
   const handleVerifyOtp = async () => {
     setOtpLoader(true);
     const success = await AuthSession.validatePasswordResetCode(otp);
-    if (success) {
-      Router.push("/(tabs)/auth/recoverPassword/recoverAccountPhase3");
+    console.log("......", success);
+    if (success.success === true) {
+      next();
     } else {
-      // TODO :: replace it with toast message to user
-      Logger.error("OTP verification failed");
+      ToastBox("custom", "Invalid code", {
+        theme: false,
+        types: false,
+      });
     }
 
     setOtpLoader(false);
@@ -121,7 +124,7 @@ const RecoverAccountPhase2 = () => {
       >
         <TouchableOpacity
           onPress={() => {
-            Router.back();
+            back();
           }}
           style={{
             paddingLeft: 3,

@@ -1,37 +1,47 @@
 import PageContainer from "@/components/Containers";
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { useEffect, useState } from "react";
-import { ImageBackground, RefreshControl, ScrollView, View } from "react-native";
+import {
+  ImageBackground,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import NetworkImage from "../components/networkImage";
 import Settings from "../components/settings";
 import UserDetails from "../components/userDetails";
 import Utilities from "../components/utilities";
 
 const Profile = () => {
-
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
 
+  const { theme, setTheme } = useTheme();
+  const { user, setUser } = useUserContext();
   const onRefresh = () => {
-    User.Load()
+    User.Load();
+    setUser(SessionUser);
+    setTheme(SessionUser?.preferences.darkMode ?? false);
   };
-
 
   useEffect(() => {
     Router.clearHistory();
-
     User.Load();
+    setUser(SessionUser);
+    setTheme(SessionUser?.preferences.darkMode ?? false);
   }, []);
-
-  const theme = SessionUser?.preferences.darkMode;
 
   return (
     <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
-       <ScrollView  refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      } >
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <ImageBackground
           defaultSource={require("../../../assets/images/profile-bg.png")}
           source={{

@@ -1,6 +1,5 @@
 import { AuthSession } from "@/services/authSession";
 import { Router } from "@/services/router";
-import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -17,10 +16,6 @@ import {
 import SplashScreen from "../splashScreen";
 
 const AuthHome = () => {
-  const [fontsLoaded] = useFonts({
-    SpaceGrotesk: require("../../../assets/fonts/SpaceGrotesk-SemiBold.ttf"),
-  });
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -48,7 +43,7 @@ const AuthHome = () => {
     <ImageBackground
       source={require("../../../assets/images/auth-home-bg.png")}
       resizeMode="cover"
-      className="flex-1 h-full"
+      style={{height:hp("100%")}}
     >
       <View
       style={{backgroundColor:"transparent"}}
@@ -57,22 +52,22 @@ const AuthHome = () => {
           source={require("../../../assets/images/auth-home-min.png")}
           style={{
             width: wp("100%"),
-            height: hp("60%"),
+            height: hp("66%"),
             resizeMode: "contain",
  
           }}
         />
       </View>
-      <Modal transparent>
+      <Modal transparent={true}>
         <View
           style={{
             backgroundColor: "#FFFFFF",
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
             padding: 24,
-            height: hp("15%"),
+            height: hp("40%"),
             position: "absolute",
-            bottom:"30%",
+            bottom:"0%",
             zIndex:1
      
           }}

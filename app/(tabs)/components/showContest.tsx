@@ -1,6 +1,6 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
-import { SessionUser } from "@/services/user";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { ContestListItem } from "./contest/contestListItem";
 
@@ -11,11 +11,11 @@ interface ShowContestProps {
 let currentPage = 0;
 
 const ShowContest: React.FC<ShowContestProps> = (refreshing) => {
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [contests, setContests] = useState<IContest[]>([]);
 
-  const getMyContestList = useCallback(async () => {
+  async function getMyContestList(){
     if (loading) return;
 
     setLoading(true);
@@ -23,19 +23,27 @@ const ShowContest: React.FC<ShowContestProps> = (refreshing) => {
     try {
       const nextPage = currentPage + 1;
       const data = await Contest.getMyContests(nextPage);
-      if (nextPage === 1) {
-        setContests(data);
-      } else {
-        setContests((prev) => [...prev, ...data]);
+      if(data.length <=0 ){
+        setLoading(true)
       }
+      else{
+        setContests(prev=>[...prev,...data])
+         currentPage = nextPage;
+      }
+      // if (nextPage === 1) {
+      //   setContests(data);
+      // } else {
+      //   setContests((prev) => [...prev, ...data]);
+      // }
 
-      if (data.length > 0) {
-        currentPage = nextPage;
-      }
+      // if (data.length > 0) {
+      //   currentPage = nextPage;
+      // }
     } finally {
       setLoading(false);
     }
-  }, [loading]);
+  }
+
 
   useEffect(() => {
     currentPage = 0;
@@ -76,8 +84,8 @@ const ShowContest: React.FC<ShowContestProps> = (refreshing) => {
         data={contests}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={renderMyContestItem}
-        //onEndReached={getMyContestList}
-        onEndReachedThreshold={0.3}
+        onEndReached={getMyContestList}
+        onEndReachedThreshold={0}
         ListFooterComponent={
           loading ? (
             <ActivityIndicator size="large" color="#aaa" />

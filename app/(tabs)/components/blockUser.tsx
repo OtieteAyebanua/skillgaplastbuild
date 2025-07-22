@@ -1,7 +1,8 @@
 import Input from "@/components/ui/Input";
+import { useTheme } from "@/hooks/useThemeContext";
 import { useDebounce } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
-import { IOtherUserRecord, SessionUser, User } from "@/services/user";
+import { IOtherUserRecord, User } from "@/services/user";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -16,7 +17,7 @@ interface IBlockUser {
 }
 
 const BlockUser = ({ userBlocked }: IBlockUser) => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [skillTag, setSkillTag] = useState("");
   const [error, setError] = useState(false);

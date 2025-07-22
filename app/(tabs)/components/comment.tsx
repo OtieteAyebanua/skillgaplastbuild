@@ -1,5 +1,5 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
-import { SessionUser } from "@/services/user";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
@@ -43,7 +43,7 @@ interface CommentProps {
 }
 
 const Comment = ({ contest }: CommentProps) => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   const [text, setText] = useState("");
   const [data, setData] = useState(mockMessages);
   const flatListRef = useRef(null);

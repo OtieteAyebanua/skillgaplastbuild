@@ -1,5 +1,7 @@
 import PageContainer from "@/components/Containers";
 import Input from "@/components/ui/Input";
+import { useUserContext } from "@/hooks/useAppContext";
+import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest, IContestCategory } from "@/services/contest";
 import { useDebounce } from "@/services/formValidation";
 import { Logger } from "@/services/logger";
@@ -30,7 +32,8 @@ import Categories from "../categories";
 import SuccessfullyCreatedContest from "./successfullyCreatedContest";
 
 const CreateContest = () => {
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
+  const { getUserBalance } = useUserContext();
 
   const [isOffline, setIsOffline] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
@@ -39,7 +42,7 @@ const CreateContest = () => {
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [stake, setStake] = useState<number>(0);
   const [skillTag, setSkillTag] = useState("");
-  const [opponentRecord, setOpponentRecord] = useState<IOtherUserRecord>();
+  const [opponentRecord, setOpponentRecord] = useState<IOtherUserRecord | null>();
 
   const [characterValue, setCharacterValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +52,9 @@ const CreateContest = () => {
   const debouncedSearch = useCallback(
     useDebounce(() => {
       User.getUserByTag(skillTag).then((response) => {
-        setError(!response.data);
-        setOpponentRecord(response.data);
+        Logger.info("TAG", response)
+        setError(response === null);
+        setOpponentRecord(response);
       });
     }, 500),
     [skillTag]
@@ -118,7 +122,7 @@ const CreateContest = () => {
     }
   };
 
-  const balance = User.getBalance();
+  const balance = getUserBalance();
 
   const isFormValid = () => {
     return (
@@ -336,7 +340,7 @@ const CreateContest = () => {
                 </Text>
                 <Input
                   placeholder="e.g @skillgap"
-                  isError={error}
+                  //isError={error}
                   type="text"
                   value={(e) => setSkillTag(e)}
                 />
@@ -599,7 +603,7 @@ const CreateContest = () => {
                   color: theme == false ? "#000" : "#fff",
                 }}
               >
-                {balance.currency}
+                &#8358;
                 {balance.left}.{balance.right}
               </Text>
             </View>

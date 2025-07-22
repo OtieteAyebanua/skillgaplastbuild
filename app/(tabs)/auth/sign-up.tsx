@@ -61,27 +61,44 @@ const SignUp = () => {
     }));
   }, [password, email, fullName, confirmPassword]);
 
-    useFocusEffect(
-      useCallback(() => {
-        setEmail("");
-        setPassword("");
-        setFullName("")
-        setConfirmPassword("")
-      }, [])
-    );
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+      setPassword("");
+      setFullName("");
+      setConfirmPassword("");
+    }, [])
+  );
 
   function checkForError() {
     if (fullName == "") {
-      ToastBox("error","Hello user","Fullname box is empty",);
+      ToastBox("custom", "Fullname box is empty", {
+        theme: false,
+        types: false,
+      });
       return false;
     } else if (!emailValidation(email)) {
-      ToastBox("error","Hello user","Email is not valid",);
+      ToastBox("custom", "Email is not valid", {
+        theme: false,
+        types: false,
+      });
       return false;
     } else if (!passwordValidation(password)) {
-    ToastBox("error","Hello user","Password must be 8-12 characters long",);
+      ToastBox(
+        "custom",
+      
+        "Password must be 8-12 characters long",
+        {
+          theme: false,
+          types: false,
+        }
+      );
       return false;
     } else if (!passwordExactness(password, confirmPassword)) {
-      ToastBox("error","Hello user","Password does not match",);
+      ToastBox("custom", "Password does not match", {
+        theme: false,
+        types: false,
+      });
       return false;
     }
     return true;
@@ -102,7 +119,7 @@ const SignUp = () => {
           Router.push("/(tabs)/auth/accountVerification");
         }
       } else {
-        ToastBox("error","Hello user",response.error,);
+        ToastBox("error", response.error);
         Logger.error(response.error);
       }
       setIsLoading(false);
@@ -183,8 +200,7 @@ const SignUp = () => {
                     ? "flex"
                     : "none",
               }}
-            >
-            </View>
+            ></View>
           </View>
 
           <View style={{ width: wp("93%"), margin: "auto", marginBottom: 10 }}>
@@ -201,8 +217,7 @@ const SignUp = () => {
                   ? "flex"
                   : "none",
               }}
-            >
-            </View>
+            ></View>
           </View>
           <TouchableOpacity
             onPress={handleSignup}

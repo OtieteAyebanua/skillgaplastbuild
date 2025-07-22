@@ -1,8 +1,9 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
+import { formatNumber, timeAgo } from "@/services/formValidation";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
-import { formatMoney } from "@/utitlity/string";
 import { Text, TouchableOpacity, View } from "react-native";
 import NetworkImage from "../networkImage";
 
@@ -13,7 +14,7 @@ interface ContestListItemProps {
 export const ContestListItem: React.FC<ContestListItemProps> = ({
   contest,
 }) => {
-  const theme = SessionUser?.preferences.darkMode;
+  const { theme } = useTheme();
 
   const isOnline =
     contest.ownerId === SessionUser?.id
@@ -22,7 +23,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
 
   const state =
     contest.state === "pending"
-      ? "10 min ago"
+      ? timeAgo(contest.timeStamp)
       : contest.state === "disputed"
       ? "Disputed"
       : contest.state === "ongoing"
@@ -36,8 +37,6 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
     : contest.winnerId === SessionUser?.id
     ? "#2A9D0D"
     : "#FB5631";
-
-  const stake = formatMoney(contest.stake);
 
   return (
     <TouchableOpacity
@@ -93,16 +92,28 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
           }}
         >
           <View style={{ marginLeft: 12 }}>
-            <Text
-              style={{
-                color: theme === false ? "#000000" : "#FFFFFF",
-                fontWeight: "600",
-              }}
-            >
-              {contest.category.name}
-            </Text>
-            <Text style={{ color: "#A1A1AA", fontSize: 12 }}>
-              @{contest.owner.tag}{" "}
+            <View style={{flexDirection:"row"}}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  color: theme === false ? "#000000" : "#FFFFFF",
+                  fontWeight: "600",
+                  width: 130,
+                }}
+              >
+                {contest.category.name}
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ color: "#A1A1AA", fontSize: 12, width: 60 }}
+              >
+                @{contest.owner.tag}
+              </Text>
+
               <Text
                 style={{
                   fontWeight: 600,
@@ -111,34 +122,14 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
               >
                 {" vs "}
               </Text>
-              {contest.opponent ? ` @${contest.opponent?.tag}` : "  ?"}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 4,
-              backgroundColor: "#E2FEE6",
-              borderWidth: 1,
-              borderColor: "#78F98D",
-              borderRadius: 39,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "General Sans Variable",
-                fontStyle: "normal",
-                fontWeight: "500",
-                fontSize: 10,
-                lineHeight: 12,
-                letterSpacing: -0.06,
-                color: "#2A9D0D",
-              }}
-            >
-              {isOnline ? "Online" : "Offline"}
-            </Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ color: "#A1A1AA", fontSize: 12, width: 60 }}
+              >
+                {contest.opponent ? ` @${contest.opponent?.tag}` : "  ?"}
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -153,7 +144,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
             fontSize: 16,
           }}
         >
-          #{stake.left}.{stake.right}
+          #{formatNumber(contest.stake)} 
         </Text>
       </View>
     </TouchableOpacity>

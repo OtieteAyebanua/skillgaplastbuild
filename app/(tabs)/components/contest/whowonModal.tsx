@@ -1,6 +1,6 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
 import { Media } from "@/services/media";
-import { SessionUser } from "@/services/user";
 import React, { useState } from "react";
 import {
   Image,
@@ -18,7 +18,7 @@ interface IWhoWonModal {
 }
 const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
   const [selectedUser, setSelectedUser] = useState<number | null>();
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,

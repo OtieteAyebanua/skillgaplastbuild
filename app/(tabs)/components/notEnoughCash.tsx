@@ -1,4 +1,4 @@
-import { SessionUser } from "@/services/user";
+import { useTheme } from "@/hooks/useThemeContext";
 import { styled } from "nativewind";
 import React from "react";
 import {
@@ -18,7 +18,7 @@ interface INotEnoughCash {
   close: () => void;
 }
 const NotEnoughCash = ({ close }: INotEnoughCash) => {
-  const theme = SessionUser?.preferences.darkMode;
+    const {theme} = useTheme();
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,

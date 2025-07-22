@@ -1,5 +1,5 @@
+import { useUserContext } from "@/hooks/useAppContext";
 import { Router } from "@/services/router";
-import { User } from "@/services/user";
 import {
   Image,
   ImageBackground,
@@ -14,7 +14,9 @@ interface FloatingWalletProps {
 }
 
 const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
-  const balance = User.getBalance();
+  const { getUserBalance } = useUserContext();
+
+  const balance = getUserBalance();
 
   return (
     <ImageBackground
@@ -57,7 +59,7 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
                 textAlign: "center",
               }}
             >
-              {balance.currency}
+              &#8358;
               {balance.left}
             </Text>
             <Text style={{ fontSize: 14, color: "#FFFFFF" }}>

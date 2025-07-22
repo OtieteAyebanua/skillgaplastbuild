@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/useThemeContext";
 import { SessionUser } from "@/services/user";
 import {
   Image,
@@ -18,8 +19,7 @@ interface IWarningModal {
   text: string;
 }
 const WarningModal = ({ proceed, cancel, text }: IWarningModal) => {
-  const theme = SessionUser?.preferences.darkMode;
-
+    const {theme} = useTheme();
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,
