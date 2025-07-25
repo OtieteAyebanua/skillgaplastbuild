@@ -1,10 +1,11 @@
 import PageContainer from "@/components/Containers";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
+import { formatNumber } from "@/services/formValidation";
+import { convertUTCToNormalDate } from "@/services/generateRandomHexNumber";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
-import { formatMoney } from "@/utitlity/string";
 import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
@@ -60,8 +61,7 @@ const MyContestDetails = () => {
             Router.back();
           });
       }
-    }, [contestId]),
-   
+    }, [contestId])
   );
 
   const setStage = (contest: IContest) => {
@@ -329,27 +329,15 @@ const MyContestDetails = () => {
               borderRadius: 10,
             }}
           >
-            <View
+            <Text
+              numberOfLines={1}
               style={{
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 4,
-                borderRadius: 2,
+                fontSize: 16,
+                color: "#1D9BF0",
+                fontWeight: "700",
+                maxWidth: 150,
               }}
             >
-              <Text
-                style={{
-                  fontSize: 8,
-                  fontWeight: "600",
-                  backgroundColor: theme == false ? "#FFFAE5" : "#E2FEE6",
-                  color: "#22C55E",
-                }}
-              >
-                {contest?.owner.isOnline ? "Online" : "Offline"}
-              </Text>
-            </View>
-
-            <Text style={{ fontSize: 16, color: "#1D9BF0", fontWeight: "700" }}>
               {contest?.category.name}
             </Text>
 
@@ -381,17 +369,18 @@ const MyContestDetails = () => {
               justifyContent: "space-evenly",
               alignItems: "center",
               backgroundColor: theme == false ? "#ffffff" : "#1D1F20",
-              padding: 16,
+              paddingVertical: 16,
               borderRadius: 12,
             }}
           >
             <View
               style={{
                 backgroundColor: theme == false ? "#ffffff" : "#27292B",
-                paddingHorizontal: 30,
+                paddingHorizontal: 20,
                 paddingVertical: 15,
                 borderRadius: 10,
                 alignItems: "center",
+                width: 125,
               }}
             >
               <View
@@ -401,7 +390,7 @@ const MyContestDetails = () => {
                 }}
               >
                 <NetworkImage
-                  loadingUri={require("../../../../assets/images/profile-bg.png")}
+                  loadingUri={require("../../../../assets/images/profile-img.png")}
                   uri={
                     Media.GetProfileImageUris(contest?.owner.id ?? 0).original
                   }
@@ -409,10 +398,12 @@ const MyContestDetails = () => {
                 />
               </View>
               <Text
+                numberOfLines={1}
                 style={{
                   color: "#3B82F6",
                   fontSize: 16,
                   fontWeight: "600",
+                  maxWidth: 90,
                 }}
               >
                 @{contest?.owner.tag}
@@ -432,8 +423,7 @@ const MyContestDetails = () => {
                     fontWeight: "500",
                   }}
                 >
-                  #{formatMoney(contest?.stake ?? 0).left}.
-                  {formatMoney(contest?.stake ?? 0).right}
+                  &#8358;{formatNumber(contest?.stake ?? 0)}
                 </Text>
               </View>
             </View>
@@ -446,10 +436,11 @@ const MyContestDetails = () => {
             <View
               style={{
                 backgroundColor: theme == false ? "#ffffff" : "#27292B",
-                paddingHorizontal: 30,
+                paddingHorizontal: 20,
                 paddingVertical: 15,
                 borderRadius: 10,
                 alignItems: "center",
+                width: 125,
               }}
             >
               <View
@@ -459,7 +450,11 @@ const MyContestDetails = () => {
                 }}
               >
                 <NetworkImage
-                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+                  loadingUri={
+                    contest?.opponent === null
+                      ? require("../../../../assets/images/unknownAvatar.png")
+                      : require("../../../../assets/images/profile-img.png")
+                  }
                   uri={
                     Media.GetProfileImageUris(contest?.opponent?.id ?? 0)
                       .original
@@ -468,10 +463,12 @@ const MyContestDetails = () => {
                 />
               </View>
               <Text
+                numberOfLines={1}
                 style={{
                   color: "#3B82F6",
                   fontSize: 16,
                   fontWeight: "600",
+                  maxWidth: 90,
                 }}
               >
                 {contest?.opponent ? `@${contest.opponent.tag}` : "?"}
@@ -491,8 +488,7 @@ const MyContestDetails = () => {
                     fontWeight: "500",
                   }}
                 >
-                  #{formatMoney(contest?.stake ?? 0).left}.
-                  {formatMoney(contest?.stake ?? 0).right}
+                  &#8358;{formatNumber(contest?.stake ?? 0)}
                 </Text>
               </View>
             </View>
@@ -521,6 +517,7 @@ const MyContestDetails = () => {
             Description
           </Text>
           <Text
+            numberOfLines={5}
             style={{
               color: "#8F8F8F",
               width: "100%",
@@ -528,7 +525,60 @@ const MyContestDetails = () => {
               fontFamily: "General Sans Variable",
             }}
           >
-            {contest?.description}
+            {contest?.description}sdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa
+            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
+            dasdasdasdsadsadsadsa dsadasdasdadsa dadaddasdas
           </Text>
         </View>
 
@@ -556,9 +606,13 @@ const MyContestDetails = () => {
           <View style={{ marginTop: 12 }}>
             {[
               { label: "Created by:", value: `@${contest?.owner.tag}` },
-              { label: "Date & Time:", value: `${contest?.timeStamp}` },
+              {
+                label: "Date & Time:",
+                value: `${convertUTCToNormalDate(contest?.timeStamp ?? "")}`,
+              },
               { label: "Contest ID:", value: `${contest?.id}` },
-              { label: "SkillGap Fee:", value: "3.0%" },
+              { label: "Prize:", value: `₦${(contest?.stake ?? 0) * 2}` },
+              { label: "SkillGap Fee:", value: `%${contest?.fee?.toFixed(2) ?? 0  }` },
             ].map((item, index) => (
               <View
                 key={index}
@@ -577,9 +631,12 @@ const MyContestDetails = () => {
                   {item.label}
                 </Text>
                 <Text
+                  numberOfLines={1}
                   style={{
                     color: item.label === "Created by:" ? "#3B82F6" : "#9CA3AF",
                     fontSize: 14,
+                    maxWidth: 200,
+                    textAlign:"right",
                   }}
                 >
                   {item.value}

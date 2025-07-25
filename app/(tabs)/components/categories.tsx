@@ -7,7 +7,9 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "react-native-heroicons/outline";
+import GetColoredCategoryBubbles from "./coloredCategorybubbles";
 import NetworkImage from "./networkImage";
+
 
 interface ICategories {
   close: () => void;
@@ -15,7 +17,7 @@ interface ICategories {
 }
 
 const Categories = ({ close, onSelected }: ICategories) => {
-    const {theme} = useTheme();
+  const { theme } = useTheme();
 
   const [stage, setStage] = useState<
     "Categories" | "Sub Categories" | "Filter"
@@ -157,13 +159,8 @@ const Categories = ({ close, onSelected }: ICategories) => {
               fontSize: 10,
             }}
           >
-            {selectedCategories.reduce((prev, curr, index) => {
-              return (
-                prev +
-                curr.name +
-                (index < selectedCategories.length - 1 ? ". " : "")
-              );
-            }, "")}
+            <GetColoredCategoryBubbles data={selectedCategories}/>
+      {/* ............... ....................... ........................ ...................... ..................... ............... */}
           </Text>
           <TouchableOpacity
             onPress={handleApply}

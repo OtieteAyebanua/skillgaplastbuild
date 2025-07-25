@@ -1,3 +1,4 @@
+import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
 import { formatNumber, timeAgo } from "@/services/formValidation";
@@ -15,6 +16,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
   contest,
 }) => {
   const { theme } = useTheme();
+  const {user} =  useUserContext()
 
   const isOnline =
     contest.ownerId === SessionUser?.id
@@ -64,7 +66,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
       <View style={{ flexDirection: "row" }}>
         <NetworkImage
           uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
-          loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+          loadingUri={require("../../../../assets/images/profile-img.png")}
           style={{
             width: 40,
             height: 40,
@@ -77,7 +79,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
         <View style={{ alignItems: "center" }}>
           <NetworkImage
             uri={Media.GetProfileImageUris(contest.opponent?.id ?? 0).small}
-            loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+            loadingUri={ contest.opponent === null ?require("../../../../assets/images/unknownAvatar.png") : require("../../../../assets/images/profile-img.png")}
             style={{ width: 40, height: 40, borderRadius: 20 }}
           />
         </View>
@@ -92,7 +94,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
           }}
         >
           <View style={{ marginLeft: 12 }}>
-            <View style={{flexDirection:"row"}}>
+            <View style={{flexDirection:"row",}}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -109,7 +111,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ color: "#A1A1AA", fontSize: 12, width: 60 }}
+                style={{ color: "#A1A1AA", fontSize: 12, maxWidth: 60 }}
               >
                 @{contest.owner.tag}
               </Text>
@@ -120,12 +122,12 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
                   color: theme === false ? "#000000" : "#FFFFFF",
                 }}
               >
-                {" vs "}
+               {" "} {" vs "}
               </Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ color: "#A1A1AA", fontSize: 12, width: 60 }}
+                style={{ color: "#A1A1AA", fontSize: 12, maxWidth: 60 }}
               >
                 {contest.opponent ? ` @${contest.opponent?.tag}` : "  ?"}
               </Text>
@@ -144,7 +146,7 @@ export const ContestListItem: React.FC<ContestListItemProps> = ({
             fontSize: 16,
           }}
         >
-          #{formatNumber(contest.stake)} 
+           &#8358;{formatNumber(contest.stake)} 
         </Text>
       </View>
     </TouchableOpacity>

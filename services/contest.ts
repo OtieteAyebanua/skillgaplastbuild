@@ -28,6 +28,7 @@ export interface IContest {
   stake: number;
   state: ContestState;
   winnerId: number | null;
+  fee: number | null;
   category: {
     id: number;
     name: string;

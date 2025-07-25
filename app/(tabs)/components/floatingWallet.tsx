@@ -72,7 +72,7 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: "flex-start",
           }}
         >
           <TouchableOpacity
@@ -84,6 +84,9 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
               borderRadius: 12,
               flexDirection: "row",
               alignItems: "center",
+              width: 90,
+              display: "flex",
+              justifyContent: "center",
             }}
             // onPress={() => router.push("/withdraw")}
           >
@@ -125,6 +128,9 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
               borderRadius: 12,
               flexDirection: "row",
               alignItems: "center",
+              width: 90,
+              display: "flex",
+              justifyContent: "center",
             }}
             onPress={() => Router.push("/(tabs)/components/wallet/deposit")}
           >

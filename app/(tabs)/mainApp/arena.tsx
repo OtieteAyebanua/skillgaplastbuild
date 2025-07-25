@@ -1,10 +1,11 @@
 import PageContainer from "@/components/Containers";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest, IContestCategory } from "@/services/contest";
+import { formatNumber } from "@/services/formValidation";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { User } from "@/services/user";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -19,7 +20,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { XMarkIcon } from "react-native-heroicons/outline";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+import { Nodata } from ".";
 import Categories from "../components/categories";
 import { ContestListItem } from "../components/contest/contestListItem";
 import NetworkImage from "../components/networkImage";
@@ -37,6 +43,7 @@ const Arena = () => {
 
   const [id, setId] = useState<number | null>(null);
   const { categoryId } = useLocalSearchParams();
+  const [displayedCategory, setDisplayedCategory] = useState("");
 
   const onRefresh = () => {
     User.Load();
@@ -63,6 +70,7 @@ const Arena = () => {
       currentPage = 0;
       const category = categories.pop();
       setId(category?.id ?? null);
+      setDisplayedCategory(category?.name ?? "");
     }
   };
 
@@ -93,9 +101,105 @@ const Arena = () => {
   };
 
   const fetchHighestStakeData = async () => {
-    const data = await Contest.getHighestStakeContests(null);
+    const data = await Contest.getHighestStakeContests(id);
     setHighestContests(data);
   };
+
+  const highestStakeContest = ({ item, index }: any) => (
+    <TouchableOpacity
+      key={index}
+      style={{
+        backgroundColor: theme == false ? "#ffffff" : "#27292B",
+        marginRight: 5,
+        padding: 2,
+        width: 160,
+        borderRadius: 3,
+      }}
+      onPress={() => {
+        Router.push(
+          "/(tabs)/components/contest/myContestDetails?contestId=${contest.id}"
+        );
+      }}
+    >
+      <NetworkImage
+        loadingUri={require("../../../assets/images/icon.png")}
+        uri={Media.GetCategoryImageUris(item.id)?.original}
+        style={{
+          width: "100%",
+          height: 165,
+          borderRadius: 5, // rounded-lg
+        }}
+      />
+
+      <Text
+        numberOfLines={1}
+        style={{
+          fontSize: 12,
+          fontWeight: "600",
+          marginTop: 1,
+          color: theme === false ? "#000000" : "#ffffff",
+          width: "90%",
+          paddingLeft: 5,
+        }}
+      >
+        {item.category.name}
+      </Text>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 2,
+        }}
+      >
+        {/* Avatar and Username */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "flex-start",
+            gap: 3,
+            width: "75%",
+          }}
+        >
+          <NetworkImage
+            uri={Media.GetProfileImageUris(item.owner.id ?? 0).small}
+            loadingUri={require("../../../assets/images/unknownAvatar.png")}
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: 20,
+            }}
+          />
+
+          <View style={{ flexDirection: "column", width: "100%" }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 12, // text-xs
+                color: theme === false ? "#000000" : "#ffffff",
+                maxWidth: "100%",
+              }}
+            >
+              @{item.owner.tag}
+            </Text>
+
+            <Text
+              numberOfLines={1}
+              style={{
+                color: "#8F8F8F",
+                fontWeight: "600",
+                fontSize: 12,
+                width: "100%",
+              }}
+            >
+              Stake: &#8358;{formatNumber(item.stake)}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <PageContainer
@@ -106,6 +210,7 @@ const Arena = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        style={{ paddingHorizontal: 5 }}
       >
         {" "}
         <View
@@ -143,173 +248,74 @@ const Arena = () => {
               borderRadius: 12,
               paddingHorizontal: 16,
               paddingVertical: 8,
-              width: wp("50%"),
+              width: wp("90%"),
+              margin: "auto",
+              justifyContent: "space-between",
             }}
             onPress={() => setShowCategories(!showCategories)}
           >
-            <Feather name="filter" size={16} color="#A3A3A3" />
-            <Text style={{ color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
-              Categories
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {highestContests.length > 0 && (
-          <>
-            <View>
-              <Text
-                style={{
-                  width: 171,
-                  height: 24,
-                  fontFamily: "General Sans Variable",
-                  fontStyle: "normal",
-                  fontWeight: "700", // equivalent to font-semibold
-                  fontSize: 16, // text-base
-                  lineHeight: 24,
-                  letterSpacing: -0.16, // -0.01em * 16px
-                  color: theme == false ? "#020B12" : "#ffffff",
-                  flex: 0,
-                  flexGrow: 0,
-                  paddingLeft: 10,
-                  marginBottom: 10,
-                  marginTop: 15,
-                }}
-              >
-                Highest Stake Contest
+            <View style={{ flexDirection: "row" }}>
+              <Ionicons name="filter" size={16} color="#A3A3A3" />
+              <Text style={{ color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
+                {displayedCategory === "" ? "Categories" : displayedCategory}
               </Text>
             </View>
-            <View>
-              <ScrollView
-                horizontal
-                style={{ marginLeft: 10 }}
-                showsHorizontalScrollIndicator={false}
+            {displayedCategory === "" ? null : (
+              <TouchableOpacity
+                onPress={() => {
+                  setId(null);
+                  setDisplayedCategory("");
+                }}
               >
-                {highestContests.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={{
-                      backgroundColor: theme == false ? "#ffffff" : "#27292B",
-                      marginRight: 5,
-                      padding: 2,
-                      width: 160,
-                      borderRadius: 3,
-                    }}
-                    onPress={() => {
-                      Router.push(
-                        "/(tabs)/components/contest/myContestDetails?contestId=${contest.id}"
-                      );
-                    }}
-                  >
-                    <NetworkImage
-                      loadingUri={require("../../../assets/images/icon.png")}
-                      uri={Media.GetCategoryImageUris(item.id)?.original}
-                      style={{
-                        width: "100%",
-                        height: 165,
-                        borderRadius: 5, // rounded-lg
-                      }}
-                    />
-
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "600",
-                        marginTop: 1,
-                        color: theme === false ? "#000000" : "#ffffff",
-                      }}
-                    >
-                      {item.category.name}
-                    </Text>
-
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginTop: 2,
-                      }}
-                    >
-                      {/* Avatar and Username */}
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "flex-start",
-                          gap: 10,
-                          width: "50%",
-                        }}
-                      >
-                        <NetworkImage
-                          uri={
-                            Media.GetProfileImageUris(item.owner.id ?? 0).small
-                          }
-                          loadingUri={require("../../../assets/images/unknownAvatar.png")}
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                          }}
-                        />
-
-                        <View style={{ flexDirection: "column" }}>
-                          <Text
-                            style={{
-                              fontSize: 12, // text-xs
-                              color: theme === false ? "#000000" : "#ffffff",
-                            }}
-                          >
-                            @{item.owner.tag}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              marginTop: 0,
-                              color: theme === false ? "#000000" : "#ffffff",
-                            }}
-                          >
-                            Stake:{" "}
-                            <Text
-                              style={{
-                                color: "#8F8F8F",
-                                fontWeight: "600",
-                              }}
-                            >
-                              ${item.stake}
-                            </Text>
-                          </Text>
-                        </View>
-                      </View>
-
-                      {/* Online/Offline Badge */}
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          paddingHorizontal: 4,
-                          backgroundColor: "#E2FEE6",
-                          borderWidth: 1,
-                          borderColor: "#78F98D",
-                          borderRadius: 39,
-                          height: "auto",
-                          width: "auto",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontFamily: "General Sans Variable",
-                            fontSize: 9,
-                            color: "#2A9D0D",
-                          }}
-                        >
-                          {item.owner.isOnline ? "Online" : "Offline"}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          </>
-        )}
+                <XMarkIcon width="30" height="20" color="#fff" />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+        </View>
+        {highestContests.length > 0 ? 
+        <View>
+          <Text
+            style={{
+              width: 171,
+              height: 24,
+              fontFamily: "General Sans Variable",
+              fontStyle: "normal",
+              fontWeight: "700", // equivalent to font-semibold
+              fontSize: 16, // text-base
+              lineHeight: 24,
+              letterSpacing: -0.16, // -0.01em * 16px
+              color: theme == false ? "#020B12" : "#ffffff",
+              flex: 0,
+              flexGrow: 0,
+              paddingLeft: 10,
+              marginBottom: 10,
+              marginTop: 15,
+            }}
+          >
+            Highest Stake Contest
+          </Text>
+        </View>: null}
+        <View style={{ margin: "auto" }}>
+          <FlatList
+            horizontal={true}
+            data={highestContests}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            renderItem={highestStakeContest}
+            //onEndReached={fetchData}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={
+              loading ? (
+                <ActivityIndicator size={"large"} color={"#aaa"} />
+              ) : contests.length === 0 ? (
+                null
+              ) : null
+            }
+            contentContainerStyle={{
+              paddingBottom: 10,
+              flexGrow: 1,
+            }}
+          />
+        </View>
         <View>
           <Text
             style={{
@@ -343,7 +349,14 @@ const Arena = () => {
               loading ? (
                 <ActivityIndicator size={"large"} color={"#aaa"} />
               ) : contests.length === 0 ? (
-                <Text>No Data</Text>
+                <View
+                  style={{
+                    height: hp("28%"),
+                    backgroundColor: theme ? "#27292B" : "#FFFFFF",
+                  }}
+                >
+                  <Nodata />
+                </View>
               ) : null
             }
             contentContainerStyle={{

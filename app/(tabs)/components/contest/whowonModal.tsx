@@ -18,7 +18,7 @@ interface IWhoWonModal {
 }
 const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
   const [selectedUser, setSelectedUser] = useState<number | null>();
-    const {theme} = useTheme();
+  const { theme } = useTheme();
   const ModalStyles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -140,12 +140,14 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                   selectedUser === contest?.ownerId
                     ? "#1D9BF033"
                     : "transparent",
-                paddingHorizontal: 25,
+
                 paddingVertical: 20,
                 borderRadius: 7,
                 alignItems: "center",
                 borderWidth: 1,
                 borderColor: "#313335",
+                width:110,
+                maxWidth:110
               }}
             >
               <View
@@ -159,12 +161,18 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                   uri={
                     Media.GetProfileImageUris(contest?.owner?.id ?? 0).original
                   }
-                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+                  loadingUri={require("../../../../assets/images/profile-img.png")}
                   style={{ width: 50, height: 50, borderRadius: 9999 }}
                 />
               </View>
               <Text
-                style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
+                numberOfLines={1}
+                style={{
+                  color: "#3B82F6",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  maxWidth: 90,
+                }}
               >
                 @{contest?.owner?.tag}
               </Text>
@@ -180,12 +188,13 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                   selectedUser === contest?.opponent?.id
                     ? "#1D9BF033"
                     : "transparent",
-                paddingHorizontal: 25,
                 paddingVertical: 20,
                 borderRadius: 7,
                 alignItems: "center",
                 borderWidth: 1,
                 borderColor: "#313335",
+                width:110,
+                maxWidth:110
               }}
             >
               <View
@@ -200,12 +209,18 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                     Media.GetProfileImageUris(contest?.opponent?.id ?? 0)
                       .original
                   }
-                  loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+                  loadingUri={require("../../../../assets/images/profile-img.png")}
                   style={{ width: 50, height: 50, borderRadius: 9999 }}
                 />
               </View>
               <Text
-                style={{ color: "#3B82F6", fontSize: 16, fontWeight: "600" }}
+                numberOfLines={1}
+                style={{
+                  color: "#3B82F6",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  maxWidth: 90,
+                }}
               >
                 @{contest?.opponent?.tag}
               </Text>

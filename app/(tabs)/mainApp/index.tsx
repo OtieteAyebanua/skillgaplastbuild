@@ -7,10 +7,12 @@ import { SessionUser, User } from "@/services/user";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import {
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import FloatingWallet from "../components/floatingWallet";
@@ -20,11 +22,13 @@ import TrendingCategory from "../components/trendingCategories";
 import SplashScreen from "../splashScreen";
 
 export default function HomePage() {
-  const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [isLoading, setIsLoading] = useState(true);
   const { setUser, user } = useUserContext();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [greeting, setGreeting] = useState(false);
+
   const onRefresh = () => {
     User.Load();
     setRefreshToken(!refreshToken);
@@ -45,14 +49,18 @@ export default function HomePage() {
   return !user ? (
     <SplashScreen />
   ) : (
-    <PageContainer backgroundColor={theme == false ? "#fff" : "#0A0A0A"}>
-      
+    <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#0A0A0A"}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View
           style={{
             width: "100%",
             padding: 16, // p-4 → 4 * 4
             flexDirection: "column",
-            backgroundColor: theme == false ? "#ffffff" : "#131315",
+            backgroundColor: theme == false ? "#FAFAFA" : "#131315",
           }}
         >
           <View
@@ -114,6 +122,7 @@ export default function HomePage() {
               >
                 Howdy,
               </Text>
+
               <Text
                 style={{
                   fontWeight: "600",
@@ -130,39 +139,79 @@ export default function HomePage() {
           <TrendingCategory refreshing={refreshToken} />
           <ShowContest refreshing={refreshToken} />
         </View>
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => Router.push("/(tabs)/components/contest/createContest")}
-      >
-        <Text style={styles.plus}>
+      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() =>
+            Router.push("/(tabs)/components/contest/createContest")
+          }
+        >
           <PlusIcon size={30} color="#fff" />
-        </Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     </PageContainer>
   );
 }
 
 const styles = StyleSheet.create({
   floatingButton: {
-    position: "absolute",
-    bottom: 10,
-    right: 30,
-    backgroundColor: "#2196F3", // blue color
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    backgroundColor: "#1D9BF0",
+    width: 50,
+    height: 50,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 5, // for Android shadow
-    shadowColor: "#000", // for iOS shadow
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  plus: {
-    color: "#fff",
-    fontSize: 32,
-    lineHeight: 36,
-    fontWeight: "bold",
+    position: "absolute",
+    bottom: 30,
+    right: 30,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
+
+export const Nodata = () => {
+  const { theme } = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 20,
+      }}
+    >
+      <Text
+        style={{
+          fontWeight: "600",
+          fontSize: 16,
+          marginBottom: 1,
+          color: theme ? "#fff" : "#000",
+        }}
+      >
+        Ouch!
+      </Text>
+
+      <Text style={{ fontSize: 14, color: "#8F8F8F", textAlign: "center",fontWeight:500 }}>
+        You don’t have an active contest now
+      </Text>
+
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        <TouchableOpacity onPress={() => Router.push("(tabs)/components/contest/createContest")}>
+          <Text style={{ color: "#1D9BF0", fontSize: 14 }}>Create</Text>
+        </TouchableOpacity>
+
+        <Text style={{ fontSize: 14, color: "#777",fontWeight:500 }}> or </Text>
+
+        <TouchableOpacity onPress={() => Router.push("/mainApp/arena")}>
+          <Text style={{ color: "#1D9BF0", fontSize: 14,fontWeight:500 }}>Join contest</Text>
+        </TouchableOpacity>
+
+        <Text style={{ fontSize: 14, color: "#777",fontWeight:500 }}> now</Text>
+      </View>
+    </View>
+  );
+};

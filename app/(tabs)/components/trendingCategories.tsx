@@ -57,7 +57,7 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                       paddingLeft: 8, // pl-2
                       paddingRight: 8, // pr-2
                       paddingTop: 10, // pt-2
-                      backgroundColor: theme == false ? "#FAFAFA" : "#27292B",
+                      backgroundColor: theme == false ? "#ffffff" : "#27292B",
                       borderRadius: 5,
                       marginRight: 10,
                     }}
