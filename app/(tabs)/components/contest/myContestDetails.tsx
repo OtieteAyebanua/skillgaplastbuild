@@ -36,7 +36,7 @@ const MyContestDetails = () => {
   const [selectWhoWon, setSelectWhoWon] = useState(false);
   const [showNoMoney, setShowNoMoney] = useState(false);
   const [showJoinedMessage, setShowJoinedMessage] = useState(false);
-  const [joinLoading,setJoinLoading] = useState(false)
+  const [joinLoading, setJoinLoading] = useState(false);
 
   const [contest, setContest] = useState<IContest | null>(null);
   const [contestStage, setContestStage] = useState<ContestStage>("Join");
@@ -193,7 +193,9 @@ const MyContestDetails = () => {
                 marginBottom: 10,
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>{joinLoading ? <ActivityIndicator/> :  "Join"}</Text>
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>
+                {joinLoading ? <ActivityIndicator /> : "Join"}
+              </Text>
             </TouchableOpacity>
           </View>
         );
@@ -219,21 +221,32 @@ const MyContestDetails = () => {
   };
 
   const joinContest = () => {
-    if(joinLoading){
+    if (joinLoading) {
       return;
     }
-    if (contest) {
-      if (contest.stake > (SessionUser?.balance ?? 0)) {
-        setShowNoMoney(true);
-        setJoinLoading(false)
-      } else {
-        Contest.joinContest(Number(contestId)).then((response) => {
-          if (response) {
-            setContest({ ...contest, state: "ongoing", opponent: SessionUser });
-            setShowJoinedMessage(true);
-          }
-        });
+
+    setJoinLoading(true);
+
+    try {
+      if (contest) {
+        if (contest.stake > (SessionUser?.balance ?? 0)) {
+          setShowNoMoney(true);
+          setJoinLoading(false);
+        } else {
+          Contest.joinContest(Number(contestId)).then((response) => {
+            if (response) {
+              setContest({
+                ...contest,
+                state: "ongoing",
+                opponent: SessionUser,
+              });
+              setShowJoinedMessage(true);
+            }
+          });
+        }
       }
+    } finally {
+      setJoinLoading(false);
     }
   };
 
@@ -256,7 +269,7 @@ const MyContestDetails = () => {
           // selection has been made
           if (winnerId) {
             if (winnerId === SessionUser?.id) {
-              // TODO: display contest won component
+              // TODO: djoinLoadingisplay contest won component
             } else {
               // TODO: display contest lost component
             }

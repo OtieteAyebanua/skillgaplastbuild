@@ -1,8 +1,7 @@
 import PageContainer from "@/components/Containers";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Logger } from "@/services/logger";
-import { Transaction } from "@/services/transaction";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -19,54 +18,47 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-import { WebView } from "react-native-webview";
-import { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
+import { useUserContext } from "@/hooks/useAppContext";
+import { generateUUID } from "@/utitlity/string";
+import { useFocusEffect } from "expo-router";
+import { usePaystack } from "react-native-paystack-webview";
+import { PaystackTransactionResponse } from "react-native-paystack-webview/production/lib/types";
 
-const CallBackUrl = "http://skillgap.co/paystack";
 const CreateDeposit = () => {
-   const {theme} = useTheme();
+  const { theme } = useTheme();
+  const { popup } = usePaystack();
+  const { user, depositInfo } = useUserContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      setAmount(0);
+      setIsLoading(false);
+    }, [])
+  );
 
   const initiateDeposit = async () => {
-    if (amount < 100 || isLoading) return;
+    if (!user || amount < (depositInfo?.minAmount ?? 100) || isLoading) return;
 
     setIsLoading(true);
-    const result = await Transaction.initiateDeposit(amount, CallBackUrl);
-    if (result) {
-      setCheckoutUrl(result.url);
-    }
-
+    popup.checkout({
+      email: user.email,
+      amount: amount,
+      reference: generateUUID(),
+      metadata: {
+        UserId: user.id.toString(),
+      },
+      onSuccess: function (data: PaystackTransactionResponse): void {
+        Logger.info("DEPOSIT SUCCESS", data);
+      },
+      onCancel: function (): void {
+        Logger.info("DEPOSIT CANCEL");
+      },
+    });
     setIsLoading(false);
   };
-
-  const onShouldStartLoadWithRequest = (request: ShouldStartLoadRequest) => {
-    const { url } = request;
-
-    Logger.info(url);
-    // we got our callback
-    if (url.includes(CallBackUrl)) {
-      setAmount(0);
-      setCheckoutUrl(null);
-
-      alert("Payment Completed");
-      return true;
-    }
-
-   return false;
-  };
-
-  if (checkoutUrl) {
-    return (
-      <WebView
-        source={{ uri: checkoutUrl }}
-        style={{ marginTop: 40 }}
-        onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-      />
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -74,7 +66,7 @@ const CreateDeposit = () => {
       style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // adjust as needed
     >
-      <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
+      <PageContainer backgroundColor={theme === false ? "" : "#141414"}>
         <ScrollView
           style={{
             marginBottom: 2,
@@ -186,10 +178,10 @@ const CreateDeposit = () => {
                   fontWeight: "400",
                   fontSize: 11,
                   lineHeight: 16.5,
-                  color: theme == false ? "#000" : "#fff",
+                  color: theme === false ? "#000" : "#fff",
                 }}
               >
-                #100
+                &#8358;{depositInfo?.minAmount ?? 100}
               </Text>
             </View>
           </View>

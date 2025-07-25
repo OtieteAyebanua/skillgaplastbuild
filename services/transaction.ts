@@ -1,3 +1,4 @@
+import { Currency, PaymentChannels } from "react-native-paystack-webview/production/lib/types";
 import { API } from "./api";
 import { Logger } from "./logger";
 
@@ -8,12 +9,19 @@ type TransactionInitiator = "user" | "system";
 export interface ITransaction {
   id: number;
   amount: number;
-  initiator: string;
+  initiator: TransactionInitiator;
   failureReason?: string | null;
   timeStamp: string;
   state: TransactionState;
   type: TransactionType;
   paymentReference?: string | null;
+}
+
+export interface IDepositInfo {
+  minAmount: number;
+  publicKey: string;
+  currency: Currency;
+  channels: PaymentChannels;
 }
 
 export class Transaction {
@@ -49,6 +57,22 @@ export class Transaction {
       .catch((err) => {
         Logger.error(err);
         return [] as ITransaction[];
+      });
+  };
+
+  static getDepositInfo = () => {
+    const url = `/transactions/deposit-info`;
+    return API.GET(url)
+      .then(async (response) => {
+        if (response.success && response.data) {
+          return response.data as IDepositInfo;
+        }
+
+        return null;
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return null;
       });
   };
 }
