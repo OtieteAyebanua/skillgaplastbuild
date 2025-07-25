@@ -42,7 +42,7 @@ const Arena = () => {
   const [highestContests, setHighestContests] = useState<IContest[]>([]);
 
   const [id, setId] = useState<number | null>(null);
-  const { categoryId } = useLocalSearchParams();
+  const { categoryId, categoryName } = useLocalSearchParams();
   const [displayedCategory, setDisplayedCategory] = useState("");
 
   const onRefresh = () => {
@@ -55,6 +55,9 @@ const Arena = () => {
     Router.clearHistory();
     if (categoryId) {
       setId(Number(categoryId));
+    }
+    if (categoryName && typeof categoryName === "string") {
+      setDisplayedCategory(categoryName ?? "Categories");
     }
   }, [categoryId]);
 
@@ -272,29 +275,30 @@ const Arena = () => {
             )}
           </TouchableOpacity>
         </View>
-        {highestContests.length > 0 ? 
-        <View>
-          <Text
-            style={{
-              width: 171,
-              height: 24,
-              fontFamily: "General Sans Variable",
-              fontStyle: "normal",
-              fontWeight: "700", // equivalent to font-semibold
-              fontSize: 16, // text-base
-              lineHeight: 24,
-              letterSpacing: -0.16, // -0.01em * 16px
-              color: theme == false ? "#020B12" : "#ffffff",
-              flex: 0,
-              flexGrow: 0,
-              paddingLeft: 10,
-              marginBottom: 10,
-              marginTop: 15,
-            }}
-          >
-            Highest Stake Contest
-          </Text>
-        </View>: null}
+        {highestContests.length > 0 ? (
+          <View>
+            <Text
+              style={{
+                width: 171,
+                height: 24,
+                fontFamily: "General Sans Variable",
+                fontStyle: "normal",
+                fontWeight: "700", // equivalent to font-semibold
+                fontSize: 16, // text-base
+                lineHeight: 24,
+                letterSpacing: -0.16, // -0.01em * 16px
+                color: theme == false ? "#020B12" : "#ffffff",
+                flex: 0,
+                flexGrow: 0,
+                paddingLeft: 10,
+                marginBottom: 10,
+                marginTop: 15,
+              }}
+            >
+              Highest Stake Contest
+            </Text>
+          </View>
+        ) : null}
         <View style={{ margin: "auto" }}>
           <FlatList
             horizontal={true}
@@ -303,13 +307,6 @@ const Arena = () => {
             renderItem={highestStakeContest}
             //onEndReached={fetchData}
             onEndReachedThreshold={0.3}
-            ListFooterComponent={
-              loading ? (
-                <ActivityIndicator size={"large"} color={"#aaa"} />
-              ) : contests.length === 0 ? (
-                null
-              ) : null
-            }
             contentContainerStyle={{
               paddingBottom: 10,
               flexGrow: 1,

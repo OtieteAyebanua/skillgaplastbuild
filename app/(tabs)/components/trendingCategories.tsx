@@ -21,7 +21,7 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
   }, [refreshing]);
 
   const routeToArena = (category: ITrendingCategory) => {
-    Router.push(`/(tabs)/mainApp/arena?categoryId=${category.id}`);
+    Router.push(`/(tabs)/mainApp/arena?categoryId=${category.id}&categoryName=${category.name}`);
   };
 
   return (

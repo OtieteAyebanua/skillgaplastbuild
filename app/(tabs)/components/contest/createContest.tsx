@@ -71,7 +71,7 @@ const CreateContest = () => {
     return () => clearTimeout(handler);
   }, [skillTag]);
 
-  const maxChars = 50;
+  const maxChars = 1000;
 
   const styles = StyleSheet.create({
     container: {
@@ -681,7 +681,7 @@ const CreateContest = () => {
               height: hp("7%"),
               borderRadius: 100,
               padding: 10,
-              backgroundColor: isFormValid() ? "#1D9BF0" : "#8F8F8F",
+              backgroundColor: "#1D9BF0",
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",

@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Linking,
   ScrollView,
@@ -35,6 +36,7 @@ const MyContestDetails = () => {
   const [selectWhoWon, setSelectWhoWon] = useState(false);
   const [showNoMoney, setShowNoMoney] = useState(false);
   const [showJoinedMessage, setShowJoinedMessage] = useState(false);
+  const [joinLoading,setJoinLoading] = useState(false)
 
   const [contest, setContest] = useState<IContest | null>(null);
   const [contestStage, setContestStage] = useState<ContestStage>("Join");
@@ -191,7 +193,7 @@ const MyContestDetails = () => {
                 marginBottom: 10,
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>Join</Text>
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>{joinLoading ? <ActivityIndicator/> :  "Join"}</Text>
             </TouchableOpacity>
           </View>
         );
@@ -217,9 +219,13 @@ const MyContestDetails = () => {
   };
 
   const joinContest = () => {
+    if(joinLoading){
+      return;
+    }
     if (contest) {
       if (contest.stake > (SessionUser?.balance ?? 0)) {
         setShowNoMoney(true);
+        setJoinLoading(false)
       } else {
         Contest.joinContest(Number(contestId)).then((response) => {
           if (response) {
@@ -517,7 +523,6 @@ const MyContestDetails = () => {
             Description
           </Text>
           <Text
-            numberOfLines={5}
             style={{
               color: "#8F8F8F",
               width: "100%",
@@ -525,60 +530,7 @@ const MyContestDetails = () => {
               fontFamily: "General Sans Variable",
             }}
           >
-            {contest?.description}sdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa
-            dadaddasdassdasdsadsadsadsadsadsdadsadsa da dad sa d
-            dasdasdasdsadsadsadsa dsadasdasdadsa dadaddasdas
+            {contest?.description}
           </Text>
         </View>
 
@@ -612,7 +564,10 @@ const MyContestDetails = () => {
               },
               { label: "Contest ID:", value: `${contest?.id}` },
               { label: "Prize:", value: `₦${(contest?.stake ?? 0) * 2}` },
-              { label: "SkillGap Fee:", value: `%${contest?.fee?.toFixed(2) ?? 0  }` },
+              {
+                label: "SkillGap Fee:",
+                value: `${contest?.fee?.toFixed(2) ?? 0}%`,
+              },
             ].map((item, index) => (
               <View
                 key={index}
@@ -636,7 +591,7 @@ const MyContestDetails = () => {
                     color: item.label === "Created by:" ? "#3B82F6" : "#9CA3AF",
                     fontSize: 14,
                     maxWidth: 200,
-                    textAlign:"right",
+                    textAlign: "right",
                   }}
                 >
                   {item.value}
