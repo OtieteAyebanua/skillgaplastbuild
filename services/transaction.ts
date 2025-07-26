@@ -20,11 +20,14 @@ export interface ITransaction {
   paymentReference?: string | null;
 }
 
-export interface IDepositInfo {
+export interface ITransactionInfo {
   minAmount: number;
   publicKey: string;
   currency: Currency;
   channels: PaymentChannels;
+  minStake: number;
+  minWithdrawalAmount: number;
+  maxWithdrawalAmount: number;
 }
 
 export interface IBank {
@@ -112,7 +115,7 @@ export class Transaction {
     return API.GET(url)
       .then(async (response) => {
         if (response.success && response.data) {
-          return response.data as IDepositInfo;
+          return response.data as ITransactionInfo;
         }
 
         return null;

@@ -3,9 +3,13 @@ import Input from "@/components/ui/Input";
 import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest, IContestCategory } from "@/services/contest";
-import { useDebounce } from "@/services/formValidation";
+import {
+  useDebounce,
+  validateCreateContestForm,
+} from "@/services/formValidation";
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
+import { ToastBox } from "@/services/toast";
 import { IOtherUserRecord, SessionUser, User } from "@/services/user";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -42,7 +46,8 @@ const CreateContest = () => {
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [stake, setStake] = useState<number>(0);
   const [skillTag, setSkillTag] = useState("");
-  const [opponentRecord, setOpponentRecord] = useState<IOtherUserRecord | null>();
+  const [opponentRecord, setOpponentRecord] =
+    useState<IOtherUserRecord | null>();
 
   const [characterValue, setCharacterValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +57,7 @@ const CreateContest = () => {
   const debouncedSearch = useCallback(
     useDebounce(() => {
       User.getUserByTag(skillTag).then((response) => {
-        Logger.info("TAG", response)
+        Logger.info("TAG", response);
         setError(response === null);
         setOpponentRecord(response);
       });
@@ -136,31 +141,39 @@ const CreateContest = () => {
   };
 
   const handleSubmit = async () => {
-    if (!isFormValid()) return;
-
-    setIsLoading(true);
-    const result = await Contest.createContest({
-      stake: stake,
-      description: characterValue,
-      opponentId: opponentRecord?.id ?? null,
-      isOpen: isChallengeOpen,
-      isOffline: isOffline,
-      categoryId: categoryId ?? 0,
-    });
-
-    if (result?.success && result.data) {
-      setCreatedContest(result.data);
+    const formError = validateCreateContestForm(
+      categoryId,
+      stake,
+      characterValue,
+      isChallengeOpen,
+      100,
+      skillTag
+    );
+    if (formError != null) {
+      ToastBox("custom", formError);
     } else {
-      Logger.error(result?.error);
+      setIsLoading(true);
+      const result = await Contest.createContest({
+        stake: stake,
+        description: characterValue,
+        opponentId: opponentRecord?.id ?? null,
+        isOpen: isChallengeOpen,
+        isOffline: isOffline,
+        categoryId: categoryId ?? 0,
+      });
+
+      if (result?.success && result.data) {
+        setCreatedContest(result.data);
+      } else {
+        Logger.error(result?.error);
+      }
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleRouteToContest = () => {
     if (createdContest) {
-      Router.push(
-        `/(tabs)/components/contest/myContestDetails?contestId=${createdContest.id}`
-      );
+      Router.push(`/(tabs)/mainApp/}`);
     } else {
       Router.push("/(tabs)/mainApp/arena");
     }
@@ -548,6 +561,7 @@ const CreateContest = () => {
             </Text>
 
             <TextInput
+              maxLength={10}
               placeholder="e.g #10,000"
               placeholderTextColor={"#8F8F8F"}
               inputMode="numeric"
@@ -566,7 +580,10 @@ const CreateContest = () => {
                 fontSize: 14,
               }}
               value={`${stake}`}
-              onChangeText={(val) => setStake(Number(val) ?? 0)}
+              onChangeText={(value) => {
+                const cleaned = value.replace(/[^0-9]/g, "");
+                setStake(Number(cleaned === "" ? null : parseInt(cleaned, 10)));
+              }}
             />
 
             <View

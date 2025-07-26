@@ -16,7 +16,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
   contest,
   onRoute,
 }) => {
-   const {theme} = useTheme();
+  const { theme } = useTheme();
 
   return contest === null ? (
     <SplashScreen />
@@ -44,17 +44,43 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
           shadowOpacity: 0.1,
           shadowRadius: 6,
           elevation: 6, // Android shadow
-          backgroundColor: theme === false ? "#ffffff" : "#000000", // to avoid transparent view
+          backgroundColor: theme === false ? "#ffffff" : "#000000",
         }}
       >
-        <NetworkImage
-          uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
-          loadingUri={require("../../../../assets/images/Group12.png")}
-          style={{
-            width: 100,
-            height: 60,
-          }}
-        />
+        <View style={{flexDirection:"row"}}>
+          <NetworkImage
+            uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
+            loadingUri={require("../../../../assets/images/profile-img.png")}
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius:100
+            }}
+          />
+          {contest.isOpen ? 
+          <NetworkImage
+            uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
+            loadingUri={require("../../../../assets/images/unknownAvatar.png")}
+            style={{
+              width: 50,
+              height: 50,
+              position:"relative",
+              right:10,
+              borderRadius:100
+              
+            }}
+          /> : <NetworkImage
+            uri={Media.GetProfileImageUris(contest?.opponent?.id ?? 0).small}
+            loadingUri={require("../../../../assets/images/profile-img.png")}
+            style={{
+              width: 50,
+              height: 50,
+              position:"relative",
+              right:10,
+              borderRadius:100
+            }}
+          />}
+        </View>
         <Text
           style={{
             color: "#ffffff",
@@ -76,7 +102,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
         >
           {contest.isOpen
             ? "Your open contest has been created, you will be notified once an opponent joins."
-            : `Your contest request has been sent to @${contest.opponent?.tag} successfully. You will be notified once they give a response`}
+            : <Text>  Your contest request has been sent to  @<Text style={{fontWeight:700,fontSize:15}}>{contest.opponent?.tag}</Text> successfully. You will be notified once they give a response</Text>}
         </Text>
 
         <TouchableOpacity
@@ -100,7 +126,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
               fontWeight: 500,
             }}
           >
-            My contest
+            My contests
           </Text>
         </TouchableOpacity>
       </View>

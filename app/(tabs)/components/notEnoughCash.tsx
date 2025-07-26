@@ -1,4 +1,5 @@
 import { useTheme } from "@/hooks/useThemeContext";
+import { Router } from "@/services/router";
 import { styled } from "nativewind";
 import React from "react";
 import {
@@ -125,7 +126,7 @@ const NotEnoughCash = ({ close }: INotEnoughCash) => {
                 paddingVertical: 10,
                 borderRadius: 100,
               }}
-              onPress={() => {}}
+              onPress={() => Router.push("/(tabs)/components/wallet/deposit")}
             >
               <Text style={ModalStyles.yesText}>Deposit Now</Text>
             </TouchableOpacity>

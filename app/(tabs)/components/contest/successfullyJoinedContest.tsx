@@ -15,7 +15,7 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
   contest,
   onRoute,
 }) => {
-    const {theme} = useTheme();
+  const { theme } = useTheme();
 
   return contest === null ? (
     <SplashScreen />
@@ -47,23 +47,28 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
           backgroundColor: theme === false ? "#ffffff" : "#000000", // to avoid transparent view
         }}
       >
-        <NetworkImage
-          uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
-          loadingUri={require("../../../../assets/images/unknownAvatar.png")}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            position: "relative",
-            left: 5,
-          }}
-        />
+        {" "}
+        <View style={{ alignItems: "center", flexDirection: "row" }}>
+          <NetworkImage
+            uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
+            loadingUri={require("../../../../assets/images/profile-img.png")}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 20,
+            }}
+          />
 
-        <View style={{ alignItems: "center" }}>
           <NetworkImage
             uri={Media.GetProfileImageUris(contest.opponent?.id ?? 0).small}
-            loadingUri={require("../../../../assets/images/unknownAvatar.png")}
-            style={{ width: 40, height: 40, borderRadius: 20 }}
+            loadingUri={require("../../../../assets/images/profile-img.png")}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 100,
+              position: "relative",
+              right: 10,
+            }}
           />
         </View>
         <Text
@@ -76,7 +81,6 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
         >
           It’s about to get real
         </Text>
-
         <Text
           style={{
             color: "#9ca3af", // text-gray-400
@@ -85,9 +89,8 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
             marginBottom: 24, // mb-6
           }}
         >
-          You have successfully joined a the contest with @{contest.owner.tag}.
+          You have successfully joined a the contest with <Text style={{fontSize:15,fontWeight:700}}>@{contest.owner.tag}</Text>.
         </Text>
-
         <TouchableOpacity
           onPress={onRoute}
           style={{
@@ -109,7 +112,7 @@ const SuccessfullyJoinedContest: React.FC<SuccessfullyJoinedContestProps> = ({
               fontWeight: 500,
             }}
           >
-            My contest
+            My contests
           </Text>
         </TouchableOpacity>
       </View>

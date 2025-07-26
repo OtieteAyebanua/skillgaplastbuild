@@ -3,12 +3,13 @@ import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
 import { formatNumber } from "@/services/formValidation";
 import { convertUTCToNormalDate } from "@/services/generateRandomHexNumber";
+import { Logger } from "@/services/logger";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -50,7 +51,6 @@ const MyContestDetails = () => {
       setShowDisputeModal(false);
       setShowWarningModal(false);
       setShowJoinedMessage(false);
-
       if (contestId) {
         Contest.getContest(Number(contestId))
           .then((response) => {
@@ -65,6 +65,10 @@ const MyContestDetails = () => {
       }
     }, [contestId])
   );
+
+  useEffect(() => {
+    setJoinLoading(false);
+  }, []);
 
   const setStage = (contest: IContest) => {
     let stage: ContestStage = "View";
@@ -193,9 +197,11 @@ const MyContestDetails = () => {
                 marginBottom: 10,
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: 16 }}>
-                {joinLoading ? <ActivityIndicator /> : "Join"}
-              </Text>
+              {joinLoading ? (
+                <ActivityIndicator size={30} color="#ffffff" />
+              ) : (
+                <Text style={{ color: "#ffffff", fontSize: 16 }}> Join</Text>
+              )}
             </TouchableOpacity>
           </View>
         );
@@ -221,33 +227,30 @@ const MyContestDetails = () => {
   };
 
   const joinContest = () => {
-    if (joinLoading) {
+    if (joinLoading || !contest) {
+      return;
+    }
+
+    if(contest.stake > (SessionUser?.balance ?? 0))
+    {
+      setShowNoMoney(true);
       return;
     }
 
     setJoinLoading(true);
-
-    try {
-      if (contest) {
-        if (contest.stake > (SessionUser?.balance ?? 0)) {
-          setShowNoMoney(true);
-          setJoinLoading(false);
-        } else {
-          Contest.joinContest(Number(contestId)).then((response) => {
-            if (response) {
-              setContest({
-                ...contest,
-                state: "ongoing",
-                opponent: SessionUser,
-              });
-              setShowJoinedMessage(true);
-            }
-          });
+      Contest.joinContest(Number(contestId))
+      .then((response) => {
+        if(response) {
+          setContest({...contest, state: "ongoing", opponent: SessionUser})
+          setShowJoinedMessage(true);
         }
-      }
-    } finally {
-      setJoinLoading(false);
-    }
+      })
+      .catch((err) => {
+        Logger.error(err)
+      })
+      .finally(() => {
+        setJoinLoading(false)
+      })
   };
 
   const disputeContest = () => {

@@ -1,4 +1,4 @@
-import { IDepositInfo, Transaction } from "@/services/transaction";
+import { ITransactionInfo, Transaction } from "@/services/transaction";
 import { IUserRecord, SessionUser } from "@/services/user";
 import { formatMoney } from "@/utitlity/string";
 import {
@@ -17,7 +17,7 @@ type AppContextType = {
   user: IUserRecord | null;
   setUser: Dispatch<SetStateAction<IUserRecord | null>>;
   getUserBalance: () => { left: string; right: string; currency: string };
-  depositInfo: IDepositInfo | null;
+  depositInfo: ITransactionInfo | null;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,7 +33,7 @@ function useUserContext(): AppContextType {
 }
 const AppContextProvider = (props: { children: ReactNode }): ReactElement => {
   const [user, setUser] = useState<IUserRecord | null>(SessionUser);
-  const [depositInfo, setDepositInfo] = useState<IDepositInfo | null>(null);
+  const [depositInfo, setDepositInfo] = useState<ITransactionInfo | null>(null);
 
   const getBalance = (): { left: string; right: string; currency: string } => {
     const { left, right } = formatMoney(SessionUser?.balance ?? 0);
@@ -64,3 +64,4 @@ const AppContextProvider = (props: { children: ReactNode }): ReactElement => {
 };
 
 export { AppContextProvider, useUserContext };
+

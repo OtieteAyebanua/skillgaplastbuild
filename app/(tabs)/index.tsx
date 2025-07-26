@@ -19,6 +19,7 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  
   useEffect(() => {
     checkForFirstTimeInstallation();
   }, []);
@@ -31,8 +32,6 @@ const Onboarding = () => {
     setIsLoading(true);
 
     const hasInstalledBefore = await Device.isRegistered();
-    Logger.info("First‐time flag from storage:", hasInstalledBefore);
-
     setIsFirstTime(!hasInstalledBefore);
 
     setIsLoading(false);

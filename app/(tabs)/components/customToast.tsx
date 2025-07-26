@@ -10,6 +10,8 @@ const CustomToast = ({ text1, text2, props }: any) => {
       borderRadius: 20,
       padding: 16,
       marginHorizontal: 16,
+      position:"relative",
+      bottom:30
     },
     row: {
       flexDirection: "row",
