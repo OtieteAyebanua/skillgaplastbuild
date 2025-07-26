@@ -281,8 +281,9 @@ const CreateContest = () => {
                       fontWeight: "400",
                     }}
                   >
-                    Make sure to take photos or videos of your contest — it's
-                    the best way to prove who won and keep things fair.
+                    Make sure to take photos or videos of your contest —
+                    it&apos;s the best way to prove who won and keep things
+                    fair.
                   </Text>
                 </View>
               </View>
@@ -349,7 +350,7 @@ const CreateContest = () => {
                     color: theme == false ? "#000" : "#fff",
                   }}
                 >
-                  Opponent's skillgap tag
+                  Opponent&apos;s skillgap tag
                 </Text>
                 <Input
                   placeholder="e.g @skillgap"
