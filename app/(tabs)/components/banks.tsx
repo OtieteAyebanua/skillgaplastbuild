@@ -8,34 +8,19 @@ interface IBanks {
   close: () => void;
   onSelected: (bank: IBank) => void;
 }
+
 const Banks = ({ close, onSelected }: IBanks) => {
   const { theme } = useTheme();
-  const [stage, setStage] = useState<"Banks" | "Filter">("Banks");
-
   const [banks, setBanks] = useState<IBank[]>([]);
-  const [selectedBank, setSelectedBank] = useState<IBank | null>(null);
 
   useEffect(() => {
     Transaction.getBanks().then((data) => {
       setBanks(data ?? []);
     });
-  },[]);
-
-  const handleClose = () => {
-    if (stage === "Banks") close();
-    else setStage("Banks");
-  };
+  }, []);
 
   const handleBankSelected = (bank: IBank) => {
-    setSelectedBank(bank);
-    setStage("Filter");
-  };
-
-  const handleApply = () => {
-    if (!selectedBank) close();
-    else {
-      onSelected(selectedBank);
-    }
+    onSelected(bank);
   };
 
   return (
@@ -45,7 +30,7 @@ const Banks = ({ close, onSelected }: IBanks) => {
         width: "100%",
         bottom: 0,
         backgroundColor: !theme ? "#ffffff" : "#141414",
-        height: "70%"
+        height: "70%",
       }}
     >
       <View
@@ -67,7 +52,7 @@ const Banks = ({ close, onSelected }: IBanks) => {
         >
           <View className="">
             <TouchableOpacity
-              onPress={handleClose}
+              onPress={close}
               className={` w-[0px] rounded-full`}
               style={{
                 paddingLeft: 10,
@@ -87,108 +72,55 @@ const Banks = ({ close, onSelected }: IBanks) => {
               color: `${!theme ? "#000000" : "#ffffff"}`,
             }}
           >
-            {stage}
+            Banks
           </Text>
         </View>
       </View>
-
-      {stage === "Filter" ? (
-        <>
-          <Text
-            style={{
-              color: "#8F8F8F",
-              fontWeight: 600,
-              paddingLeft: 12,
-              paddingTop: 5,
-              fontSize: 18,
-            }}
-          >
-            Selected Bank
-          </Text>
-          <Text
-            style={{
-              color: "#8F8F8F",
-              fontWeight: 400,
-              paddingLeft: 12,
-              paddingTop: 5,
-              paddingBottom: 16,
-              fontSize: 10,
-              textTransform: "capitalize",
-            }}
-          >
-            {selectedBank?.name}
-          </Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 0, paddingTop: 10 }}
+        scrollsToTop
+      >
+        {banks.map((item, index) => (
           <TouchableOpacity
-            onPress={handleApply}
+            key={index}
+            onPress={() => {
+              handleBankSelected(item);
+            }}
             style={{
               flexDirection: "row",
               alignItems: "center",
-              backgroundColor: "#3B82F6",
-              borderRadius: 16,
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-              justifyContent: "center",
+              justifyContent: "space-between",
+              borderRadius: 12,
+              padding: 12,
+              marginBottom: 5,
             }}
           >
-            <Text
-              style={{
-                color: "#ffffff",
-                fontSize: 16,
-                fontWeight: "600",
-              }}
-            >
-              Apply
-            </Text>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  fontSize: 16, // text-base
+                  fontWeight: "600", // font-semibold
+                  color: !theme ? "#000000" : "#ffffff",
+                }}
+              >
+                {item.name}
+              </Text>
+              <Text
+                style={{
+                  width: 185,
+                  height: 30,
+                  fontSize: 10,
+                  color: "#8F8F8F",
+                  textTransform: "capitalize",
+                }}
+              >
+                {item.slug}
+              </Text>
+            </View>
           </TouchableOpacity>
-        </>
-      ) : (
-        // Banks section
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 0, paddingTop: 10 }}
-          scrollsToTop
-        >
-          {banks.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                handleBankSelected(item);
-              }}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 5,
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    fontSize: 16, // text-base
-                    fontWeight: "600", // font-semibold
-                    color: !theme ? "#000000" : "#ffffff",
-                  }}
-                >
-                  {item.name}
-                </Text>
-                <Text
-                  style={{
-                    width: 185,
-                    height: 30,
-                    fontSize: 10,
-                    color: "#8F8F8F",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {item.slug}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+        ))}
+      </ScrollView>
     </View>
   );
 };
