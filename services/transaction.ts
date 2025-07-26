@@ -1,4 +1,7 @@
-import { Currency, PaymentChannels } from "react-native-paystack-webview/production/lib/types";
+import {
+  Currency,
+  PaymentChannels,
+} from "react-native-paystack-webview/production/lib/types";
 import { API } from "./api";
 import { Logger } from "./logger";
 
@@ -24,17 +27,61 @@ export interface IDepositInfo {
   channels: PaymentChannels;
 }
 
+export interface IBank {
+  name: string;
+  slug: string;
+  code: string;
+  id: number;
+}
+
+export interface IAccountResolve {
+  accountNumber: string;
+  accountName: string;
+  bankName: string;
+  bankId: number;
+  amount: number;
+}
+
 export class Transaction {
-  static initiateDeposit = (amount: number, callBackUrl: string) => {
-    const url = `/transactions/deposit`;
+  static resolveAccount = (
+    amount: number,
+    bankId: number,
+    accountNumber: string
+  ) => {
+    const url = `/transactions/withdraw-resolve`;
     return API.POST(url, {
       amount: amount,
-      callBackUrl: callBackUrl,
+      bankId: bankId,
+      accountNumber: accountNumber,
     })
       .then(async (response) => {
         if (response.success && response.data) {
-          return response.data;
+          return response.data as IAccountResolve;
         }
+        return null;
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return null;
+      });
+  };
+
+  static initiateWithdrawal = (
+    amount: number,
+    bankId: number,
+    accountNumber: string
+  ) => {
+    const url = `/transactions/withdraw-initiate`;
+    return API.POST(url, {
+      amount: amount,
+      bankId: bankId,
+      accountNumber: accountNumber,
+    })
+      .then(async (response) => {
+        if (response.success && response.data) {
+          return response.data as ITransaction;
+        }
+        return null;
       })
       .catch((err) => {
         Logger.error(err);
@@ -73,6 +120,21 @@ export class Transaction {
       .catch((err) => {
         Logger.error(err);
         return null;
+      });
+  };
+
+  static getBanks = () => {
+    const url = `/transactions/banks`;
+    return API.GET(url)
+      .then(async (response) => {
+        if (response.success && Array.isArray(response.data)) {
+          return response.data as IBank[];
+        }
+        return [] as IBank[];
+      })
+      .catch((err) => {
+        Logger.error(err);
+        return [] as IBank[];
       });
   };
 }

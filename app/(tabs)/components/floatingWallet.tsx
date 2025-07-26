@@ -88,7 +88,7 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
               display: "flex",
               justifyContent: "center",
             }}
-            // onPress={() => router.push("/withdraw")}
+            onPress={() => Router.push("/(tabs)/components/wallet/withdraw")}
           >
             <Text
               style={{

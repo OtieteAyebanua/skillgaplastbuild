@@ -259,7 +259,7 @@ const Arena = () => {
           >
             <View style={{ flexDirection: "row" }}>
               <Ionicons name="filter" size={16} color="#A3A3A3" />
-              <Text style={{ color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
+              <Text style={{  color: "#A3A3A3", marginLeft: 8, fontSize: 14 }}>
                 {displayedCategory === "" ? "Categories" : displayedCategory}
               </Text>
             </View>
@@ -270,7 +270,7 @@ const Arena = () => {
                   setDisplayedCategory("");
                 }}
               >
-                <XMarkIcon width="30" height="20" color="#fff" />
+                <XMarkIcon width="30" height="20" color="#A3A3A3" />
               </TouchableOpacity>
             )}
           </TouchableOpacity>

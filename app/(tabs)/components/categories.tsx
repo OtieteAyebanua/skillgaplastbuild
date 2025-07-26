@@ -10,7 +10,6 @@ import {
 import GetColoredCategoryBubbles from "./coloredCategorybubbles";
 import NetworkImage from "./networkImage";
 
-
 interface ICategories {
   close: () => void;
   onSelected: (categories: IContestCategory[]) => void;
@@ -159,8 +158,8 @@ const Categories = ({ close, onSelected }: ICategories) => {
               fontSize: 10,
             }}
           >
-            <GetColoredCategoryBubbles data={selectedCategories}/>
-      {/* ............... ....................... ........................ ...................... ..................... ............... */}
+            <GetColoredCategoryBubbles data={selectedCategories} />
+            {/* ............... ....................... ........................ ...................... ..................... ............... */}
           </Text>
           <TouchableOpacity
             onPress={handleApply}
@@ -242,17 +241,21 @@ const Categories = ({ close, onSelected }: ICategories) => {
                     {item.name}
                   </Text>
                 </View>
-                <View
-                  style={{
-                    width: 31,
-                    height: 63,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    display: item.hasChildren ? "contents" : "none",
-                  }}
-                >
-                  <ChevronRightIcon width={15} color={"#fff"} />
-                </View>
+                {item.hasChildren && (
+                  <View
+                    style={{
+                      width: 31,
+                      height: 63,
+                      backgroundColor: "#7900FB",
+                      borderTopRightRadius: 4,
+                      borderBottomRightRadius: 4,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ChevronRightIcon color={"#ffffff"} />
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </ScrollView>
