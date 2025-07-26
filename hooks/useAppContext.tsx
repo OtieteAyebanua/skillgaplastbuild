@@ -42,7 +42,7 @@ const AppContextProvider = (props: { children: ReactNode }): ReactElement => {
   };
 
   useEffect(() => {
-    Transaction.getDepositInfo().then((response) => {
+    Transaction.getTransactionInfo().then((response) => {
       if (response) {
         setDepositInfo(response);
       }

@@ -26,7 +26,7 @@ export interface ITransactionInfo {
   currency: Currency;
   channels: PaymentChannels;
   minStake: number;
-  minWithdrawalAmount: number;
+  minDepositAmount: number;
   maxWithdrawalAmount: number;
 }
 
@@ -110,8 +110,8 @@ export class Transaction {
       });
   };
 
-  static getDepositInfo = () => {
-    const url = `/transactions/deposit-info`;
+  static getTransactionInfo = () => {
+    const url = `/transactions/info`;
     return API.GET(url)
       .then(async (response) => {
         if (response.success && response.data) {
