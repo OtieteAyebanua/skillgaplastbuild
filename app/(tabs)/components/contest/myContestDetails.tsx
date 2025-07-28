@@ -286,6 +286,13 @@ const MyContestDetails = () => {
     });
   };
 
+  const getContestReward = () => {
+    if(!contest) return 0;
+    const rewardChunk = (100 - (contest?.fee ?? 0)) / 100; // remove contest fee
+
+    return rewardChunk * contest.stake * 2; // total contest pool = 2 * stake
+  }
+
   if (showJoinedMessage && contest) {
     return (
       <SuccessfullyJoinedContest onRoute={navigateBack} contest={contest} />
@@ -578,7 +585,7 @@ const MyContestDetails = () => {
                 value: `${convertUTCToNormalDate(contest?.timeStamp ?? "")}`,
               },
               { label: "Contest ID:", value: `${contest?.id}` },
-              { label: "Prize:", value: `₦${(contest?.stake ?? 0) * 2}` },
+              { label: "Prize:", value: `₦${getContestReward()}` },
               {
                 label: "SkillGap Fee:",
                 value: `${contest?.fee?.toFixed(2) ?? 0}%`,

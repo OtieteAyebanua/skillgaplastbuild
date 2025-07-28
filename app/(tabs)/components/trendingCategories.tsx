@@ -103,28 +103,9 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                             fontSize: 12,
                           }}
                         >
-                          Bets :
+                          Contests :
                         </Text>
                         {item.contests}
-                      </Text>
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={{
-                          color: theme == false ? "#000000" : "#8F8F8F",
-                          fontSize: 10,
-                          width: 60,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: theme == false ? "#000000" : "#ffffff",
-                            fontSize: 12,
-                          }}
-                        >
-                          Users :
-                        </Text>{" "}
-                        {item.users}
                       </Text>
                     </View>
                   </View>
