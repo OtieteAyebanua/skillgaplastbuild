@@ -100,12 +100,14 @@ export const validateCreateContestForm = (
   description: string,
   isChallengeOpen: boolean,
   minStake: number,
+  isTagValid:boolean,
   tag?: string
 ): string | null => {
-  if (tag == "" && !isChallengeOpen) return "Please select an opponent.";
+  if (tag === "" && !isChallengeOpen) return "Please select an opponent.";
   if (!categoryId) return "Please select a category.";
   if (stake < minStake) return `Minimum stake amount must be ${minStake}`;
   if (description.trim() === "") return "Description cannot be empty.";
+  if(isTagValid && !isChallengeOpen)return "Skilgap user with tag doesn't exit"
 
   return null;
 };

@@ -66,16 +66,18 @@ const GetColoredCategoryBubbles = ({ data }: IGetColoredCategoryBubbles) => {
               }}
             >
               <Text
+              numberOfLines={1}
                 style={{
                   color: item.text,
                   fontSize: 10,
                   fontWeight: "500",
+                  width:65,
+                  textAlign:"center"
                 }}
               >
                 {item.name}
               </Text>
             </TouchableOpacity>
-            {/* <Text style={{color:"red",fontSize:20,}}>/</Text> */}
           </View>
         ))}
       </View>

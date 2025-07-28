@@ -17,7 +17,7 @@ type AppContextType = {
   user: IUserRecord | null;
   setUser: Dispatch<SetStateAction<IUserRecord | null>>;
   getUserBalance: () => { left: string; right: string; currency: string };
-  depositInfo: ITransactionInfo | null;
+  transactionInfo: ITransactionInfo | null;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,7 +33,7 @@ function useUserContext(): AppContextType {
 }
 const AppContextProvider = (props: { children: ReactNode }): ReactElement => {
   const [user, setUser] = useState<IUserRecord | null>(SessionUser);
-  const [depositInfo, setDepositInfo] = useState<ITransactionInfo | null>(null);
+  const [transactionInfo, setTransactionInfo] = useState<ITransactionInfo | null>(null);
 
   const getBalance = (): { left: string; right: string; currency: string } => {
     const { left, right } = formatMoney(SessionUser?.balance ?? 0);
@@ -44,20 +44,20 @@ const AppContextProvider = (props: { children: ReactNode }): ReactElement => {
   useEffect(() => {
     Transaction.getTransactionInfo().then((response) => {
       if (response) {
-        setDepositInfo(response);
+        setTransactionInfo(response);
       }
     });
   }, []);
 
-  return depositInfo ? (
+  return transactionInfo ? (
     <PaystackProvider
-      publicKey={depositInfo?.publicKey ?? ""}
-      currency={depositInfo?.currency}
-      defaultChannels={depositInfo?.channels}
+      publicKey={transactionInfo?.publicKey ?? ""}
+      currency={transactionInfo?.currency}
+      defaultChannels={transactionInfo?.channels}
     >
       <AppContext.Provider
         {...props}
-        value={{ user, setUser, getUserBalance: getBalance, depositInfo }}
+        value={{ user, setUser, getUserBalance: getBalance, transactionInfo }}
       />
     </PaystackProvider>
   ) : <></>;

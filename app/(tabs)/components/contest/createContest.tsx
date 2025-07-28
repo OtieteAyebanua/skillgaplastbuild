@@ -10,7 +10,7 @@ import {
 import { Logger } from "@/services/logger";
 import { Router } from "@/services/router";
 import { ToastBox } from "@/services/toast";
-import { IOtherUserRecord, SessionUser, User } from "@/services/user";
+import { IOtherUserRecord, User } from "@/services/user";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useState } from "react";
@@ -33,11 +33,14 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import Categories from "../categories";
+import GetColoredCategoryBubbles from "../coloredCategorybubbles";
 import SuccessfullyCreatedContest from "./successfullyCreatedContest";
 
 const CreateContest = () => {
   const { theme } = useTheme();
   const { getUserBalance } = useUserContext();
+  const {transactionInfo} = useUserContext()
+  const minStake = transactionInfo?.minStake ?? 0;
 
   const [isOffline, setIsOffline] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
@@ -52,13 +55,13 @@ const CreateContest = () => {
   const [characterValue, setCharacterValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [createdContest, setCreatedContest] = useState<IContest | null>(null);
-  const [error, setError] = useState(false);
+  const [tagError, setTagError] = useState(false);
 
   const debouncedSearch = useCallback(
     useDebounce(() => {
+      skillTag &&
       User.getUserByTag(skillTag).then((response) => {
-        Logger.info("TAG", response);
-        setError(response === null);
+        setTagError(response === null);
         setOpponentRecord(response);
       });
     }, 500),
@@ -129,46 +132,37 @@ const CreateContest = () => {
 
   const balance = getUserBalance();
 
-  const isFormValid = () => {
-    return (
-      !isLoading && // not valid while loading
-      categoryId !== null && // category is needed
-      stake > 0 && // stake must be greater than 0
-      stake <= (SessionUser?.balance ?? 0) &&
-      characterValue.length > 0 &&
-      (isChallengeOpen || opponentRecord)
-    );
-  };
-
   const handleSubmit = async () => {
     const formError = validateCreateContestForm(
       categoryId,
       stake,
       characterValue,
       isChallengeOpen,
-      100,
+      minStake,
+      tagError,
       skillTag
     );
     if (formError != null) {
       ToastBox("custom", formError);
-    } else {
-      setIsLoading(true);
-      const result = await Contest.createContest({
-        stake: stake,
-        description: characterValue,
-        opponentId: opponentRecord?.id ?? null,
-        isOpen: isChallengeOpen,
-        isOffline: isOffline,
-        categoryId: categoryId ?? 0,
-      });
-
-      if (result?.success && result.data) {
-        setCreatedContest(result.data);
-      } else {
-        Logger.error(result?.error);
-      }
-      setIsLoading(false);
+      return;
     }
+
+    setIsLoading(true);
+    const result = await Contest.createContest({
+      stake: stake,
+      description: characterValue,
+      opponentId: opponentRecord?.id ?? null,
+      isOpen: isChallengeOpen,
+      isOffline: isOffline,
+      categoryId: categoryId ?? 0,
+    });
+
+    if (result?.success && result.data) {
+      setCreatedContest(result.data);
+    } else {
+      Logger.error(result?.error);
+    }
+    setIsLoading(false);
   };
 
   const handleRouteToContest = () => {
@@ -353,10 +347,21 @@ const CreateContest = () => {
                 </Text>
                 <Input
                   placeholder="e.g @skillgap"
-                  //isError={error}
                   type="text"
                   value={(e) => setSkillTag(e)}
                 />
+                {tagError ? (
+                  <Text
+                    style={{
+                      color: "#FB5631",
+                      fontSize: 11,
+                      paddingLeft: 10,
+                      paddingTop: 5,
+                    }}
+                  >
+                    skilgap user with tag doesn't exit
+                  </Text>
+                ) : null}
               </>
             ) : (
               <View>
@@ -496,32 +501,7 @@ const CreateContest = () => {
                     columnGap: 20,
                   }}
                 >
-                  {categoriesMap.map((item) => (
-                    <TouchableOpacity
-                      key={item.id}
-                      style={{
-                        width: 84,
-                        height: 32,
-                        borderStyle: "dashed",
-                        borderColor: "#6700D6",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderWidth: 1,
-                        borderRadius: 16,
-                        backgroundColor: theme == false ? "#fff" : "#27292B",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "#6700D6",
-                          fontSize: 10,
-                          fontWeight: "500",
-                        }}
-                      >
-                        {item.name}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                  <GetColoredCategoryBubbles data={categoriesMap} />
                 </View>
               </>
             )}

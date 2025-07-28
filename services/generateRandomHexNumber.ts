@@ -40,3 +40,37 @@ export function convertUTCToNormalDate(utcInput:string) {
 
   return `${day}/${month}/${year}`;
 }
+
+
+export function formatDateDisplay(dateString: string): string {
+  const inputDate = new Date(dateString);
+  const now = new Date();
+
+  // Remove time part for comparison
+  const input = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const optionsTime: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  const optionsDateTime: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    ...optionsTime,
+  };
+
+  if (input.getTime() === today.getTime()) {
+    return `Today, ${inputDate.toLocaleTimeString(undefined, optionsTime)}`;
+  } else if (input.getTime() === yesterday.getTime()) {
+    return `Yesterday, ${inputDate.toLocaleTimeString(undefined, optionsTime)}`;
+  } else {
+    return inputDate.toLocaleString(undefined, optionsDateTime);
+  }
+}
+

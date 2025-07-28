@@ -1,7 +1,8 @@
 import { useTheme } from "@/hooks/useThemeContext";
 import { IContest } from "@/services/contest";
 import { Media } from "@/services/media";
-import React from "react";
+import { Router } from "@/services/router";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import SplashScreen from "../../splashScreen";
@@ -17,6 +18,10 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
   onRoute,
 }) => {
   const { theme } = useTheme();
+
+  useEffect(()=>{
+    Router.back();
+  })
 
   return contest === null ? (
     <SplashScreen />
@@ -59,7 +64,7 @@ const SuccessfullyCreatedContest: React.FC<SuccessfullyCreatedContestProps> = ({
           />
           {contest.isOpen ? 
           <NetworkImage
-            uri={Media.GetProfileImageUris(contest.owner.id ?? 0).small}
+            uri={""}
             loadingUri={require("../../../../assets/images/unknownAvatar.png")}
             style={{
               width: 50,

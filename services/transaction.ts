@@ -5,7 +5,7 @@ import {
 import { API } from "./api";
 import { Logger } from "./logger";
 
-type TransactionType = "contest" | "deposit";
+export type TransactionType = "contest" | "deposit" | "withdrawal";
 type TransactionState = "pending" | "successful" | "failed";
 type TransactionInitiator = "user" | "system";
 
@@ -18,6 +18,9 @@ export interface ITransaction {
   state: TransactionState;
   type: TransactionType;
   paymentReference?: string | null;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
 }
 
 export interface ITransactionInfo {

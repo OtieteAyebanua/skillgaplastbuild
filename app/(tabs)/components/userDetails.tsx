@@ -193,7 +193,7 @@ const UserDetails = () => {
               color: theme == false ? "#000" : "#fff",
             }}
           >
-            {user?.stats.disputes}
+            {user?.stats.contests}
           </Text>
         </View>
 

@@ -188,8 +188,6 @@ export class Contest {
             data: null,
           };
 
-          Logger.info("RESULT RESPONSE", response);
-
           if (response.success && response.data) {
             reply.success = true;
             reply.data = response.data as IContest;
@@ -291,11 +289,11 @@ export class Contest {
         if (response.success && response.data) {
           return response.data
         }
-        return false;
+        return null;
       })
       .catch((err) => {
         Logger.error(err);
-        return false;
+        return null;
       });
   };
 }

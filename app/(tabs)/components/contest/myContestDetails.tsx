@@ -1,4 +1,5 @@
 import PageContainer from "@/components/Containers";
+import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
 import { formatNumber } from "@/services/formValidation";
@@ -30,6 +31,7 @@ import WhoWonModal from "./whowonModal";
 type ContestStage = "View" | "OwnerEdit" | "Ongoing" | "Join";
 
 const MyContestDetails = () => {
+  const { user } = useUserContext();
   const { theme } = useTheme();
 
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -231,26 +233,25 @@ const MyContestDetails = () => {
       return;
     }
 
-    if(contest.stake > (SessionUser?.balance ?? 0))
-    {
+    if (contest.stake > (SessionUser?.balance ?? 0)) {
       setShowNoMoney(true);
       return;
     }
 
     setJoinLoading(true);
-      Contest.joinContest(Number(contestId))
+    Contest.joinContest(Number(contestId))
       .then((response) => {
-        if(response) {
-          setContest({...contest, state: "ongoing", opponent: SessionUser})
+        if (response) {
+          setContest({ ...contest, state: "ongoing", opponent: SessionUser });
           setShowJoinedMessage(true);
         }
       })
       .catch((err) => {
-        Logger.error(err)
+        Logger.error(err);
       })
       .finally(() => {
-        setJoinLoading(false)
-      })
+        setJoinLoading(false);
+      });
   };
 
   const disputeContest = () => {
@@ -265,26 +266,24 @@ const MyContestDetails = () => {
   };
 
   const selectWinner = (userId: number) => {
-    if (contest) {
-      Contest.selectContestWinner(contest.id, userId).then((response) => {
-        if (response) {
-          const winnerId = response.winnerId;
-          // selection has been made
-          if (winnerId) {
-            if (winnerId === SessionUser?.id) {
-              // TODO: djoinLoadingisplay contest won component
-            } else {
-              // TODO: display contest lost component
-            }
-          } else {
-            // TODO: waiting for final decision component
-          }
+    if (!contest) return;
 
-          // TODO : remove this
-          Router.back();
+    Contest.selectContestWinner(contest.id, userId).then((response) => {
+      if (response) {
+        const winnerId = response.winnerId;
+        //pending selection
+        if (!winnerId) {
+          Router.push("/components/contest/waitingForResults");
+          return;
         }
-      });
-    }
+
+        const route =
+          winnerId === user?.id
+            ? `/components/contest/winnerCard?tagName=${SessionUser?.tag}&opponentTagName=${contest.opponent?.tag}&stake=${contest.stake}`
+            : `/components/contest/lostCard?opponentTagName=${contest.opponent?.tag}&stake=${contest.stake}`;
+        Router.push(route);
+      }
+    });
   };
 
   if (showJoinedMessage && contest) {

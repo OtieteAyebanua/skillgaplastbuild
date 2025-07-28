@@ -3,6 +3,7 @@ import { IContest } from "@/services/contest";
 import { Media } from "@/services/media";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Modal,
   StyleSheet,
@@ -18,6 +19,7 @@ interface IWhoWonModal {
 }
 const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
   const [selectedUser, setSelectedUser] = useState<number | null>();
+  const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
   const ModalStyles = StyleSheet.create({
     modalContainer: {
@@ -89,10 +91,18 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
   });
 
   const handleConfirm = () => {
-    if (!selectedUser) return;
-
-    confirmed(selectedUser);
-  };
+    if (isLoading || !selectedUser) {
+      return;
+    } 
+    try{
+ setIsLoading(true);
+      confirmed(selectedUser);
+    }finally{
+      setIsLoading(false)
+    }
+     
+    }
+  
 
   return (
     <Modal animationType="fade" transparent={true}>
@@ -146,8 +156,8 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                 alignItems: "center",
                 borderWidth: 1,
                 borderColor: "#313335",
-                width:110,
-                maxWidth:110
+                width: 110,
+                maxWidth: 110,
               }}
             >
               <View
@@ -193,8 +203,8 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
                 alignItems: "center",
                 borderWidth: 1,
                 borderColor: "#313335",
-                width:110,
-                maxWidth:110
+                width: 110,
+                maxWidth: 110,
               }}
             >
               <View
@@ -239,15 +249,19 @@ const WhoWonModal = ({ confirmed, close, contest }: IWhoWonModal) => {
             }}
             onPress={handleConfirm}
           >
-            <Text
-              style={{
-                color: "#ffffff",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Done
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size={30} color="#ffffff" />
+            ) : (
+              <Text
+                style={{
+                  color: "#ffffff",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                }}
+              >
+                Done
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
