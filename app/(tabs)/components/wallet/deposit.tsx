@@ -19,7 +19,7 @@ import {
 } from "react-native-responsive-screen";
 
 import { useUserContext } from "@/hooks/useAppContext";
-import { generateUUID } from "@/utitlity/string";
+import { generateTxnRef } from "@/utitlity/string";
 import { BlurView } from "expo-blur";
 import { useFocusEffect } from "expo-router";
 import { usePaystack } from "react-native-paystack-webview";
@@ -28,7 +28,7 @@ import { PaystackTransactionResponse } from "react-native-paystack-webview/produ
 const CreateDeposit = () => {
   const { theme } = useTheme();
   const { popup } = usePaystack();
-  const { user, depositInfo } = useUserContext();
+  const { user,  transactionInfo} = useUserContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
@@ -45,13 +45,13 @@ const CreateDeposit = () => {
   );
 
   const initiateDeposit = async () => {
-    if (!user || amount < (depositInfo?.minAmount ?? 100) || isLoading) return;
+    if (!user || amount < (transactionInfo?.minAmount ?? 100) || isLoading) return;
 
     setIsLoading(true);
     popup.checkout({
       email: user.email,
       amount: amount,
-      reference: generateUUID(),
+      reference: generateTxnRef(),
       metadata: {
         UserId: user.id.toString(),
       },
@@ -183,7 +183,7 @@ const CreateDeposit = () => {
                 color: theme === false ? "#000" : "#fff",
               }}
             >
-              &#8358;{depositInfo?.minAmount ?? 100}
+              &#8358;{transactionInfo?.minAmount ?? 100}
             </Text>
           </View>
         </View>
@@ -196,7 +196,7 @@ const CreateDeposit = () => {
             borderRadius: 100,
             padding: 10,
             backgroundColor:
-              amount >= (depositInfo?.minAmount ?? 100) ? "#1D9BF0" : "#8F8F8F",
+              amount >= (transactionInfo?.minAmount ?? 100) ? "#1D9BF0" : "#8F8F8F",
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
