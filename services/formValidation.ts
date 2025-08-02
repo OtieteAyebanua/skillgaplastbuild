@@ -76,7 +76,7 @@ export function formatNumber(num: number): string {
 
 export function timeAgo(isoTimestamp: string): string {
   const now = new Date();
-  const past = new Date(isoTimestamp);
+  const past = new Date(isoTimestamp); // keep it as Date, not string!
   const diffMs = now.getTime() - past.getTime();
 
   const seconds = Math.floor(diffMs / 1000);
@@ -100,14 +100,26 @@ export const validateCreateContestForm = (
   description: string,
   isChallengeOpen: boolean,
   minStake: number,
-  isTagValid:boolean,
+  isTagValid: boolean,
   tag?: string
 ): string | null => {
   if (tag === "" && !isChallengeOpen) return "Please select an opponent.";
   if (!categoryId) return "Please select a category.";
   if (stake < minStake) return `Minimum stake amount must be ${minStake}`;
   if (description.trim() === "") return "Description cannot be empty.";
-  if(isTagValid && !isChallengeOpen)return "Skilgap user with tag doesn't exit"
+  if (isTagValid && !isChallengeOpen)
+    return "Skilgap user with tag doesn't exit";
 
   return null;
 };
+
+type SignedAmount = {
+  sign: "+" | "-";
+  amount: string;
+};
+
+export function getSignedAmount(value: number): SignedAmount {
+  const sign = value < 0 ? "-" : "+";
+  const amount = Math.abs(value).toLocaleString();
+  return { sign, amount };
+}

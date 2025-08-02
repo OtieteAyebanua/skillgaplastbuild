@@ -3,6 +3,7 @@ import { useTheme } from "@/hooks/useThemeContext";
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Keyboard,
   Modal,
   ScrollView,
@@ -22,19 +23,41 @@ import { useUserContext } from "@/hooks/useAppContext";
 import { generateTxnRef } from "@/utitlity/string";
 import { BlurView } from "expo-blur";
 import { useFocusEffect } from "expo-router";
+import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { usePaystack } from "react-native-paystack-webview";
 import { PaystackTransactionResponse } from "react-native-paystack-webview/production/lib/types";
 
 const CreateDeposit = () => {
   const { theme } = useTheme();
   const { popup } = usePaystack();
-  const { user,  transactionInfo} = useUserContext();
+  const { user, depositInfo } = useUserContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
   const [depositStatus, setDepositStatus] = useState<
     "Success" | "Failed" | null
   >(null);
+  const depositDarkImg =
+    depositStatus === "Success" ? (
+      <Image
+        source={require("../../../../assets/icons/depositSuccessDark.png")}
+      />
+    ) : (
+      <Image
+        source={require("../../../../assets/icons/depositFailedDark.png")}
+      />
+    );
+  const depositLightImg =
+    depositStatus === "Success" ? (
+      <Image
+        source={require("../../../../assets/icons/depositSuccessLight.png")}
+      />
+    ) : (
+      <Image
+        source={require("../../../../assets/icons/depositFailedLight.png")}
+      />
+    );
+  const currency = formatMoney(user?.balance ?? 0);
 
   useFocusEffect(
     useCallback(() => {
@@ -45,7 +68,7 @@ const CreateDeposit = () => {
   );
 
   const initiateDeposit = async () => {
-    if (!user || amount < (transactionInfo?.minAmount ?? 100) || isLoading) return;
+    if (!user || amount < (depositInfo?.minAmount ?? 100) || isLoading) return;
 
     setIsLoading(true);
     popup.checkout({
@@ -74,24 +97,68 @@ const CreateDeposit = () => {
           marginBottom: 2,
         }}
       >
+        <View style={{ position: "absolute", top: 0, left: 12 }}>
+          <TouchableOpacity
+            onPress={() => {
+              Router.back();
+            }}
+            style={{
+              paddingLeft: 3,
+              marginBottom: 24,
+              width: 30,
+              borderRadius: 9999,
+            }}
+          >
+            <ChevronLeftIcon
+              size={25}
+              color={theme === false ? "#292D32" : "#fff"}
+            />
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: "1%",
+            marginTop: "2%",
+            width: "90%",
+            margin: "auto",
             alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "10%", // originally 'mb-3' but overridden
           }}
         >
           <Text
             style={{
-              fontSize: 16, // 'text-base' → 16px
-              fontWeight: "600", // 'font-semibold'
+              fontSize: 16,
+              fontWeight: "600",
               color: theme === false ? "#020B12" : "#ffffff",
               paddingTop: 30,
             }}
           >
             Deposit
           </Text>
+          <View style={{}}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: "#8F8F8F",
+                fontWeight: 500,
+                textAlign: "right",
+              }}
+            >
+              Balance
+            </Text>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 16, // 'text-base' → 16px
+                fontWeight: "600", // 'font-semibold'
+                color: theme === false ? "#020B12" : "#ffffff",
+                textAlign: "right",
+              }}
+            >
+              ₦{currency.left}.{currency.right}
+            </Text>
+          </View>
         </View>
 
         <View
@@ -146,7 +213,10 @@ const CreateDeposit = () => {
               fontSize: 14,
             }}
             value={`${amount}`}
-            onChangeText={(val) => setAmount(Number(val))}
+            onChangeText={(val) => {
+              const cleaned = val.replace(/[^0-9]/g, "");
+              setAmount(Number(cleaned === "" ? null : parseInt(cleaned, 10)));
+            }}
           />
 
           <View
@@ -166,24 +236,10 @@ const CreateDeposit = () => {
                 fontWeight: "400",
                 fontSize: 11,
                 lineHeight: 16.5,
-                letterSpacing: -0.121,
-                color: "#8F8F8F",
-              }}
-            >
-              Min:
-            </Text>
-            <Text
-              style={{
-                height: 17,
-                fontFamily: "General Sans Variable",
-                fontStyle: "italic",
-                fontWeight: "400",
-                fontSize: 11,
-                lineHeight: 16.5,
                 color: theme === false ? "#000" : "#fff",
               }}
             >
-              &#8358;{transactionInfo?.minAmount ?? 100}
+              &#8358;{depositInfo?.minAmount ?? 100}
             </Text>
           </View>
         </View>
@@ -196,7 +252,7 @@ const CreateDeposit = () => {
             borderRadius: 100,
             padding: 10,
             backgroundColor:
-              amount >= (transactionInfo?.minAmount ?? 100) ? "#1D9BF0" : "#8F8F8F",
+              amount >= (depositInfo?.minAmount ?? 100) ? "#1D9BF0" : "#8F8F8F",
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
@@ -228,25 +284,39 @@ const CreateDeposit = () => {
           <TouchableWithoutFeedback>
             <View
               style={{
-                height: "100%",
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                backgroundColor: theme === false ? "#FAFAFA" : "#000",
               }}
             >
               <BlurView
                 intensity={80}
-                tint="systemMaterialDark"
                 style={{
                   flex: 1,
                   justifyContent: "center",
                   alignItems: "center",
+                  paddingBottom: 50,
+                  paddingTop: 30,
                 }}
               >
                 <TouchableWithoutFeedback>
-                  <View>
+                  <View
+                    style={{
+                      alignItems: "center",
+                      width: "90%",
+                    }}
+                  >
+                    <View style={{ alignItems: "center", marginBottom: "6%" }}>
+                      {" "}
+                      {theme === false ? depositLightImg : depositDarkImg}
+                    </View>
                     <Text
                       style={{
                         fontSize: 20,
                         fontWeight: 600,
                         color: "#FFFFFF",
+                        paddingBottom: 10,
                       }}
                     >
                       {depositStatus === "Success"
@@ -255,9 +325,10 @@ const CreateDeposit = () => {
                     </Text>
                     <Text
                       style={{
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: 600,
-                        color: "#FFFFFF",
+                        color: theme === false ? "#000" : "#fff",
+                        paddingBottom: 30,
                       }}
                     >
                       {depositStatus === "Success"
@@ -267,19 +338,20 @@ const CreateDeposit = () => {
                     <TouchableOpacity
                       onPress={() => setDepositStatus(null)}
                       style={{
-                        flexDirection: "row",
                         alignItems: "center",
                         backgroundColor: "#3B82F6",
                         borderRadius: 16,
-                        paddingHorizontal: 16,
-                        paddingVertical: 16,
+                        paddingHorizontal: 12,
+                        paddingVertical: 12,
                         justifyContent: "center",
+                        width: "90%",
+                        margin: "auto",
                       }}
                     >
                       <Text
                         style={{
                           color: "#ffffff",
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: "600",
                         }}
                       >

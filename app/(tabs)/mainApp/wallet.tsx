@@ -1,7 +1,7 @@
 import PageContainer from "@/components/Containers";
 import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
-import { formatNumber } from "@/services/formValidation";
+import { getSignedAmount } from "@/services/formValidation";
 import { formatDateDisplay } from "@/services/generateRandomHexNumber";
 import { Router } from "@/services/router";
 import {
@@ -30,12 +30,12 @@ const Wallet = () => {
   const { user } = useUserContext();
 
   const [active, setActive] = useState<TransactionType | null>(null);
-  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [transactions, setTransactions] = useState<ITransaction[] | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
   const money = formatMoney(user?.balance ?? 0);
   const [selectedTransaction, setSelectedTransaction] =
     useState<ITransaction>();
-
+  const amountResult = getSignedAmount(selectedTransaction?.amount ?? 0);
   useFocusEffect(
     useCallback(() => {
       Transaction.getTransactions(1, active).then((res) => {
@@ -83,10 +83,21 @@ const Wallet = () => {
       : "#DBBC1C";
   const selectedHeader =
     selectedTransaction?.state === "successful"
-      ? "has been successfully processed. Please check your receipt for more information."
+      ? "has been successfully processed."
       : selectedTransaction?.state === "failed"
-      ? "failed to process. Please check your receipt for more information."
-      : "is currently pending . Please check your receipt for more information.";
+      ? "failed to process."
+      : "is currently pending.";
+
+  const firstSentence =
+    selectedTransaction?.type === "withdrawal"
+      ? `Withdrawal to ${selectedTransaction.bankName} - ${selectedTransaction.accountName}`
+      : selectedTransaction?.type === "deposit"
+      ? `Deposit ${selectedTransaction.bankName ? `via ${selectedTransaction.bankName}` : ""} 
+`
+      : Number(selectedTransaction?.amount) < 0
+      ? "You started  a contest"
+      : "You won a contest";
+
   const renderItem = ({ item }: { item: ITransaction }) => {
     const header = item.type === "withdrawal" ? item.bankName : item.type;
     const subHeader =
@@ -98,6 +109,7 @@ const Wallet = () => {
         ? "Started a contest"
         : "Won a contest";
 
+          const formattedAmount = getSignedAmount(item.amount)
     return (
       <TouchableOpacity
         onPress={() => {
@@ -180,7 +192,7 @@ const Wallet = () => {
                   <Text
                     numberOfLines={1}
                     style={{
-                      color: "#fff",
+                      color: theme === false ? "#000" : "#fff",
                       fontSize: 12,
                       width: 175,
                       textTransform: "capitalize",
@@ -236,8 +248,7 @@ const Wallet = () => {
                 maxWidth: 80,
               }}
             >
-              {item.amount > 0 ? "+" : ""}
-              {formatNumber(item.amount)}
+              {formattedAmount.sign}₦{formattedAmount.amount}
             </Text>
             <View
               style={{
@@ -433,20 +444,56 @@ const Wallet = () => {
           </TouchableOpacity>
         </View>
       ) : null}
-      <View
-        style={{
-          borderWidth: 1,
-          width: "90%",
-          margin: "auto",
-          borderRadius: 10,
-          borderColor: theme === false ? "#E7F4FD" : "#27292B",
-          backgroundColor: theme === false ? "#FFFFFF" : "#1D1F20",
-          paddingVertical: 13,
-          marginBottom: "100%",
-        }}
-      >
-        <FlatList renderItem={renderItem} data={transactions} />
-      </View>
+
+      {transactions ? (
+        <View
+          style={{
+            borderWidth: 1,
+            width: "90%",
+            margin: "auto",
+            borderRadius: 10,
+            borderColor: theme === false ? "#E7F4FD" : "#27292B",
+            backgroundColor: theme === false ? "#FFFFFF" : "#1D1F20",
+            paddingVertical: 13,
+            marginBottom: "100%",
+          }}
+        >
+          <FlatList renderItem={renderItem} data={transactions} />
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 20,
+            marginTop: 100,
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: "600",
+              fontSize: 16,
+              marginBottom: 1,
+              color: theme ? "#fff" : "#000",
+            }}
+          >
+            Oops!
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: "#8F8F8F",
+              textAlign: "center",
+              fontWeight: 500,
+            }}
+          >
+            You don’t have any{" "}
+            {[null, "contest"].includes(active) ? "transactions" : `${active}s`}
+          </Text>
+        </View>
+      )}
+
       <Modal
         visible={showReceipt}
         transparent
@@ -566,8 +613,8 @@ const Wallet = () => {
                             fontWeight: "600", // font-semibold
                           }}
                         >
-                          Your {selectedTransaction?.type} of &#8358;
-                          {selectedTransaction?.amount} {selectedHeader}
+                          {firstSentence}{" "}
+                          {selectedTransaction ? "" : selectedHeader}
                         </Text>
                       </View>
 
@@ -595,75 +642,76 @@ const Wallet = () => {
                         <View style={{ marginTop: 12 }}>
                           {[
                             {
-                              label: "Transaction Type",
+                              label: "Type",
                               value: `${selectedTransaction?.type}`,
                             },
                             {
-                              label: "Transaction Number",
+                              label: "Reference",
                               value: `${
-                                selectedTransaction?.paymentReference ??
-                                "No Number"
+                                selectedTransaction?.paymentReference ?? ""
                               }`,
                             },
                             {
-                              label: "Transaction Date",
+                              label: "Date",
                               value: `${formatDateDisplay(
                                 selectedTransaction?.timeStamp ?? Date()
                               )}`,
                             },
                             {
-                              label: "Payment Status",
+                              label: "Status",
                               value: `${selectedTransaction?.state}`,
                             },
                             {
                               label: "Amount",
-                              value: `₦${
-                                selectedTransaction?.amount ?? 0 > 0
-                                  ? `${selectedTransaction?.amount}`
-                                  : selectedTransaction?.amount
-                              }`,
+                              value: `${amountResult.sign}₦${amountResult.amount}`,
                             },
-                          ].map((item, index) => (
-                            <View
-                              key={index}
-                              style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                marginBottom: 4,
-                              }}
-                            >
-                              <Text
+                          ].map((item, index) => {
+                            if (!item.value) {
+                              return <></>;
+                            }
+                            return (
+                              <View
+                                key={index}
                                 style={{
-                                  color: theme == false ? "#020B12" : "#ffffff",
-                                  fontSize: 14,
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  marginBottom: 4,
                                 }}
                               >
-                                {item.label}
-                              </Text>
-                              <Text
-                                numberOfLines={1}
-                                style={{
-                                  color:
-                                    item.label === "Amount"
-                                      ? Number(
-                                          String(item.value)
-                                            .replace(/[^0-9.-]/g, "")
-                                            .trim()
-                                        ) > 0
-                                        ? "#2A9D0D"
-                                        : "#FB5631"
-                                      : item.label === "Payment Status"
-                                      ? `${stateColor}`
-                                      : "#9CA3AF",
-                                  fontSize: 14,
-                                  maxWidth: 160,
-                                  textAlign: "right",
-                                }}
-                              >
-                                {item.value}
-                              </Text>
-                            </View>
-                          ))}
+                                <Text
+                                  style={{
+                                    color:
+                                      theme == false ? "#020B12" : "#ffffff",
+                                    fontSize: 14,
+                                  }}
+                                >
+                                  {item.label}
+                                </Text>
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    textTransform: "capitalize",
+                                    color:
+                                      item.label === "Amount"
+                                        ? Number(
+                                            String(item.value)
+                                              .replace(/[^0-9.-]/g, "")
+                                              .trim()
+                                          ) > 0
+                                          ? "#2A9D0D"
+                                          : "#FB5631"
+                                        : item.label === "Payment Status"
+                                        ? `${stateColor}`
+                                        : "#9CA3AF",
+                                    fontSize: 14,
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  {item.value}
+                                </Text>
+                              </View>
+                            );
+                          })}
                         </View>
                       </View>
                     </View>

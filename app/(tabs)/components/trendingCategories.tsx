@@ -78,6 +78,8 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                       style={{
                         color: theme == false ? "#020B12" : "#ffffff",
                         width: 125,
+                        fontWeight:700,
+                        fontSize:14
                       }}
                     >
                       {item.name}
@@ -94,7 +96,8 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                         style={{
                           color: theme == false ? "#000000" : "#8F8F8F",
                           fontSize: 10,
-                          width: 60,
+                         
+                          fontWeight:400
                         }}
                       >
                         <Text
@@ -103,7 +106,7 @@ const TrendingCategory: React.FC<TrendingCategoryProps> = (refreshing) => {
                             fontSize: 12,
                           }}
                         >
-                          Contests :
+                          Contests: {""}
                         </Text>
                         {item.contests}
                       </Text>

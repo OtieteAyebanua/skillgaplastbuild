@@ -114,7 +114,7 @@ const FloatingWallet: React.FC<FloatingWalletProps> = (refreshing) => {
                 bottom: 15,
                 textDecorationLine: "underline",
               }}
-              // onPress={() => router.push("/(tabs)/wallet/history")}
+              onPress={() => Router.push("/mainApp/wallet")}
             >
               Transaction History
             </Text>

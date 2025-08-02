@@ -13,6 +13,7 @@ import { ToastBox } from "@/services/toast";
 import { IOtherUserRecord, User } from "@/services/user";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -28,6 +29,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -39,7 +41,7 @@ import SuccessfullyCreatedContest from "./successfullyCreatedContest";
 const CreateContest = () => {
   const { theme } = useTheme();
   const { getUserBalance } = useUserContext();
-  const {transactionInfo} = useUserContext()
+  const { transactionInfo } = useUserContext();
   const minStake = transactionInfo?.minStake ?? 0;
 
   const [isOffline, setIsOffline] = useState(false);
@@ -57,13 +59,18 @@ const CreateContest = () => {
   const [createdContest, setCreatedContest] = useState<IContest | null>(null);
   const [tagError, setTagError] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      resetValues();
+    }, [])
+  );
   const debouncedSearch = useCallback(
     useDebounce(() => {
       skillTag &&
-      User.getUserByTag(skillTag).then((response) => {
-        setTagError(response === null);
-        setOpponentRecord(response);
-      });
+        User.getUserByTag(skillTag).then((response) => {
+          setTagError(response === null);
+          setOpponentRecord(response);
+        });
     }, 500),
     [skillTag]
   );
@@ -165,6 +172,14 @@ const CreateContest = () => {
     setIsLoading(false);
   };
 
+  const resetValues = () => {
+    setSkillTag("");
+    setIsChallengeOpen(false);
+    setCategoryId(null);
+    setStake(0);
+    setCharacterValue("");
+  };
+
   const handleRouteToContest = () => {
     if (createdContest) {
       Router.push(`/(tabs)/mainApp/}`);
@@ -201,15 +216,31 @@ const CreateContest = () => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: "10%", // originally 'mb-3' but overridden
+              marginBottom: "10%",
+              marginTop: 30,
             }}
           >
+            <View style={{ position: "absolute", top: 0, left: 12 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  Router.back();
+                }}
+                style={{
+                  paddingLeft: 3,
+                  borderRadius: 9999,
+                }}
+              >
+                <ChevronLeftIcon
+                  size={25}
+                  color={theme === false ? "#292D32" : "#fff"}
+                />
+              </TouchableOpacity>
+            </View>
             <Text
               style={{
                 fontSize: 16, // 'text-base' → 16px
                 fontWeight: "600", // 'font-semibold'
                 color: theme == false ? "#020B12" : "#ffffff",
-                paddingTop: 30,
               }}
             >
               Create Contest
@@ -218,13 +249,17 @@ const CreateContest = () => {
           <View>
             <View style={styles.container}>
               <TouchableOpacity
-                onPress={() => setIsOffline(false)}
+                onPress={() => {
+                  setIsOffline(false);
+                }}
                 style={styles.viewBlockListButton}
               >
                 <Text style={styles.text}>Online</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setIsOffline(true)}
+                onPress={() => {
+                  setIsOffline(true);
+                }}
                 style={styles.blockButton}
               >
                 <Text style={styles.text}>Offline</Text>
@@ -349,9 +384,10 @@ const CreateContest = () => {
                 <Input
                   placeholder="e.g @skillgap"
                   type="text"
-                  value={(e) => setSkillTag(e)}
+                  value={setSkillTag}
+                  text={skillTag}
                 />
-                {tagError ? (
+                {tagError && skillTag != "" ? (
                   <Text
                     style={{
                       color: "#FB5631",

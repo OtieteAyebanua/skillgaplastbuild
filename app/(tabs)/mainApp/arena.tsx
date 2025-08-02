@@ -167,7 +167,7 @@ const Arena = () => {
         >
           <NetworkImage
             uri={Media.GetProfileImageUris(item.owner.id ?? 0).small}
-            loadingUri={require("../../../assets/images/unknownAvatar.png")}
+            loadingUri={require("../../../assets/images/profile-img.png")}
             style={{
               width: 35,
               height: 35,
@@ -179,9 +179,10 @@ const Arena = () => {
             <Text
               numberOfLines={1}
               style={{
-                fontSize: 12, // text-xs
+                fontSize: 14, // text-xs
                 color: theme === false ? "#000000" : "#ffffff",
                 maxWidth: "100%",
+                fontWeight:700
               }}
             >
               @{item.owner.tag}
@@ -299,7 +300,7 @@ const Arena = () => {
             </Text>
           </View>
         ) : null}
-        <View style={{ margin: "auto" }}>
+        <View style={{ margin: "auto",marginLeft:10 }}>
           <FlatList
             horizontal={true}
             data={highestContests}

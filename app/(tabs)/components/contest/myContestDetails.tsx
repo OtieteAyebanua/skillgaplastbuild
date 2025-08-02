@@ -121,7 +121,7 @@ const MyContestDetails = () => {
             >
               <Text
                 style={{
-                  color: theme == false ? "#000" : "#ffffff",
+                  color: "#ffffff",
                   fontSize: 16,
                 }}
               >

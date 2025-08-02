@@ -10,3 +10,11 @@ export const generateTxnRef = () => {
 
   return `${Date.now().toString()}_${rand}`;
 };
+
+export const fixCurrency =()=>{
+  // take a number
+  // get the sign save in const var
+  // get abs of number
+
+  // return {absNum, sign}
+}

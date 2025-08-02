@@ -1,6 +1,7 @@
 import { useTheme } from "@/hooks/useThemeContext";
 import { Contest, IContest } from "@/services/contest";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Nodata } from "../mainApp";
@@ -45,10 +46,12 @@ const ShowContest: React.FC<ShowContestProps> = (refreshing) => {
     }
   }
 
-  useEffect(() => {
-    currentPage = 0;
-    getMyContestList();
-  }, [refreshing]);
+  useFocusEffect(
+    useCallback(() => {
+      currentPage = 0;
+      getMyContestList();
+    }, [refreshing])
+  );
 
   const renderMyContestItem = ({ item }: { item: IContest }) => (
     <ContestListItem contest={item} />

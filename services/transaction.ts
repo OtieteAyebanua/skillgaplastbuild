@@ -31,6 +31,7 @@ export interface ITransactionInfo {
   minStake: number;
   minDepositAmount: number;
   maxWithdrawalAmount: number;
+  minWithdrawalAmount:number;
 }
 
 export interface IBank {
