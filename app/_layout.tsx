@@ -2,8 +2,6 @@ import { Stack } from "expo-router";
 import "react-native-reanimated";
 
 import { SessionUser } from "@/services/user";
-import type { NotificationBehavior } from 'expo-notifications';
-import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import CustomToast from "./(tabs)/components/customToast";
@@ -29,26 +27,17 @@ export default function RootLayout() {
   if (one != 0) {
     return <SplashScreen />;
   }
-
-Notifications.setNotificationHandler({
-  handleNotification: async (): Promise<NotificationBehavior> => ({
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
   return (
     <>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <Toast
-          config={{
-            custom: (props) => <CustomToast {...props} />,
-          }}
-        />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <Toast
+        config={{
+          custom: (props) => <CustomToast {...props} />,
+        }}
+      />
     </>
   );
 }

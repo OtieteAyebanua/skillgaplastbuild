@@ -2,12 +2,20 @@ import PageContainer from "@/components/Containers";
 import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
 import { Media } from "@/services/media";
+import {
+  askNotificationPermission,
+  ensureAndroidChannel,
+  getExpoPushTokenOrThrow,
+} from "@/services/notificationPermission";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { useFocusEffect } from "@react-navigation/native";
+import * as Notifications from "expo-notifications";
 import { getExpoPushTokenAsync } from "expo-notifications";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  Alert,
+  Button,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -23,6 +31,43 @@ import TrendingCategory from "../components/trendingCategories";
 import SplashScreen from "../splashScreen";
 
 export default function HomePage() {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await ensureAndroidChannel(); // 1) channel first
+        const status = await askNotificationPermission(); // 2) then request permission
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission required",
+            "Enable notifications in Settings."
+          );
+          return;
+        }
+        const t = await getExpoPushTokenOrThrow(); // 3) then fetch token
+        setToken(t);
+      } catch (e: any) {
+        console.error(e);
+        Alert.alert("Push setup error", e?.message ?? String(e));
+      }
+    })();
+
+    const subRecv = Notifications.addNotificationReceivedListener((n) => {
+      console.log("foreground notification:", n);
+    });
+    const subResp = Notifications.addNotificationResponseReceivedListener(
+      (r) => {
+        console.log("user tapped:", r);
+        // read r.notification.request.content.data to navigate
+      }
+    );
+    return () => {
+      subRecv.remove();
+      subResp.remove();
+    };
+  }, []);
+
   const [refreshToken, setRefreshToken] = useState(false);
   const { theme, setTheme } = useTheme();
   const { setUser, user } = useUserContext();
@@ -37,7 +82,7 @@ export default function HomePage() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log(getExpoPushTokenAsync())
+      console.log(getExpoPushTokenAsync());
       Router.clearHistory();
       User.Load(() => {
         setUser(SessionUser);
@@ -49,7 +94,7 @@ export default function HomePage() {
   return !user ? (
     <SplashScreen />
   ) : (
-    <PageContainer  backgroundColor={theme == false ? "#FAFAFA" : "#0A0A0A"}>
+    <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#0A0A0A"}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -122,7 +167,28 @@ export default function HomePage() {
               >
                 Howdy,
               </Text>
-
+              <Button
+                title="Send me a test"
+                onPress={async () => {
+                  if (!token) return;
+                  await fetch("https://exp.host/--/api/v2/push/send", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                      "Accept-encoding": "gzip, deflate",
+                    },
+                    body: JSON.stringify({
+                      to: token,
+                      title: "Hello 👋",
+                      body: "From Expo Push",
+                      sound: "default",
+                      data: { route: "inbox" },
+                    }),
+                  });
+                  Alert.alert("Sent", "Check your notification tray");
+                }}
+              />
               <Text
                 style={{
                   fontWeight: "600",
@@ -195,22 +261,39 @@ export const Nodata = () => {
         Ouch!
       </Text>
 
-      <Text style={{ fontSize: 14, color: "#8F8F8F", textAlign: "center",fontWeight:500 }}>
+      <Text
+        style={{
+          fontSize: 14,
+          color: "#8F8F8F",
+          textAlign: "center",
+          fontWeight: 500,
+        }}
+      >
         You don’t have an active contest now
       </Text>
 
       <View style={{ flexDirection: "row", marginTop: 4 }}>
-        <TouchableOpacity onPress={() => Router.push("(tabs)/components/contest/createContest")}>
+        <TouchableOpacity
+          onPress={() => Router.push("(tabs)/components/contest/createContest")}
+        >
           <Text style={{ color: "#1D9BF0", fontSize: 14 }}>Create</Text>
         </TouchableOpacity>
 
-        <Text style={{ fontSize: 14, color: "#777",fontWeight:500 }}> or </Text>
+        <Text style={{ fontSize: 14, color: "#777", fontWeight: 500 }}>
+          {" "}
+          or{" "}
+        </Text>
 
         <TouchableOpacity onPress={() => Router.push("/mainApp/arena")}>
-          <Text style={{ color: "#1D9BF0", fontSize: 14,fontWeight:500 }}>Join contest</Text>
+          <Text style={{ color: "#1D9BF0", fontSize: 14, fontWeight: 500 }}>
+            Join contest
+          </Text>
         </TouchableOpacity>
 
-        <Text style={{ fontSize: 14, color: "#777",fontWeight:500 }}> now</Text>
+        <Text style={{ fontSize: 14, color: "#777", fontWeight: 500 }}>
+          {" "}
+          now
+        </Text>
       </View>
     </View>
   );
