@@ -2,8 +2,9 @@ import { Stack } from "expo-router";
 import "react-native-reanimated";
 
 import { SessionUser } from "@/services/user";
+import type { NotificationBehavior } from 'expo-notifications';
+import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
 import Toast from "react-native-toast-message";
 import CustomToast from "./(tabs)/components/customToast";
 import SplashScreen from "./(tabs)/splashScreen";
@@ -29,9 +30,16 @@ export default function RootLayout() {
     return <SplashScreen />;
   }
 
+Notifications.setNotificationHandler({
+  handleNotification: async (): Promise<NotificationBehavior> => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
   return (
     <>
-      <SafeAreaView style={styles.container}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
@@ -41,14 +49,6 @@ export default function RootLayout() {
             custom: (props) => <CustomToast {...props} />,
           }}
         />
-      </SafeAreaView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: "0%",
-  },
-});

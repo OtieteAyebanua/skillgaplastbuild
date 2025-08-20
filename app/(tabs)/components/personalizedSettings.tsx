@@ -66,6 +66,7 @@ const Personalized = () => {
 
   return (
     <PageContainer backgroundColor={theme == false ? "" : "#141414"}>
+      
       <View>
         <View
           style={{

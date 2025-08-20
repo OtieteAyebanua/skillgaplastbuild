@@ -144,4 +144,18 @@ export class Transaction {
         return [] as IBank[];
       });
   };
+
+  static getTransactionDetails =(id:any)=>{
+    const url = `/transactions/${id}`
+    return API.GET(url)
+    .then(async (response)=>{
+      if(response.success){
+        return response.data  as ITransaction
+      }
+      return {} as ITransaction
+    }).catch((err)=>{
+      Logger.error(err)
+      return {} as ITransaction
+    })
+  }
 }

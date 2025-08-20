@@ -34,6 +34,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Categories from "../categories";
 import GetColoredCategoryBubbles from "../coloredCategorybubbles";
 import SuccessfullyCreatedContest from "./successfullyCreatedContest";
@@ -200,6 +201,13 @@ const CreateContest = () => {
   }
 
   return (
+    <SafeAreaView
+      edges={['bottom']}
+      style={{
+        flex: 1,
+        backgroundColor: theme === false ? "#fff" : "#000"
+      }}
+    >
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
@@ -772,7 +780,7 @@ const CreateContest = () => {
           </TouchableWithoutFeedback>
         </Modal>
       </PageContainer>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView> </SafeAreaView>
   );
 };
 

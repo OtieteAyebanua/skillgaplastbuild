@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -254,6 +255,7 @@ const SignUp = () => {
         }}
         className={`bg-white`}
       ></View>
+      <StatusBar backgroundColor={"#fff"} barStyle={"dark-content"}/>
     </View>
   );
 };

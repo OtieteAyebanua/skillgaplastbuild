@@ -5,6 +5,7 @@ import {
   Image,
   ImageBackground,
   Modal,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -143,6 +144,7 @@ const AuthHome = () => {
           </View>
         </View>
       </Modal>
+      <StatusBar backgroundColor={"#fff"} barStyle={"dark-content"} hidden={true} />
     </ImageBackground>
   );
 };

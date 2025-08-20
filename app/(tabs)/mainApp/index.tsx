@@ -5,6 +5,7 @@ import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
 import { useFocusEffect } from "@react-navigation/native";
+import { getExpoPushTokenAsync } from "expo-notifications";
 import { useCallback, useState } from "react";
 import {
   RefreshControl,
@@ -27,8 +28,6 @@ export default function HomePage() {
   const { setUser, user } = useUserContext();
   const [refreshing, setRefreshing] = useState(false);
 
-  const [greeting, setGreeting] = useState(false);
-
   const onRefresh = () => {
     User.Load();
     setRefreshToken(!refreshToken);
@@ -38,6 +37,7 @@ export default function HomePage() {
 
   useFocusEffect(
     useCallback(() => {
+      console.log(getExpoPushTokenAsync())
       Router.clearHistory();
       User.Load(() => {
         setUser(SessionUser);
@@ -49,7 +49,7 @@ export default function HomePage() {
   return !user ? (
     <SplashScreen />
   ) : (
-    <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#0A0A0A"}>
+    <PageContainer  backgroundColor={theme == false ? "#FAFAFA" : "#0A0A0A"}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

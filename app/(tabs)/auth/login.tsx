@@ -9,6 +9,7 @@ import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -188,6 +189,7 @@ const Login = () => {
           </View>
         </View>
       </ScrollView>
+      <StatusBar backgroundColor={"#fff"} barStyle={"dark-content"}/>
     </SafeAreaView>
   );
 };

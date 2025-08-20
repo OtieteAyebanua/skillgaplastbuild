@@ -25,7 +25,7 @@ const PageContainer = ({
         {
           flex: 1,
           height: hp("100%"),
-          paddingTop: 20,
+          paddingTop: 50,
           paddingBottom: paddingBottom ? insets.bottom : 0,
           backgroundColor: backgroundColor,
         },

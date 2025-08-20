@@ -1,10 +1,9 @@
 import PageContainer from "@/components/Containers";
 import { Router } from "@/services/router";
 import React, { ReactNode, useState } from "react";
-import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Modal, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import SplashScreen from "../splashScreen";
-import { router } from "expo-router";
 
 interface ITransactionPin {
   children: ReactNode;
@@ -164,6 +163,7 @@ const TransactionPin = ({ children }: ITransactionPin) => {
        
       </View>
     </Modal>
+    <StatusBar backgroundColor={"#fff"} barStyle={"dark-content"}/>
     </PageContainer>
   );
 };

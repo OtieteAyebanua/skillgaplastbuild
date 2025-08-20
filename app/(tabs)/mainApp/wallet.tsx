@@ -10,9 +10,9 @@ import {
   TransactionType,
 } from "@/services/transaction";
 import { formatMoney } from "@/utitlity/string";
-import { useFocusEffect } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
-import React, { useCallback, useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -34,22 +34,50 @@ const Wallet = () => {
   const [showReceipt, setShowReceipt] = useState(false);
   const money = formatMoney(user?.balance ?? 0);
   const [selectedTransaction, setSelectedTransaction] =
-    useState<ITransaction>();
+    useState<ITransaction | null>();
   const amountResult = getSignedAmount(selectedTransaction?.amount ?? 0);
-  useFocusEffect(
-    useCallback(() => {
-      Transaction.getTransactions(1, active).then((res) => {
-        setTransactions(res);
+  const { transactionId } = useLocalSearchParams();
+const [isTransactionIdState, setIsTransactionIdState] = useState<any>(null);
+
+useEffect(() => {
+    let alive = true;
+
+    console.log("transaction id:", transactionId);
+
+    // mirror into local state only if you really need it
+    setIsTransactionIdState(transactionId ?? null);
+
+    // always (re)load list
+    Transaction.getTransactions(1, active).then((res) => {
+      if (alive) setTransactions(res);
+    });
+
+    // load details if we have a param; otherwise clear
+    if (transactionId) {
+      Transaction.getTransactionDetails(String(transactionId)).then((res) => {
+        if (alive) setSelectedTransaction(res);
       });
-    }, [active])
-  );
+    } else {
+      setSelectedTransaction(null);
+    }
+
+    // cleanup on blur
+    return () => {
+      alive = false;
+      setShowReceipt(false);
+      setIsTransactionIdState(null);
+      setSelectedTransaction(null); // <-- clear retained details
+    };
+  }, [active, transactionId])
+
+
 
   const getBackgroundColor = (buttonName: string) => {
     const isActive = active === buttonName;
     if (theme === false) {
-      return isActive ? "#B3E5FC" : "#E7F4FD"; // light theme
+      return isActive ? "#B3E5FC" : "#E7F4FD"; 
     } else {
-      return isActive ? "#1A1D1F" : "#313335"; // dark theme
+      return isActive ? "#1A1D1F" : "#313335";
     }
   };
   const getTextColor = () => "#1D9BF0";
@@ -495,10 +523,10 @@ const Wallet = () => {
       )}
 
       <Modal
-        visible={showReceipt}
+        visible={showReceipt || isTransactionIdState != null}
         transparent
         animationType="slide"
-        onRequestClose={() => setShowReceipt(false)}
+        onRequestClose={() => {setShowReceipt(false);setIsTransactionIdState(null) } }
       >
         <TouchableWithoutFeedback>
           <View
@@ -543,7 +571,7 @@ const Wallet = () => {
                     >
                       <View className="">
                         <TouchableOpacity
-                          onPress={() => setShowReceipt(false)}
+                          onPress={() => {setShowReceipt(false);setIsTransactionIdState(null) } }
                           style={{
                             width: 0,
                             borderRadius: 9999, // rounded-full

@@ -21,6 +21,7 @@ import {
 } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const AccountSettings = () => {
     const {theme} = useTheme();
@@ -148,6 +149,13 @@ const AccountSettings = () => {
 
   return (
     <PageContainer backgroundColor={theme == false ? "#FAFAFA" : "#141414"}>
+      <SafeAreaView
+            edges={['bottom']}
+            style={{
+           
+              backgroundColor: theme === false ? "#fff" : "#000"
+            }}
+          >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
@@ -491,7 +499,7 @@ const AccountSettings = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView></SafeAreaView>
     </PageContainer>
   );
 };

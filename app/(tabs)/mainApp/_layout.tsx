@@ -1,16 +1,19 @@
 import { Tabs } from "expo-router";
-import React, { ReactNode, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
+import { useUserContext } from "@/hooks/useAppContext";
 import { useTheme } from "@/hooks/useThemeContext";
 import { AuthSession } from "@/services/authSession";
 import { Logger } from "@/services/logger";
 import { Media } from "@/services/media";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
-import { BackHandler, Image, StatusBar } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
+import { BackHandler, Image, StatusBar, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Arena from "../../../assets/icons/arena.png";
 import Home from "../../../assets/icons/home.png";
 import Notification from "../../../assets/icons/notification.png";
@@ -22,14 +25,22 @@ import Wallet from "../../../assets/icons/wallet.png";
 import NativeImage from "../components/networkImage";
 import SplashScreen from "../splashScreen";
 
-interface IMainAppTabLayout {
-  children: ReactNode;
-}
-
 let isLoading = true;
-export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
+export default function MainAppTabLayout() {
   const { theme,setTheme } = useTheme();
+  const {user} = useUserContext()
 
+    useEffect(() => {
+    (async () => {
+      // Make sure the nav bar is drawing a solid background behind content
+      await NavigationBar.setBehaviorAsync("inset-swipe"); // or "inset-touch"
+      await NavigationBar.setVisibilityAsync("visible");
+
+      // Now set color + icon style
+      await NavigationBar.setBackgroundColorAsync("#032B69");
+      await NavigationBar.setButtonStyleAsync(theme === false ? "dark": "light"); // "dark" if you switch to a light background
+    })();
+  }, []);
   useEffect(() => {
     setTheme(SessionUser?.preferences.darkMode??false);
     const onBackPress = () => {
@@ -61,6 +72,14 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
   return isLoading ? (
     <SplashScreen />
   ) : (
+    <>
+  <SafeAreaView
+  edges={['bottom']}
+  style={{
+    flex: 1,
+    backgroundColor: theme === false ? "#fff" : "#000"
+  }}
+>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[theme ? "dark" : "light"].tint,
@@ -105,11 +124,14 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
         options={{
           title: "Notification",
           tabBarIcon: ({ color, focused }) => (
+            <View>
             <Image
               source={focused ? OnNotification : Notification}
               style={{ width: 25, height: 25 }}
               resizeMode="contain"
             />
+          { user?.notification ?   <View style={{borderWidth:1,borderColor:"red",borderRadius:100,width:10,height:10,backgroundColor:"red",position:"absolute",left:20}}></View> : null }
+            </View>
           ),
         }}
       />
@@ -139,7 +161,9 @@ export default function MainAppTabLayout({ children }: IMainAppTabLayout) {
           ),
         }}
       />
-     <StatusBar  hidden />
     </Tabs>
+        <StatusBar backgroundColor={theme === false ? "#FAFAFA" : "#0A0A0A"} barStyle={theme === false ? "dark-content" : "light-content"} />
+    </SafeAreaView>
+    </>
   );
 }

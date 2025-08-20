@@ -10,11 +10,8 @@ import { ThemeContextProvider } from "@/hooks/useThemeContext";
 import { Router } from "@/services/router";
 import { SessionUser } from "@/services/user";
 import { BackHandler } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 export default function TabLayout() {
   const colorScheme = SessionUser?.preferences.darkMode;
-
   useEffect(() => {
     const onBackPress = () => {
       Router.back();
@@ -28,10 +25,10 @@ export default function TabLayout() {
     return () => subscription.remove();
   }, []);
 
+
   return (
     <AppContextProvider>
       <ThemeContextProvider>
-        <SafeAreaView style={{ flex: 1 }}>
           <Tabs
             screenOptions={{
               tabBarActiveTintColor:
@@ -63,7 +60,6 @@ export default function TabLayout() {
               }}
             />
           </Tabs>
-        </SafeAreaView>
       </ThemeContextProvider>
     </AppContextProvider>
   );

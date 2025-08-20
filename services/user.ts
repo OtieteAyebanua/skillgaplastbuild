@@ -14,6 +14,7 @@ export interface IUserRecord {
   isVerified: boolean;
   isOnline: boolean;
   canChangeTag: boolean;
+  notification: boolean;
   socials: {
     twitter: string | null;
     instagram: string | null;
