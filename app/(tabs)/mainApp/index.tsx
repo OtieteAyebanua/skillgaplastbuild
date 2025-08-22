@@ -9,6 +9,7 @@ import {
 } from "@/services/notificationPermission";
 import { Router } from "@/services/router";
 import { SessionUser, User } from "@/services/user";
+import { NotificationType } from "@/types/notification";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import { getExpoPushTokenAsync } from "expo-notifications";
@@ -32,7 +33,44 @@ import SplashScreen from "../splashScreen";
 
 export default function HomePage() {
   const [token, setToken] = useState<string | null>(null);
+  const [testRoute, setTestRoute] = useState<any>("");
+  const [type, setType] = useState<NotificationType | null>(null);
 
+  async function setRandomTypeAndNotify() {
+    // 1) Pick random type
+    const values = Object.values(NotificationType);
+    const randomValue = values[
+      Math.floor(Math.random() * values.length)
+    ] as NotificationType;
+
+    // 2) Update state
+    setType(randomValue);
+
+    // 3) Trigger push with the new type
+    if (!token) return;
+    try {
+      const res = await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+        },
+        body: JSON.stringify({
+          to: token,
+          title: "Hello 👋",
+          body: `New type chosen: ${randomValue}`, // make it visible in tray
+          sound: "default",
+          data: { type: randomValue },
+        }),
+      });
+
+      const json = await res.json();
+      console.log("Push ticket:", json);
+    } catch (err) {
+      console.error("Push send failed:", err);
+    }
+  }
   useEffect(() => {
     (async () => {
       try {
@@ -58,8 +96,36 @@ export default function HomePage() {
     });
     const subResp = Notifications.addNotificationResponseReceivedListener(
       (r) => {
-        console.log("user tapped:", r);
-        // read r.notification.request.content.data to navigate
+        const data = r.notification.request.content.data;
+        switch (data?.type) {
+          case "request":
+            Router.push("/(tabs)/components/contest/myContestDetails");
+            break;
+
+          case "won":
+            Router.push("/(tabs)/components/contest/myContestDetails");
+            break;
+
+          case "lost":
+            Router.push("/(tabs)/components/contest/myContestDetails");
+            break;
+
+          case "dispute":
+            Router.push("/(tabs)/components/contest/myContestDetails");
+            break;
+
+          case "deposit":
+            Router.push("/mainApp/wallet");
+            break;
+
+          case "withdraw":
+            Router.push("/mainApp/wallet");
+            break;
+
+          default:
+            Router.push("/mainApp/home");
+            break;
+        }
       }
     );
     return () => {
@@ -168,25 +234,9 @@ export default function HomePage() {
                 Howdy,
               </Text>
               <Button
-                title="Send me a test"
+                title={testRoute}
                 onPress={async () => {
-                  if (!token) return;
-                  await fetch("https://exp.host/--/api/v2/push/send", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Accept: "application/json",
-                      "Accept-encoding": "gzip, deflate",
-                    },
-                    body: JSON.stringify({
-                      to: token,
-                      title: "Hello 👋",
-                      body: "From Expo Push",
-                      sound: "default",
-                      data: { route: "inbox" },
-                    }),
-                  });
-                  Alert.alert("Sent", "Check your notification tray");
+                  setRandomTypeAndNotify();
                 }}
               />
               <Text

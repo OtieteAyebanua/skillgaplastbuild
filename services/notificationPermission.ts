@@ -18,6 +18,7 @@ export async function askNotificationPermission() {
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === "granted") return "granted";
   const { status } = await Notifications.requestPermissionsAsync();
+  console.log("notification", status);
   return status;
 }
 
@@ -32,6 +33,7 @@ export async function getExpoPushTokenOrThrow() {
   if (!projectId) throw new Error("Missing EAS projectId in app.json");
 
   const { data } = await Notifications.getExpoPushTokenAsync({ projectId });
+  console.log("this is notification token", data);
   return data;
 }
 
@@ -42,5 +44,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
+    shouldShowAlert: true,
   }),
 });
